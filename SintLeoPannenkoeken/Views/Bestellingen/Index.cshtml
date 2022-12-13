@@ -1,9 +1,25 @@
-﻿@{
+﻿@model SintLeoPannenkoeken.ViewModels.Bestellingen.IndexViewModel
+@{
     ViewData["Title"] = "Bestellingen";
 }
 
-<div class="text-center">
+<div class="text-center bestellingen">
     <h1 class="display-4">Bestellingen</h1>
-
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <ul class="nav nav-tabs">
+        @foreach (var scoutsjaarViewModel in Model.Scoutsjaren)
+        {
+            <li class="nav-item">
+                <a class="nav-link" href="#">@scoutsjaarViewModel.BeginJaar - @scoutsjaarViewModel.EindJaar</a>
+            </li>
+        }
+    </ul>
 </div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('.bestellingen .nav-item:first a').addClass('active');
+            $('.bestellingen .nav-item:first a').attr('aria-current', 'page');
+        });
+    </script>
+}

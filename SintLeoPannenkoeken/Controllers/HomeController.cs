@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SintLeoPannenkoeken.Models;
+using SintLeoPannenkoeken.ViewModels;
 using System.Diagnostics;
 
 namespace SintLeoPannenkoeken.Controllers

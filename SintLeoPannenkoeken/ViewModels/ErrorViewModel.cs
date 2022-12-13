@@ -1,4 +1,4 @@
-namespace SintLeoPannenkoeken.Models
+namespace SintLeoPannenkoeken.ViewModels
 {
     public class ErrorViewModel
     {
