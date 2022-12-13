@@ -30,28 +30,24 @@
 @section Scripts {
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.js"></script>
     <script>
-        function reloadBestellingen() {
+        async function reloadBestellingen() {
             var beginjaar = $(this).data('beginjaar');
-            fetch(new Request(`/api/bestellingen/${beginjaar}`))
-                .then((response) => {
-                    if (!response.ok) {
-                        // TODO: handle error
-                    }
+            var response = await fetch(new Request(`/api/bestellingen/${beginjaar}`));
+            if (!response.ok) {
+                // TODO: handle error
+            }
 
-                    return response.json();
-                })
-                .then((json) => {
-                    $('#bestellingen').DataTable({
-                        destroy: true,
-                        data: json,
-                        columns: [
-                            { data: 'naam' },
-                            { data: 'aantalPakken' },
-                            { data: 'opmerkingen' },
-                            { data: 'betaald' },
-                        ]
-                    })
-                });
+            var json = await response.json();
+            $('#bestellingen').DataTable({
+                destroy: true,
+                data: json,
+                columns: [
+                    { data: 'naam' },
+                    { data: 'aantalPakken' },
+                    { data: 'opmerkingen' },
+                    { data: 'betaald' },
+                ]
+            });
         }
 
         $(function () {
