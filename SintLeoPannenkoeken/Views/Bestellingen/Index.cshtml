@@ -3,23 +3,59 @@
     ViewData["Title"] = "Bestellingen";
 }
 
+@section Styles {
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.css" />
+}
+
 <div class="text-center bestellingen">
     <h1 class="display-4">Bestellingen</h1>
     <ul class="nav nav-tabs">
         @foreach (var scoutsjaarViewModel in Model.Scoutsjaren)
         {
             <li class="nav-item">
-                <a class="nav-link" href="#">@scoutsjaarViewModel.BeginJaar - @scoutsjaarViewModel.EindJaar</a>
+                <a class="nav-link" href="#" data-beginjaar="@scoutsjaarViewModel.BeginJaar">@scoutsjaarViewModel.BeginJaar - @scoutsjaarViewModel.EindJaar</a>
             </li>
         }
     </ul>
+    <table id="bestellingen" class="table table-striped">
+        <thead>
+            <th>Naam</th>
+            <th>Aantal pakken</th>
+            <th>Opmerkingen</th>
+            <th>Betaald</th>
+        </thead>
+    </table>
 </div>
 
 @section Scripts {
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.js"></script>
     <script>
         $(function () {
             $('.bestellingen .nav-item:first a').addClass('active');
             $('.bestellingen .nav-item:first a').attr('aria-current', 'page');
+            $('.bestellingen .nav-item a').click(function() {
+                var beginjaar = $(this).data('beginjaar');
+                fetch(new Request(`/api/bestellingen/${beginjaar}`))
+                    .then((response) => {
+                        if (!response.ok) {
+                            // TODO: handle error
+                        }
+
+                        return response.json();
+                    })
+                    .then((json) => {
+                        $('#bestellingen').DataTable({
+                            destroy: true,
+                            data: json,
+                            columns: [
+                                { data: 'naam' },
+                                { data: 'aantalPakken' },
+                                { data: 'opmerkingen' },
+                                { data: 'betaald' },
+                            ]
+                        })
+                    });
+            });
         });
     </script>
 }

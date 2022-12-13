@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "datatables.net-bs5@1.13.1",
+      "destination": "wwwroot/datatables.net-bs5/"
+    }
+  ]
+}
