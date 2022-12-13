@@ -30,32 +30,33 @@
 @section Scripts {
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.js"></script>
     <script>
-        $(function () {
-            $('.bestellingen .nav-item:first a').addClass('active');
-            $('.bestellingen .nav-item:first a').attr('aria-current', 'page');
-            $('.bestellingen .nav-item a').click(function() {
-                var beginjaar = $(this).data('beginjaar');
-                fetch(new Request(`/api/bestellingen/${beginjaar}`))
-                    .then((response) => {
-                        if (!response.ok) {
-                            // TODO: handle error
-                        }
+        function reloadBestellingen() {
+            var beginjaar = $(this).data('beginjaar');
+            fetch(new Request(`/api/bestellingen/${beginjaar}`))
+                .then((response) => {
+                    if (!response.ok) {
+                        // TODO: handle error
+                    }
 
-                        return response.json();
+                    return response.json();
+                })
+                .then((json) => {
+                    $('#bestellingen').DataTable({
+                        destroy: true,
+                        data: json,
+                        columns: [
+                            { data: 'naam' },
+                            { data: 'aantalPakken' },
+                            { data: 'opmerkingen' },
+                            { data: 'betaald' },
+                        ]
                     })
-                    .then((json) => {
-                        $('#bestellingen').DataTable({
-                            destroy: true,
-                            data: json,
-                            columns: [
-                                { data: 'naam' },
-                                { data: 'aantalPakken' },
-                                { data: 'opmerkingen' },
-                                { data: 'betaald' },
-                            ]
-                        })
-                    });
-            });
+                });
+        }
+
+        $(function () {
+            $('.bestellingen .nav-item a').click(reloadBestellingen);
+            $('.bestellingen .nav-item:first a').click();
         });
     </script>
 }
