@@ -1,17 +1,21 @@
-﻿namespace SintLeoPannenkoeken.Models
+﻿using Microsoft.EntityFrameworkCore;
+using System.Net.Mail;
+
+namespace SintLeoPannenkoeken.Models
 {
+    [Index(nameof(Begin), IsUnique = true)]
     public class Scoutsjaar
     {
-        public Scoutsjaar(DateTime begin, DateTime einde)
+        public Scoutsjaar(int begin, int einde)
         {
             Begin = begin;
             Einde = einde;
             Bestellingen = new List<Bestelling>();
         }
 
-        public int Id {  get; set; }
-        public DateTime Begin { get; set; }
-        public DateTime Einde { get; set; }
+        public int Id { get; set; }
+        public int Begin { get; set; }
+        public int Einde { get; set; }
         public List<Bestelling> Bestellingen { get; set; }
     }
 }

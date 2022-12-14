@@ -289,13 +289,16 @@ namespace SintLeoPannenkoeken.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<DateTime>("Begin")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("Begin")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("Einde")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("Einde")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Begin")
+                        .IsUnique();
 
                     b.ToTable("Scoutsjaren");
                 });

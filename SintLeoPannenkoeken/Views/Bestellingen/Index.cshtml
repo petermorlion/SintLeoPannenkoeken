@@ -7,17 +7,36 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.css" />
 }
 
-<div class="text-center bestellingen">
-    <h1 class="display-4">Bestellingen</h1>
-    <ul class="nav nav-tabs">
-        @foreach (var scoutsjaarViewModel in Model.Scoutsjaren)
-        {
-            <li class="nav-item">
-                <a class="nav-link" href="#" data-beginjaar="@scoutsjaarViewModel.BeginJaar">@scoutsjaarViewModel.BeginJaar - @scoutsjaarViewModel.EindJaar</a>
-            </li>
-        }
-    </ul>
-    <table id="bestellingen" class="table table-striped">
+<div id="bestellingen" class="container" data-scoutsjaar="@Model.Scoutsjaar.Begin">
+    <h1 class="display-4">Bestellingen @Model.Scoutsjaar.Begin</h1>
+    <form id="bestellingForm">
+        <div class="row mt-4">
+            <div class="col-6 mb-4">
+                <label for="naam" class="form-label">Naam</label>
+                <input type="text" class="form-control" placeholder="Naam" aria-label="Naam" name="naam" id="naam">
+            </div>
+            <div class="col-4 mb-4">
+                <label for="naam" class="form-label">Aantal pakken</label>
+                <input type="number" class="form-control" aria-label="Aantal pakken" name="aantalPakken" id="aantalPakken">
+            </div>
+            <div class="col-2 mb-4">
+                <label for="betaald" class="form-label">Betaald</label>
+                <input type="checkbox" class="form-check-input" aria-label="Betaald" name="betaald" id="betaald">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 mb-4">
+                <label for="opmerkingen" class="form-label">Opmerkingen</label>
+                <input type="text" class="form-control" aria-label="Opmerkingen" name="opmerkingen" id="opmerkingen">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 mb-4">
+                <button type="submit" class="btn btn-primary">Opslaan</button>
+            </div>
+        </div>
+    </form>
+    <table id="bestellingenTable" class="table table-striped">
         <thead>
             <th>Naam</th>
             <th>Aantal pakken</th>
@@ -31,14 +50,14 @@
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.js"></script>
     <script>
         async function reloadBestellingen() {
-            var beginjaar = $(this).data('beginjaar');
-            var response = await fetch(new Request(`/api/bestellingen/${beginjaar}`));
+            var scoutsjaar = $('#bestellingen').data('scoutsjaar');
+            var response = await fetch(`/api/bestellingen/${scoutsjaar}`);
             if (!response.ok) {
                 // TODO: handle error
             }
 
             var json = await response.json();
-            $('#bestellingen').DataTable({
+            $('#bestellingenTable').DataTable({
                 destroy: true,
                 data: json,
                 columns: [
@@ -50,9 +69,44 @@
             });
         }
 
-        $(function () {
-            $('.bestellingen .nav-item a').click(reloadBestellingen);
-            $('.bestellingen .nav-item:first a').click();
+        async function submitBestelling() {
+            var scoutsjaar = $('#bestellingen').data('scoutsjaar');
+            var data = {
+                naam: $('#bestellingForm #naam').val(),
+                aantalPakken: $('#bestellingForm #aantalPakken').val(),
+                betaald: $('#bestellingForm #betaald').is(':checked'),
+                opmerkingen: $('#bestellingForm #opmerkingen').val(),
+            };
+
+            var response = await fetch(`/api/bestellingen/${scoutsjaar}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                // TODO: handle error
+            }
+
+            setFocus();
+        }
+
+        function setFocus() {
+            $('#bestellingForm #naam').focus();
+        }
+
+        $(async function () {
+            $('#bestellingForm button.btn-primary').click(async function(event) {
+                var scoutsjaar = $('#bestellingen').data('scoutsjaar');
+                await submitBestelling();
+                await reloadBestellingen();
+                event.preventDefault();
+            });
+
+            await reloadBestellingen();
+            setFocus();
         });
     </script>
 }

@@ -4,11 +4,11 @@ namespace SintLeoPannenkoeken.ViewModels.Bestellingen
 {
     public class IndexViewModel
     {
-        public IndexViewModel(IList<Scoutsjaar> scoutsjaren)
+        public IndexViewModel(Scoutsjaar scoutsjaar)
         {
-            Scoutsjaren = scoutsjaren.Select(scoutsjaar => new ScoutsjaarViewModel(scoutsjaar)).ToList();
+            Scoutsjaar = new ScoutsjaarViewModel(scoutsjaar);
         }
 
-        public IList<ScoutsjaarViewModel> Scoutsjaren { get; set; }
+        public ScoutsjaarViewModel Scoutsjaar { get; set; }
     }
 }

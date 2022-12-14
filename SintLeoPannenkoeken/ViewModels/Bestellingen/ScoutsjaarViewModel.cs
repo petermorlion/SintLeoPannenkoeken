@@ -11,8 +11,7 @@ namespace SintLeoPannenkoeken.ViewModels.Bestellingen
             _scoutsjaar = scoutsjaar;
         }
 
-        public int ScoutsjaarId => _scoutsjaar.Id;
-        public string BeginJaar => _scoutsjaar.Begin.Year.ToString();
-        public string EindJaar => _scoutsjaar.Einde.Year.ToString();
+        public int Begin => _scoutsjaar.Begin;
+        public int Einde => _scoutsjaar.Einde;
     }
 }

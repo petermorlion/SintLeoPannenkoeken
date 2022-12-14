@@ -25,7 +25,7 @@ namespace SintLeoPannenkoeken.Controllers.API
         {
             var bestellingen = _dbContext.Scoutsjaren
                 .Include(scoutsjaar => scoutsjaar.Bestellingen)
-                .SingleOrDefault(scoutsjaar => scoutsjaar.Begin.Year == jaar)
+                .SingleOrDefault(scoutsjaar => scoutsjaar.Begin == jaar)
                 ?.Bestellingen
                 ?.ToList();
 
@@ -40,7 +40,7 @@ namespace SintLeoPannenkoeken.Controllers.API
         [Route("{jaar:int}")]
         public IActionResult Put(int jaar, [FromBody] CreateBestellingViewModel createBestellingViewModel)
         {
-            var scoutsjaar = _dbContext.Scoutsjaren.SingleOrDefault(s => s.Begin.Year == jaar);
+            var scoutsjaar = _dbContext.Scoutsjaren.SingleOrDefault(s => s.Begin == jaar);
             if (scoutsjaar == null)
             {
                 return BadRequest("Onbekend scoutsjaar");

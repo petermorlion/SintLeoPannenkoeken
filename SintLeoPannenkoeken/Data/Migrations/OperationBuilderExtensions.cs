@@ -8,10 +8,10 @@ namespace SintLeoPannenkoeken.Data.Migrations
     {
         public static OperationBuilder<SqlOperation> InsertScoutsjaar(
             this MigrationBuilder migrationBuilder,
-            DateTime begin,
-            DateTime einde)
+            int begin,
+            int einde)
         {
-            return migrationBuilder.Sql($"INSERT INTO Scoutsjaren ([Begin], [Einde]) VALUES ('{begin.ToString("yyyy-MM-dd HH:mm:ss")}', '{einde.ToString("yyyy-MM-dd HH:mm:ss")}');");
+            return migrationBuilder.Sql($"INSERT INTO Scoutsjaren ([Begin], [Einde]) VALUES ('{begin}', '{einde}');");
         }
     }
 }

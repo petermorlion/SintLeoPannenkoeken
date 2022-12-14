@@ -12,8 +12,8 @@ using SintLeoPannenkoeken.Data;
 namespace SintLeoPannenkoeken.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221213093925_AddScoutsjarenData")]
-    partial class AddScoutsjarenData
+    [Migration("20221214203753_CreateInitialTables")]
+    partial class CreateInitialTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -226,6 +226,63 @@ namespace SintLeoPannenkoeken.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("SintLeoPannenkoeken.Models.Bestelling", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AantalPakken")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Betaald")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Naam")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Opmerkingen")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ScoutsjaarId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ScoutsjaarId");
+
+                    b.ToTable("Bestelling");
+                });
+
+            modelBuilder.Entity("SintLeoPannenkoeken.Models.Lid", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Achternaam")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Functie")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Voornaam")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Leden");
+                });
+
             modelBuilder.Entity("SintLeoPannenkoeken.Models.Scoutsjaar", b =>
                 {
                     b.Property<int>("Id")
@@ -234,13 +291,16 @@ namespace SintLeoPannenkoeken.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<DateTime>("Begin")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("Begin")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("Einde")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("Einde")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Begin")
+                        .IsUnique();
 
                     b.ToTable("Scoutsjaren");
                 });
@@ -294,6 +354,18 @@ namespace SintLeoPannenkoeken.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("SintLeoPannenkoeken.Models.Bestelling", b =>
+                {
+                    b.HasOne("SintLeoPannenkoeken.Models.Scoutsjaar", null)
+                        .WithMany("Bestellingen")
+                        .HasForeignKey("ScoutsjaarId");
+                });
+
+            modelBuilder.Entity("SintLeoPannenkoeken.Models.Scoutsjaar", b =>
+                {
+                    b.Navigation("Bestellingen");
                 });
 #pragma warning restore 612, 618
         }

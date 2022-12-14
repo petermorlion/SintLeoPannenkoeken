@@ -4,10 +4,39 @@
 
 namespace SintLeoPannenkoeken.Data.Migrations
 {
-    public partial class AddLedenAndBestellingen : Migration
+    public partial class CreateInitialTables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Leden",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Voornaam = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Achternaam = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Functie = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Leden", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Scoutsjaren",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Begin = table.Column<int>(type: "int", nullable: false),
+                    Einde = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Scoutsjaren", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Bestelling",
                 columns: table => new
@@ -30,25 +59,18 @@ namespace SintLeoPannenkoeken.Data.Migrations
                         principalColumn: "Id");
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Leden",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Voornaam = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Achternaam = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Functie = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Leden", x => x.Id);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_Bestelling_ScoutsjaarId",
                 table: "Bestelling",
                 column: "ScoutsjaarId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Scoutsjaren_Begin",
+                table: "Scoutsjaren",
+                column: "Begin",
+                unique: true);
+
+            migrationBuilder.InsertScoutsjaar(2022, 2023);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -58,6 +80,9 @@ namespace SintLeoPannenkoeken.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Leden");
+
+            migrationBuilder.DropTable(
+                name: "Scoutsjaren");
         }
     }
 }
