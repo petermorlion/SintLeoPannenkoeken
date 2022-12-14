@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Data;
+using SintLeoPannenkoeken.Models;
 using SintLeoPannenkoeken.ViewModels.Bestellingen;
 
 namespace SintLeoPannenkoeken.Controllers.API
@@ -33,6 +34,27 @@ namespace SintLeoPannenkoeken.Controllers.API
                 : bestellingen.Select(bestelling => new BestellingViewModel(bestelling)).ToList();
 
             return Ok(bestellingenViewModels);
+        }
+
+        [HttpPost]
+        [Route("{jaar:int}")]
+        public IActionResult Put(int jaar, [FromBody] CreateBestellingViewModel createBestellingViewModel)
+        {
+            var scoutsjaar = _dbContext.Scoutsjaren.SingleOrDefault(s => s.Begin.Year == jaar);
+            if (scoutsjaar == null)
+            {
+                return BadRequest("Onbekend scoutsjaar");
+            }
+
+            var bestelling = new Bestelling(createBestellingViewModel.Naam, createBestellingViewModel.AantalPakken)
+            {
+                Opmerkingen = createBestellingViewModel.Opmerkingen != null ? createBestellingViewModel.Opmerkingen : "",
+                Betaald = createBestellingViewModel.Betaald
+            };
+
+            scoutsjaar.Bestellingen.Add(bestelling);
+            _dbContext.SaveChanges();
+            return Created($"/api/bestellingen/{bestelling.Id}", bestelling);
         }
     }
 }

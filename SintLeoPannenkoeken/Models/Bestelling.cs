@@ -2,6 +2,12 @@
 {
     public class Bestelling
     {
+        public Bestelling(string naam, int aantalPakken)
+        {
+            Naam = naam;
+            AantalPakken = aantalPakken;
+        }
+
         public int Id { get; set; }
         public string Naam { get; set; }
         public int AantalPakken { get; set; }
