@@ -48,6 +48,7 @@ namespace SintLeoPannenkoeken.Controllers.API
 
             var bestelling = new Bestelling(createBestellingViewModel.Naam, createBestellingViewModel.AantalPakken)
             {
+                Telefoon = createBestellingViewModel.Telefoon != null ? createBestellingViewModel.Telefoon : "",
                 Opmerkingen = createBestellingViewModel.Opmerkingen != null ? createBestellingViewModel.Opmerkingen : "",
                 Betaald = createBestellingViewModel.Betaald
             };

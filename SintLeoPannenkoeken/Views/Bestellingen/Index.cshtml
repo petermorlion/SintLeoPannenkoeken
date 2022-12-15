@@ -11,10 +11,16 @@
     <h1 class="display-4">Bestellingen @Model.Scoutsjaar.Begin</h1>
     <form id="bestellingForm">
         <div class="row mt-4">
-            <div class="col-6 mb-4">
+            <div class="col-8">
                 <label for="naam" class="form-label">Naam</label>
                 <input type="text" class="form-control" placeholder="Naam" aria-label="Naam" name="naam" id="naam">
             </div>
+            <div class="col-4">
+                <label for="naam" class="form-label">Telefoon</label>
+                <input type="text" class="form-control" placeholder="Telefoon" aria-label="Telefoon" name="telefoon" id="telefoon">
+            </div>
+        </div>
+        <div class="row">
             <div class="col-4 mb-4">
                 <label for="naam" class="form-label">Aantal pakken</label>
                 <input type="number" class="form-control" aria-label="Aantal pakken" name="aantalPakken" id="aantalPakken">
@@ -40,6 +46,7 @@
         <thead>
             <tr>
                 <th>Naam</th>
+                <th>Telefoon</th>
                 <th>Aantal pakken</th>
                 <th>Opmerkingen</th>
                 <th>Betaald</th>
@@ -64,6 +71,7 @@
                 data: json,
                 columns: [
                     { data: 'naam' },
+                    { data: 'telefoon'},
                     { data: 'aantalPakken' },
                     { data: 'opmerkingen' },
                     { data: 'betaald' },
@@ -75,6 +83,7 @@
             var scoutsjaar = $('#bestellingen').data('scoutsjaar');
             var data = {
                 naam: $('#bestellingForm #naam').val(),
+                telefoon: $('#bestellingForm #telefoon').val(),
                 aantalPakken: $('#bestellingForm #aantalPakken').val(),
                 betaald: $('#bestellingForm #betaald').is(':checked'),
                 opmerkingen: $('#bestellingForm #opmerkingen').val(),
