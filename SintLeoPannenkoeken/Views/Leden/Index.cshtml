@@ -1,0 +1,102 @@
+﻿@model SintLeoPannenkoeken.ViewModels.Bestellingen.IndexViewModel
+@{
+    ViewData["Title"] = "Leden";
+}
+
+@section Styles {
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.css" />
+}
+
+<div id="leden" class="container">
+    <h1 class="display-4">Leden</h1>
+    <form id="lidForm">
+        <div class="row mt-4">
+            <div class="col-4 mb-4">
+                <label for="naam" class="form-label">Achternaam</label>
+                <input type="text" class="form-control" placeholder="Achternaam" aria-label="Achternaam" name="achternaam" id="achternaam">
+            </div>
+            <div class="col-4 mb-4">
+                <label for="naam" class="form-label">Voornaam</label>
+                <input type="text" class="form-control" aria-label="Voornaam" name="voornaam" id="voornaam">
+            </div>
+            <div class="col-4 mb-4">
+                <label for="betaald" class="form-label">Functie</label>
+                <input type="text" class="form-control" aria-label="Functie" name="functie" id="functie">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 mb-4">
+                <button type="submit" class="btn btn-primary">Opslaan</button>
+            </div>
+        </div>
+    </form>
+    <table id="ledenTable" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Achternaam</th>
+                <th>Voornaam</th>
+                <th>Functie</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.js"></script>
+    <script>
+        async function reloadLeden() {
+            var response = await fetch(`/api/leden`);
+            if (!response.ok) {
+                // TODO: handle error
+            }
+
+            var json = await response.json();
+            $('#ledenTable').DataTable({
+                destroy: true,
+                data: json,
+                columns: [
+                    { data: 'achternaam' },
+                    { data: 'voornaam' },
+                    { data: 'functie' }
+                ]
+            });
+        }
+
+        async function submitLid() {
+            var data = {
+                achternaam: $('#lidForm #achternaam').val(),
+                voornaam: $('#lidForm #voornaam').val(),
+                functie: $('#lidForm #functie').val()
+            };
+
+            var response = await fetch(`/api/leden`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                // TODO: handle error
+            }
+
+            setFocus();
+        }
+
+        function setFocus() {
+            $('#lidForm #achternaam').focus();
+        }
+
+        $(async function () {
+            $('#lidForm button.btn-primary').click(async function(event) {
+                await submitLid();
+                await reloadLeden();
+                event.preventDefault();
+            });
+
+            await reloadLeden();
+            setFocus();
+        });
+    </script>
+}

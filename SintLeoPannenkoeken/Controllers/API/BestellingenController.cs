@@ -13,7 +13,7 @@ namespace SintLeoPannenkoeken.Controllers.API
         private readonly ILogger<BestellingenController> _logger;
         private readonly ApplicationDbContext _dbContext;
 
-        public BestellingenController(ILogger<BestellingenController> logger, ApplicationDbContext dbContext    )
+        public BestellingenController(ILogger<BestellingenController> logger, ApplicationDbContext dbContext)
         {
             _logger = logger;
             _dbContext = dbContext;
