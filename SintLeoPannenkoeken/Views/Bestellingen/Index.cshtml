@@ -87,9 +87,14 @@
                     { data: 'telefoon'},
                     { data: 'aantalPakken' },
                     { data: 'opmerkingen' },
-                    { data: 'betaald' },
                     { 
-                        targets: 0,
+                        data: function(row, type, val, meta) {
+                            if (row.betaald) {
+                                return '<i class="bi-check-lg"></i>';
+                            }
+                        }
+                    },
+                    { 
                         data: function(row, type, val, meta) {
                             return `${row.lid.achternaam} ${row.lid.voornaam}`;
                         } 
