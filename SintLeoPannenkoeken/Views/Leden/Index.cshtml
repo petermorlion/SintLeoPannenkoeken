@@ -103,9 +103,9 @@
 
         $(async function () {
             $('#lidForm button.btn-primary').click(async function(event) {
+                event.preventDefault();
                 await submitLid();
                 await reloadLeden();
-                event.preventDefault();
             });
 
             await reloadLeden();
