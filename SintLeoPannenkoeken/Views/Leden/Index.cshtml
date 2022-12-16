@@ -101,11 +101,16 @@
             $('#lidForm #achternaam').focus();
         }
 
+        function clearForm() {
+            $('#lidForm')[0].reset();
+        }
+
         $(async function () {
             $('#lidForm button.btn-primary').click(async function(event) {
                 event.preventDefault();
                 await submitLid();
                 await reloadLeden();
+                clearForm();
             });
 
             await reloadLeden();
