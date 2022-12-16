@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using SintLeoPannenkoeken.Models;
+﻿using SintLeoPannenkoeken.Models;
+using SintLeoPannenkoeken.ViewModels.Leden;
 
 namespace SintLeoPannenkoeken.ViewModels.Bestellingen
 {
@@ -19,5 +18,6 @@ namespace SintLeoPannenkoeken.ViewModels.Bestellingen
         public int AantalPakken => _bestelling.AantalPakken;
         public string Opmerkingen => _bestelling.Opmerkingen;
         public bool Betaald => _bestelling.Betaald;
+        public LidViewModel Lid => new LidViewModel(_bestelling.Lid);
     }
 }

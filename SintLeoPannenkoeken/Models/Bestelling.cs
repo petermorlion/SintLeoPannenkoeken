@@ -14,5 +14,10 @@
         public int AantalPakken { get; set; }
         public string Opmerkingen { get; set; }
         public bool Betaald { get; set; }
+
+        public int LidId { get; set; }
+        public Lid Lid { get; set; }
+        public int TakId { get; set; }
+        public Tak Tak { get; set; }
     }
 }

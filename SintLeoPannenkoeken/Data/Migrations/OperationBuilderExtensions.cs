@@ -13,5 +13,12 @@ namespace SintLeoPannenkoeken.Data.Migrations
         {
             return migrationBuilder.Sql($"INSERT INTO Scoutsjaren ([Begin], [Einde]) VALUES ('{begin}', '{einde}');");
         }
+
+        public static OperationBuilder<SqlOperation> InsertTak(
+            this MigrationBuilder migrationBuilder,
+            string naam)
+        {
+            return migrationBuilder.Sql($"INSERT INTO Takken ([Naam]) VALUES ('{naam}');");
+        }
     }
 }

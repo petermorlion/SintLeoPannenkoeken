@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Data;
 using SintLeoPannenkoeken.Models;
 using SintLeoPannenkoeken.ViewModels.Leden;
@@ -22,7 +23,7 @@ namespace SintLeoPannenkoeken.Controllers.API
         [Route("")]
         public IActionResult Get()
         {
-            var leden = _dbContext.Leden.ToList();
+            var leden = _dbContext.Leden.Include(lid => lid.Tak).ToList();
 
             var ledenViewModels = leden == null 
                 ? new List<LidViewModel>() 
@@ -37,7 +38,8 @@ namespace SintLeoPannenkoeken.Controllers.API
         {
             var lid = new Lid(createLidViewModel.Voornaam, createLidViewModel.Achternaam)
             {
-                Functie = createLidViewModel.Functie
+                Functie = createLidViewModel.Functie,
+                TakId = createLidViewModel.TakId
             };
 
             _dbContext.Leden.Add(lid);

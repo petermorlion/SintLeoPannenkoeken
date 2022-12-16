@@ -7,5 +7,6 @@ namespace SintLeoPannenkoeken.ViewModels.Leden
         public string Achternaam { get; set; }
         public string Voornaam { get; set; }
         public string Functie{ get; set; }
+        public int TakId { get; set; }
     }
 }

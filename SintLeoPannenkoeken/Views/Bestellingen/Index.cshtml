@@ -10,34 +10,45 @@
 <div id="bestellingen" class="container" data-scoutsjaar="@Model.Scoutsjaar.Begin">
     <h1 class="display-4">Bestellingen @Model.Scoutsjaar.Begin</h1>
     <form id="bestellingForm">
-        <div class="row mt-4">
+        <div class="row mt-4 mb-4">
             <div class="col-8">
                 <label for="naam" class="form-label">Naam</label>
-                <input type="text" class="form-control" placeholder="Naam" aria-label="Naam" name="naam" id="naam">
+                <input type="text" class="form-control" placeholder="Naam" aria-label="Naam" name="naam" id="naam" />
             </div>
             <div class="col-4">
                 <label for="naam" class="form-label">Telefoon</label>
-                <input type="text" class="form-control" placeholder="Telefoon" aria-label="Telefoon" name="telefoon" id="telefoon">
+                <input type="text" class="form-control" placeholder="Telefoon" aria-label="Telefoon" name="telefoon" id="telefoon" />
             </div>
         </div>
-        <div class="row">
-            <div class="col-4 mb-4">
+        <div class="row mb-4">
+            <div class="col-4">
                 <label for="naam" class="form-label">Aantal pakken</label>
-                <input type="number" class="form-control" aria-label="Aantal pakken" name="aantalPakken" id="aantalPakken">
+                <input type="number" class="form-control" aria-label="Aantal pakken" name="aantalPakken" id="aantalPakken" />
             </div>
-            <div class="col-2 mb-4">
+            <div class="col-2">
                 <label for="betaald" class="form-label">Betaald</label>
-                <input type="checkbox" class="form-check-input" aria-label="Betaald" name="betaald" id="betaald">
+                <input type="checkbox" class="form-check-input" aria-label="Betaald" name="betaald" id="betaald" />
             </div>
         </div>
-        <div class="row">
-            <div class="col-12 mb-4">
+        <div class="row mb-4">
+            <div class="col-12">
                 <label for="opmerkingen" class="form-label">Opmerkingen</label>
-                <input type="text" class="form-control" aria-label="Opmerkingen" name="opmerkingen" id="opmerkingen">
+                <input type="text" class="form-control" aria-label="Opmerkingen" name="opmerkingen" id="opmerkingen" />
             </div>
         </div>
-        <div class="row">
-            <div class="col-12 mb-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <label for="lid" class="form-label">Lid</label>
+                <select id="lid" class="form-select" aria-label="Lid">
+                    @foreach (var lid in Model.Leden)
+                    {
+                        <option value="@lid.Id">@lid.Achternaam @lid.Voornaam (@lid.TakNaam)</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-12">
                 <button type="submit" class="btn btn-primary">Opslaan</button>
             </div>
         </div>
@@ -50,6 +61,8 @@
                 <th>Aantal pakken</th>
                 <th>Opmerkingen</th>
                 <th>Betaald</th>
+                <th>Lid</th>
+                <th>Tak</th>
             </tr>
         </thead>
     </table>
@@ -75,6 +88,13 @@
                     { data: 'aantalPakken' },
                     { data: 'opmerkingen' },
                     { data: 'betaald' },
+                    { 
+                        targets: 0,
+                        data: function(row, type, val, meta) {
+                            return `${row.lid.achternaam} ${row.lid.voornaam}`;
+                        } 
+                    },
+                    { data: 'lid.takNaam' }
                 ]
             });
         }
@@ -87,6 +107,7 @@
                 aantalPakken: $('#bestellingForm #aantalPakken').val(),
                 betaald: $('#bestellingForm #betaald').is(':checked'),
                 opmerkingen: $('#bestellingForm #opmerkingen').val(),
+                lidId: $('#bestellingForm #lid').val()
             };
 
             var response = await fetch(`/api/bestellingen/${scoutsjaar}`, {

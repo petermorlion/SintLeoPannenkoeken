@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SintLeoPannenkoeken.Data;
 
@@ -11,9 +12,10 @@ using SintLeoPannenkoeken.Data;
 namespace SintLeoPannenkoeken.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221215223028_AddLidToBestelling")]
+    partial class AddLidToBestelling
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -252,9 +254,6 @@ namespace SintLeoPannenkoeken.Data.Migrations
                     b.Property<int?>("ScoutsjaarId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TakId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Telefoon")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -264,8 +263,6 @@ namespace SintLeoPannenkoeken.Data.Migrations
                     b.HasIndex("LidId");
 
                     b.HasIndex("ScoutsjaarId");
-
-                    b.HasIndex("TakId");
 
                     b.ToTable("Bestelling");
                 });
@@ -286,16 +283,11 @@ namespace SintLeoPannenkoeken.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TakId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Voornaam")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TakId");
 
                     b.ToTable("Leden");
                 });
@@ -320,23 +312,6 @@ namespace SintLeoPannenkoeken.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Scoutsjaren");
-                });
-
-            modelBuilder.Entity("SintLeoPannenkoeken.Models.Tak", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Naam")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Takken");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -402,26 +377,7 @@ namespace SintLeoPannenkoeken.Data.Migrations
                         .WithMany("Bestellingen")
                         .HasForeignKey("ScoutsjaarId");
 
-                    b.HasOne("SintLeoPannenkoeken.Models.Tak", "Tak")
-                        .WithMany()
-                        .HasForeignKey("TakId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Lid");
-
-                    b.Navigation("Tak");
-                });
-
-            modelBuilder.Entity("SintLeoPannenkoeken.Models.Lid", b =>
-                {
-                    b.HasOne("SintLeoPannenkoeken.Models.Tak", "Tak")
-                        .WithMany("Leden")
-                        .HasForeignKey("TakId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Tak");
                 });
 
             modelBuilder.Entity("SintLeoPannenkoeken.Models.Lid", b =>
@@ -432,11 +388,6 @@ namespace SintLeoPannenkoeken.Data.Migrations
             modelBuilder.Entity("SintLeoPannenkoeken.Models.Scoutsjaar", b =>
                 {
                     b.Navigation("Bestellingen");
-                });
-
-            modelBuilder.Entity("SintLeoPannenkoeken.Models.Tak", b =>
-                {
-                    b.Navigation("Leden");
                 });
 #pragma warning restore 612, 618
         }

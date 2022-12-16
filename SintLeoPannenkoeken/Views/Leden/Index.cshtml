@@ -1,5 +1,4 @@
-﻿@model SintLeoPannenkoeken.ViewModels.Bestellingen.IndexViewModel
-@{
+﻿@{
     ViewData["Title"] = "Leden";
 }
 
@@ -10,17 +9,28 @@
 <div id="leden" class="container">
     <h1 class="display-4">Leden</h1>
     <form id="lidForm">
-        <div class="row mt-4">
-            <div class="col-4 mb-4">
+        <div class="row mt-4 mb-4">
+            <div class="col-6">
                 <label for="naam" class="form-label">Achternaam</label>
                 <input type="text" class="form-control" placeholder="Achternaam" aria-label="Achternaam" name="achternaam" id="achternaam">
             </div>
-            <div class="col-4 mb-4">
+            <div class="col-6">
                 <label for="naam" class="form-label">Voornaam</label>
                 <input type="text" class="form-control" aria-label="Voornaam" name="voornaam" id="voornaam">
             </div>
-            <div class="col-4 mb-4">
-                <label for="betaald" class="form-label">Functie</label>
+        </div>
+        <div class="row mb-4">
+            <div class="col-6">
+                <label for="tak" class="form-label">Tak</label>
+                <select id="tak" class="form-select" aria-label="Tak">
+                    @foreach (var tak in Model.Takken)
+                    {
+                        <option value="@tak.Id">@tak.Naam</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6">
+                <label for="functie" class="form-label">Functie</label>
                 <input type="text" class="form-control" aria-label="Functie" name="functie" id="functie">
             </div>
         </div>
@@ -36,6 +46,7 @@
                 <th>Achternaam</th>
                 <th>Voornaam</th>
                 <th>Functie</th>
+                <th>Tak</th>
             </tr>
         </thead>
     </table>
@@ -57,6 +68,7 @@
                 columns: [
                     { data: 'achternaam' },
                     { data: 'voornaam' },
+                    { data: 'takNaam' },
                     { data: 'functie' }
                 ]
             });
@@ -66,7 +78,8 @@
             var data = {
                 achternaam: $('#lidForm #achternaam').val(),
                 voornaam: $('#lidForm #voornaam').val(),
-                functie: $('#lidForm #functie').val()
+                functie: $('#lidForm #functie').val(),
+                takId: $('#lidForm #tak').val()
             };
 
             var response = await fetch(`/api/leden`, {

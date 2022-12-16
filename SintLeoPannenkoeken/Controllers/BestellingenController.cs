@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Data;
 using SintLeoPannenkoeken.Models;
 using SintLeoPannenkoeken.ViewModels.Bestellingen;
+using SintLeoPannenkoeken.ViewModels.Leden;
 
 namespace SintLeoPannenkoeken.Controllers
 {
@@ -31,7 +33,9 @@ namespace SintLeoPannenkoeken.Controllers
                 return Redirect($"/bestellingen?scoutsjaar={currentScoutsjaar.Begin}");
             }
 
-            return View(new IndexViewModel(sj));
+            var leden = _dbContext.Leden.Include(lid => lid.Tak).ToList();
+
+            return View(new ViewModels.Bestellingen.IndexViewModel(sj, leden));
         }
     }
 }
