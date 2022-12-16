@@ -110,10 +110,10 @@
 
         $(async function () {
             $('#bestellingForm button.btn-primary').click(async function(event) {
+                event.preventDefault();
                 var scoutsjaar = $('#bestellingen').data('scoutsjaar');
                 await submitBestelling();
                 await reloadBestellingen();
-                event.preventDefault();
             });
 
             await reloadBestellingen();
