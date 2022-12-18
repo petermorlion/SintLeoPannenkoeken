@@ -14,5 +14,8 @@ namespace SintLeoPannenkoeken.Data
         public DbSet<Scoutsjaar> Scoutsjaren { get; set; }
         public DbSet<Lid> Leden { get; set; }
         public DbSet<Tak> Takken { get; set; }
+        public DbSet<Bestelling> Bestellingen { get; set; }
+        public DbSet<Zone> Zones { get; set; }
+        public DbSet<Straat> Straten { get; set; }
     }
 }
