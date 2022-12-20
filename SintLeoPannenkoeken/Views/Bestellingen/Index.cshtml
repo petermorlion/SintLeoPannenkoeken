@@ -20,6 +20,21 @@
                 <input type="text" class="form-control" placeholder="Telefoon" aria-label="Telefoon" name="telefoon" id="telefoon" />
             </div>
         </div>
+        <div class="row mt-4 mb-4">
+            <div class="col-8">
+                <label for="straat" class="form-label">Straat</label>
+                <select id="straat" class="form-select" aria-label="Straat">
+                    @foreach (var straat in Model.Straten)
+                    {
+                        <option value="@straat.Id">@straat.Naam (@straat.Gemeente)</option>
+                    }
+                </select>
+            </div>
+            <div class="col-4">
+                <label for="nummer" class="form-label">Nummer</label>
+                <input type="text" class="form-control" placeholder="Nummer" aria-label="TeleNummerfoon" name="nummer" id="nummer" />
+            </div>
+        </div>
         <div class="row mb-4">
             <div class="col-4">
                 <label for="naam" class="form-label">Aantal pakken</label>

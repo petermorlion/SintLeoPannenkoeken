@@ -34,8 +34,9 @@ namespace SintLeoPannenkoeken.Controllers
             }
 
             var leden = _dbContext.Leden.Include(lid => lid.Tak).ToList();
+            var straten = _dbContext.Straten.ToList();
 
-            return View(new ViewModels.Bestellingen.IndexViewModel(sj, leden));
+            return View(new ViewModels.Bestellingen.IndexViewModel(sj, leden, straten));
         }
     }
 }
