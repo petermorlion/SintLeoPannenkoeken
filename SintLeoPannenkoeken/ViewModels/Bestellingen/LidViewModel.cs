@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SintLeoPannenkoeken.Models;
 
-namespace SintLeoPannenkoeken.ViewModels.Leden
+namespace SintLeoPannenkoeken.ViewModels.Bestellingen
 {
     public class LidViewModel
     {
@@ -20,7 +20,6 @@ namespace SintLeoPannenkoeken.ViewModels.Leden
         public int Id => _lid.Id;
         public string Achternaam => _lid.Achternaam;
         public string Voornaam => _lid.Voornaam;
-        public string Functie => _lid.Functie;
         public string TakNaam => _lid.Tak.Naam;
     }
 }

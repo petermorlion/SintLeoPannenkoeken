@@ -2,8 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Data;
 using SintLeoPannenkoeken.Models;
-using SintLeoPannenkoeken.ViewModels.Bestellingen;
-using SintLeoPannenkoeken.ViewModels.Leden;
 
 namespace SintLeoPannenkoeken.Controllers
 {
