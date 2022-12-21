@@ -32,7 +32,7 @@
             </div>
             <div class="col-4">
                 <label for="nummer" class="form-label">Nummer</label>
-                <input type="text" class="form-control" placeholder="Nummer" aria-label="TeleNummerfoon" name="nummer" id="nummer" />
+                <input type="text" class="form-control" placeholder="Nummer" aria-label="Nummer" name="nummer" id="nummer" />
             </div>
         </div>
         <div class="row mb-4">
@@ -73,6 +73,7 @@
             <tr>
                 <th>Naam</th>
                 <th>Telefoon</th>
+                <th>Adres</th>
                 <th>Aantal pakken</th>
                 <th>Opmerkingen</th>
                 <th>Betaald</th>
@@ -100,7 +101,12 @@
                 data: json,
                 columns: [
                     { data: 'naam' },
-                    { data: 'telefoon'},
+                    { data: 'telefoon' },
+                    {
+                        data: function(row, type, val, meta) {
+                            return `${row.straat} ${row.nummer}`;
+                        }
+                    },
                     { data: 'aantalPakken' },
                     { data: 'opmerkingen' },
                     { 
@@ -139,7 +145,9 @@
                 aantalPakken: $('#bestellingForm #aantalPakken').val(),
                 betaald: $('#bestellingForm #betaald').is(':checked'),
                 opmerkingen: $('#bestellingForm #opmerkingen').val(),
-                lidId: $('#bestellingForm #lid').val()
+                lidId: $('#bestellingForm #lid').val(),
+                straatId: $('#bestellingForm #straat').val(),
+                nummer: $('#bestellingForm #nummer').val(),
             };
 
             var response = await fetch(`/api/bestellingen/${scoutsjaar}`, {

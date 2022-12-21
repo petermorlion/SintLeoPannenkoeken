@@ -10,5 +10,7 @@ namespace SintLeoPannenkoeken.ViewModels.Bestellingen
         public string? Opmerkingen { get; set; }
         public bool Betaald { get; set; }
         public int LidId { get; set; }
+        public int StraatId { get; set; }
+        public string Nummer { get; set; }
     }
 }

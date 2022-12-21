@@ -19,5 +19,8 @@
         public Lid Lid { get; set; }
         public int TakId { get; set; }
         public Tak Tak { get; set; }
+        public int StraatId { get; set; }
+        public Straat Straat { get; set; }
+        public string Nummer { get; set; }
     }
 }

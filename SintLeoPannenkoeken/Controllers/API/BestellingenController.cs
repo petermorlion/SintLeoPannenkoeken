@@ -25,6 +25,8 @@ namespace SintLeoPannenkoeken.Controllers.API
         {
             var bestellingen = _dbContext.Scoutsjaren
                 .Include(scoutsjaar => scoutsjaar.Bestellingen)
+                .ThenInclude(bestelling => bestelling.Straat)
+                .Include(scoutsjaar => scoutsjaar.Bestellingen)
                 .ThenInclude(bestelling => bestelling.Lid)
                 .ThenInclude(lid => lid.Tak)
                 .SingleOrDefault(scoutsjaar => scoutsjaar.Begin == jaar)
@@ -56,12 +58,19 @@ namespace SintLeoPannenkoeken.Controllers.API
                 Opmerkingen = createBestellingViewModel.Opmerkingen != null ? createBestellingViewModel.Opmerkingen : "",
                 Betaald = createBestellingViewModel.Betaald,
                 LidId = createBestellingViewModel.LidId,
-                TakId = takId
+                TakId = takId,
+                StraatId = createBestellingViewModel.StraatId,
+                Nummer = createBestellingViewModel.Nummer
             };
 
             scoutsjaar.Bestellingen.Add(bestelling);
             _dbContext.SaveChanges();
-            bestelling = _dbContext.Bestellingen.Include(b => b.Tak).Include(b => b.Lid).Single(b => b.Id == bestelling.Id);
+            bestelling = _dbContext.Bestellingen
+                .Include(b => b.Tak)
+                .Include(b => b.Lid)
+                .Include(b => b.Straat)
+                .Single(b => b.Id == bestelling.Id);
+
             var bestellingViewModel = new BestellingViewModel(bestelling);
             return Created($"/api/bestellingen/{bestelling.Id}", bestellingViewModel);
         }

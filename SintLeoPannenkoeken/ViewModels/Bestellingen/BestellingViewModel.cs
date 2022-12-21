@@ -20,5 +20,7 @@ namespace SintLeoPannenkoeken.ViewModels.Bestellingen
         public bool Betaald => _bestelling.Betaald;
         public LidViewModel Lid => new LidViewModel(_bestelling.Lid);
         public TakViewModel Tak => new TakViewModel(_bestelling.Tak);
+        public string Straat => _bestelling.Straat.Naam;
+        public string Nummer => _bestelling.Nummer;
     }
 }
