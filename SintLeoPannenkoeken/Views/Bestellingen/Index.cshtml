@@ -21,7 +21,11 @@
             </div>
         </div>
         <div class="row mt-4 mb-4">
-            <div class="col-8">
+            <div class="col-2">
+                <label for="zelfAfhalen" class="form-label">Zelf afhalen</label>
+                <input type="checkbox" class="form-check-input" aria-label="Zelf Afhalen" name="zelfAfhalen" id="zelfAfhalen" />
+            </div>
+            <div class="col-6">
                 <label for="straat" class="form-label">Straat</label>
                 <select id="straat" class="form-select" aria-label="Straat">
                     @foreach (var straat in Model.Straten)
@@ -126,7 +130,7 @@
                     { data: 'tak.naam' },
                     {
                         data: function(row, type, val, meta) {
-                            return `<a href='#' class='bestellingen-delete' title='Verwijderen' data-id='${row.id}'><i class="text-bg-danger bi-x-circle-fill"></i></a>`;
+                            return `<a href='#' class='bestellingen-delete' title='Verwijderen' data-id='${row.id}'><i class="text-danger bi-x-circle-fill"></i></a>`;
                         }
                     }
                 ]
@@ -195,6 +199,19 @@
             $('#bestellingForm button.btn-primary').click(async function(event) {
                 event.preventDefault();
                 await submitBestelling();
+            });
+
+            $('#bestellingForm #zelfAfhalen').click(async function() {
+                var checked = $(this).is(':checked');
+                if (checked) {
+                    $('#bestellingForm #straat').prop('disabled', true);
+                    $('#bestellingForm #nummer').prop('disabled', true);
+                    $('#bestellingForm #nummer').val('');
+                    $('#bestellingForm #straat').val('120');
+                } else {
+                    $('#bestellingForm #straat').prop('disabled', false);
+                    $('#bestellingForm #nummer').prop('disabled', false);
+                }
             });
 
             await reloadBestellingen();
