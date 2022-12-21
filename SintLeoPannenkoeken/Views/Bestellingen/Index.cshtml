@@ -78,6 +78,7 @@
                 <th>Betaald</th>
                 <th>Lid</th>
                 <th>Tak</th>
+                <th></th>
             </tr>
         </thead>
     </table>
@@ -107,6 +108,8 @@
                             if (row.betaald) {
                                 return '<i class="bi-check-lg"></i>';
                             }
+                            
+                            return '';
                         }
                     },
                     { 
@@ -114,8 +117,17 @@
                             return `${row.lid.achternaam} ${row.lid.voornaam}`;
                         } 
                     },
-                    { data: 'tak.naam' }
+                    { data: 'tak.naam' },
+                    {
+                        data: function(row, type, val, meta) {
+                            return `<a href='#' class='bestellingen-delete' title='Verwijderen' data-id='${row.id}'><i class="text-bg-danger bi-x-circle-fill"></i></a>`;
+                        }
+                    }
                 ]
+            });
+
+            $('.bestellingen-delete').click(async function () {
+                await deleteBestelling($(this).data('id'));
             });
         }
 
@@ -142,7 +154,25 @@
                 // TODO: handle error
             }
 
+            await reloadBestellingen();
+            clearForm();
             setFocus();
+        }
+
+        async function deleteBestelling(bestellingId) {
+            var scoutsjaar = $('#bestellingen').data('scoutsjaar');
+            var response = await fetch(`/api/bestellingen/${scoutsjaar}/${bestellingId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                // TODO: handle error
+            }
+
+            await reloadBestellingen();
         }
 
         function setFocus() {
@@ -156,13 +186,11 @@
         $(async function () {
             $('#bestellingForm button.btn-primary').click(async function(event) {
                 event.preventDefault();
-                var scoutsjaar = $('#bestellingen').data('scoutsjaar');
                 await submitBestelling();
-                await reloadBestellingen();
-                clearForm();
             });
 
             await reloadBestellingen();
+
             setFocus();
         });
     </script>

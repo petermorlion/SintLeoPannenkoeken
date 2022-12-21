@@ -40,7 +40,7 @@ namespace SintLeoPannenkoeken.Controllers.API
 
         [HttpPost]
         [Route("{jaar:int}")]
-        public IActionResult Put(int jaar, [FromBody] CreateBestellingViewModel createBestellingViewModel)
+        public IActionResult Post(int jaar, [FromBody] CreateBestellingViewModel createBestellingViewModel)
         {
             var scoutsjaar = _dbContext.Scoutsjaren.SingleOrDefault(s => s.Begin == jaar);
             if (scoutsjaar == null)
@@ -61,7 +61,20 @@ namespace SintLeoPannenkoeken.Controllers.API
 
             scoutsjaar.Bestellingen.Add(bestelling);
             _dbContext.SaveChanges();
-            return Created($"/api/bestellingen/{bestelling.Id}", bestelling);
+            bestelling = _dbContext.Bestellingen.Include(b => b.Tak).Include(b => b.Lid).Single(b => b.Id == bestelling.Id);
+            var bestellingViewModel = new BestellingViewModel(bestelling);
+            return Created($"/api/bestellingen/{bestelling.Id}", bestellingViewModel);
+        }
+
+        [HttpDelete]
+        [Route("{jaar:int}/{id:int}")]
+        public IActionResult Delete(int jaar, int id)
+        {
+            var bestelling = new Bestelling("", 0) { Id = id };
+            _dbContext.Bestellingen.Attach(bestelling);
+            _dbContext.Bestellingen.Remove(bestelling);
+            _dbContext.SaveChanges();
+            return NoContent();
         }
     }
 }
