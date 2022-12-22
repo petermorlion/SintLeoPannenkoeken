@@ -127,7 +127,7 @@
                             return `${row.lid.achternaam} ${row.lid.voornaam}`;
                         } 
                     },
-                    { data: 'tak.naam' },
+                    { data: 'tak.afkorting' },
                     {
                         data: function(row, type, val, meta) {
                             return `<a href='#' class='bestellingen-delete' title='Verwijderen' data-id='${row.id}'><i class="text-danger bi-x-circle-fill"></i></a>`;

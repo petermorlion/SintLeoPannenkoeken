@@ -9,6 +9,7 @@
         }
         public int Id { get; set; }
         public string Naam { get; set; }
+        public string Afkorting { get; set; }
         public List<Lid> Leden { get; set; }
     }
 }

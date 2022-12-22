@@ -44,5 +44,13 @@ namespace SintLeoPannenkoeken.Data.Migrations
             return migrationBuilder.Sql($"INSERT INTO Straten ([Naam], [PostNummer], [Gemeente], [Omschrijving], [ZoneId]) " +
                 $"SELECT '{naam}', {postNummer}, '{gemeente}', '{omschrijving}', Id FROM Zones WHERE Zones.Naam = '{zone}';");
         }
+
+        public static OperationBuilder<SqlOperation> SetTakAfkorting(
+            this MigrationBuilder migrationBuilder,
+            string takNaam,
+            string afkorting)
+        {
+            return migrationBuilder.Sql($"UPDATE Takken SET Afkorting = '{afkorting}' WHERE Naam = '{takNaam}';");
+        }
     }
 }

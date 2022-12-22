@@ -1,5 +1,4 @@
 ﻿using SintLeoPannenkoeken.Models;
-using SintLeoPannenkoeken.ViewModels.Leden;
 
 namespace SintLeoPannenkoeken.ViewModels.Bestellingen
 {
