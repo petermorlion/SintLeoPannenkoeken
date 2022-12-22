@@ -7,12 +7,12 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.css" />
 }
 
-<div id="bestellingen" class="container" data-scoutsjaar="@Model.Scoutsjaar.Begin">
+<div id="bestellingen" class="container-fluid" data-scoutsjaar="@Model.Scoutsjaar.Begin">
     <h1 class="display-4">Bestellingen @Model.Scoutsjaar.Begin</h1>
     <form id="bestellingForm">
         <div class="row mt-4 mb-4">
             <div class="col-8">
-                <label for="naam" class="form-label">Naam</label>
+                <label for="naam" class="form-label">Naam koper</label>
                 <input type="text" class="form-control" placeholder="Naam" aria-label="Naam" name="naam" id="naam" />
             </div>
             <div class="col-4">
@@ -46,7 +46,7 @@
             </div>
             <div class="col-2">
                 <label for="betaald" class="form-label">Betaald</label>
-                <input type="checkbox" class="form-check-input" aria-label="Betaald" name="betaald" id="betaald" />
+                <input type="checkbox" class="form-check-input" aria-label="Betaald" name="betaald" id="betaald" checked />
             </div>
         </div>
         <div class="row mb-4">
@@ -75,7 +75,7 @@
     <table id="bestellingenTable" class="table table-striped">
         <thead>
             <tr>
-                <th>Naam</th>
+                <th>Naam koper</th>
                 <th>Telefoon</th>
                 <th>Adres</th>
                 <th>Aantal pakken</th>
