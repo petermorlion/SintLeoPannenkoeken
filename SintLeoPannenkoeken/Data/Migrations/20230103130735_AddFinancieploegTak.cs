@@ -14,7 +14,7 @@ namespace SintLeoPannenkoeken.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            return migrationBuilder.Sql($"DELETE FROM Takken WHERE [Naam] = '{naam}';");
+            migrationBuilder.Sql($"DELETE FROM Takken WHERE [Naam] = 'Financieploeg';");
         }
     }
 }

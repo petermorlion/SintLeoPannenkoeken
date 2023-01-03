@@ -75,6 +75,7 @@
     <table id="bestellingenTable" class="table table-striped">
         <thead>
             <tr>
+                <th>Nr</th>
                 <th>Naam koper</th>
                 <th>Telefoon</th>
                 <th>Adres</th>
@@ -103,7 +104,9 @@
             $('#bestellingenTable').DataTable({
                 destroy: true,
                 data: json,
+                order: [[0, 'desc']],
                 columns: [
+                    { data: 'id' },
                     { data: 'naam' },
                     { data: 'telefoon' },
                     {
