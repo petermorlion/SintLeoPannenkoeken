@@ -94,6 +94,8 @@
 @section Scripts {
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.13.1/datatables.min.js"></script>
     <script>
+        var basisId = '120';
+
         async function reloadBestellingen() {
             var scoutsjaar = $('#bestellingen').data('scoutsjaar');
             var response = await fetch(`/api/bestellingen/${scoutsjaar}`);
@@ -221,9 +223,17 @@
                 if (checked) {
                     disableAdres();
                     $('#bestellingForm #nummer').val('');
-                    $('#bestellingForm #straat').val('120');
+                    $('#bestellingForm #straat').val(basisId);
                 } else {
                     enableAdres();
+                }
+            });
+
+            $('#straat').change(function() {
+                if ($(this).val() === basisId) {
+                    disableAdres();
+                    $('#bestellingForm #nummer').val('');
+                    $('#bestellingForm #zelfAfhalen').prop('checked', true);
                 }
             });
 
