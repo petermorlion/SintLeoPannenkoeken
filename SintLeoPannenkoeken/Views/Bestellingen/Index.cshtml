@@ -28,6 +28,7 @@
             <div class="col-6">
                 <label for="straat" class="form-label">Straat</label>
                 <select id="straat" class="form-select" aria-label="Straat">
+                    <option value=""></option>
                     @foreach (var straat in Model.Straten)
                     {
                         <option value="@straat.Id">@straat.Naam (@straat.Gemeente)</option>
@@ -198,22 +199,31 @@
             $('#bestellingForm')[0].reset();
         }
 
+        function disableAdres() {
+            $('#bestellingForm #straat').prop('disabled', true);
+            $('#bestellingForm #nummer').prop('disabled', true);
+        }
+
+        function enableAdres() {
+            $('#bestellingForm #straat').prop('disabled', false);
+            $('#bestellingForm #nummer').prop('disabled', false);
+        }
+
         $(async function () {
             $('#bestellingForm button.btn-primary').click(async function(event) {
                 event.preventDefault();
                 await submitBestelling();
+                enableAdres();
             });
 
             $('#bestellingForm #zelfAfhalen').click(async function() {
                 var checked = $(this).is(':checked');
                 if (checked) {
-                    $('#bestellingForm #straat').prop('disabled', true);
-                    $('#bestellingForm #nummer').prop('disabled', true);
+                    disableAdres();
                     $('#bestellingForm #nummer').val('');
                     $('#bestellingForm #straat').val('120');
                 } else {
-                    $('#bestellingForm #straat').prop('disabled', false);
-                    $('#bestellingForm #nummer').prop('disabled', false);
+                    enableAdres();
                 }
             });
 
