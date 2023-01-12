@@ -26,6 +26,7 @@ namespace SintLeoPannenkoeken.Controllers.API
             var bestellingen = _dbContext.Scoutsjaren
                 .Include(scoutsjaar => scoutsjaar.Bestellingen)
                 .ThenInclude(bestelling => bestelling.Straat)
+                .ThenInclude(straat => straat.Zone)
                 .Include(scoutsjaar => scoutsjaar.Bestellingen)
                 .ThenInclude(bestelling => bestelling.Lid)
                 .ThenInclude(lid => lid.Tak)

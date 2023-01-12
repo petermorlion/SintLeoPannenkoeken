@@ -14,5 +14,6 @@
         public string? Omschrijving { get; set; }
         public int ZoneId { get; set; }
         public Zone? Zone { get; set; }
+        public int Nummer { get; set; }
     }
 }
