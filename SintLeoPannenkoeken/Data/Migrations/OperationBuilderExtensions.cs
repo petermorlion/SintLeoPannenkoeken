@@ -52,5 +52,15 @@ namespace SintLeoPannenkoeken.Data.Migrations
         {
             return migrationBuilder.Sql($"UPDATE Takken SET Afkorting = '{afkorting}' WHERE Naam = '{takNaam}';");
         }
+
+        public static OperationBuilder<SqlOperation> InsertLid(
+            this MigrationBuilder migrationBuilder,
+            string voorNaam,
+            string achterNaam,
+            string takNaam,
+            string functie)
+        {
+            return migrationBuilder.Sql($"INSERT INTO Leden (Voornaam, Achternaam, TakId, Functie) SELECT '{voorNaam}', '{achterNaam}', Id, '{functie}' FROM Takken WHERE Afkorting = '{takNaam}';");
+        }
     }
 }
