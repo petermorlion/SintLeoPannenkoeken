@@ -21,6 +21,6 @@ namespace SintLeoPannenkoeken.ViewModels.Bestellingen
         public TakViewModel Tak => new TakViewModel(_bestelling.Tak);
         public string Straat => _bestelling.Straat.Naam;
         public string Nummer => _bestelling.Nummer;
-        public string Code => $"{_bestelling.Straat.Zone.Naam} {_bestelling.Straat.Nummer}";
+        public string Code => $"{_bestelling?.Straat?.Zone?.Naam} {_bestelling?.Straat?.Nummer}";
     }
 }
