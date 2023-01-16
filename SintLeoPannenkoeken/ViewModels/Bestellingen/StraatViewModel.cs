@@ -14,5 +14,6 @@ namespace SintLeoPannenkoeken.ViewModels.Bestellingen
         public int Id => _straat.Id;
         public string Naam => _straat.Naam;
         public string Gemeente => _straat.Gemeente;
+        public string Code => $"{_straat?.Zone?.Naam} {_straat?.Nummer.ToString()}";
     }
 }

@@ -31,11 +31,15 @@
                     <option value=""></option>
                     @foreach (var straat in Model.Straten)
                     {
-                        <option value="@straat.Id">@straat.Naam (@straat.Gemeente)</option>
+                        <option value="@straat.Id" data-code="@straat.Code">@straat.Naam (@straat.Gemeente)</option>
                     }
                 </select>
             </div>
-            <div class="col-4">
+            <div class="col-2">
+                <label for="code" class="form-label">Code</label>
+                <input type="text" disabled class="form-control" placeholder="Code" aria-label="Code" name="code" id="code" />
+            </div>
+            <div class="col-2">
                 <label for="nummer" class="form-label">Nummer</label>
                 <input type="text" class="form-control" placeholder="Nummer" aria-label="Nummer" name="nummer" id="nummer" />
             </div>
@@ -237,6 +241,9 @@
                     $('#bestellingForm #nummer').val('');
                     $('#bestellingForm #zelfAfhalen').prop('checked', true);
                 }
+
+                var selectedOptionCode = $('#straat option:selected').data('code');
+                $('#code').val(selectedOptionCode);
             });
 
             await reloadBestellingen();
