@@ -13,6 +13,6 @@ namespace SintLeoPannenkoeken.ViewModels.Bestellingen
 
         public IList<BestellingViewModel> Bestellingen => _bestellingen;
         public int AantalPakjes => _bestellingen.Sum(bestelling => bestelling.AantalPakken);
-        public int AantalPannenkoeken => _bestellingen.Count * 5;
+        public int AantalPannenkoeken => _bestellingen.Sum(bestelling => bestelling.AantalPakken) * 5;
     }
 }

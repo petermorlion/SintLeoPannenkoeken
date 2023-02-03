@@ -23,7 +23,7 @@
                         <label for="zelfAfhalen" class="form-label">Zelf afhalen</label>
                         <input type="checkbox" class="form-check-input" aria-label="Zelf Afhalen" name="zelfAfhalen" id="zelfAfhalen" />
                     </div>
-                    <div class="col-6">
+                    <div class="col-5">
                         <label for="straat" class="form-label">Straat</label>
                         <select id="straat" class="form-select" aria-label="Straat">
                             <option value=""></option>
@@ -40,6 +40,10 @@
                     <div class="col-2">
                         <label for="nummer" class="form-label">Nummer</label>
                         <input type="text" class="form-control" placeholder="Nummer" aria-label="Nummer" name="nummer" id="nummer" />
+                    </div>
+                    <div class="col-1">
+                        <label for="bus" class="form-label">Bus</label>
+                        <input type="text" class="form-control" placeholder="Bus" aria-label="Bus" name="bus" id="bus" />
                     </div>
                 </div>
                 <div class="row mb-4">
@@ -132,7 +136,11 @@
                     { data: 'code' },
                     {
                         data: function(row, type, val, meta) {
-                            return `${row.straat} ${row.nummer}`;
+                            if (row.bus) {
+                                return `${row.straat} ${row.nummer}/${row.bus}`;
+                            } else {
+                                return `${row.straat} ${row.nummer}`
+                            }
                         }
                     },
                     { data: 'aantalPakken' },
@@ -176,6 +184,7 @@
                 lidId: $('#bestellingForm #lid').val(),
                 straatId: $('#bestellingForm #straat').val(),
                 nummer: $('#bestellingForm #nummer').val(),
+                bus: $('#bestellingForm #bus').val()
             };
 
             var response = await fetch(`/api/bestellingen/${scoutsjaar}`, {

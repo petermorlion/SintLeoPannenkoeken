@@ -63,7 +63,8 @@ namespace SintLeoPannenkoeken.Controllers.API
                 LidId = createBestellingViewModel.LidId,
                 TakId = takId,
                 StraatId = createBestellingViewModel.StraatId,
-                Nummer = createBestellingViewModel.Nummer
+                Nummer = createBestellingViewModel.Nummer,
+                Bus = createBestellingViewModel.Bus
             };
 
             scoutsjaar.Bestellingen.Add(bestelling);

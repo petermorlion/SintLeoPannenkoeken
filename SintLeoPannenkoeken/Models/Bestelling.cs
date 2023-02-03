@@ -22,5 +22,6 @@
         public int StraatId { get; set; }
         public Straat Straat { get; set; }
         public string Nummer { get; set; }
+        public string Bus { get; set; }
     }
 }
