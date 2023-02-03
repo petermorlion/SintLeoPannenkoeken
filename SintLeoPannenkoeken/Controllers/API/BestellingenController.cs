@@ -38,7 +38,9 @@ namespace SintLeoPannenkoeken.Controllers.API
                 ? new List<BestellingViewModel>() 
                 : bestellingen.Select(bestelling => new BestellingViewModel(bestelling)).ToList();
 
-            return Ok(bestellingenViewModels);
+            var bestellingenViewModel = new BestellingenViewModel(bestellingenViewModels);
+
+            return Ok(bestellingenViewModel);
         }
 
         [HttpPost]

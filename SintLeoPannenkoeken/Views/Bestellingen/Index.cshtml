@@ -11,69 +11,77 @@
     <h1 class="display-4">Bestellingen @Model.Scoutsjaar.Begin</h1>
     <form id="bestellingForm">
         <div class="row mt-4 mb-4">
-            <div class="col-8">
-                <label for="naam" class="form-label">Naam koper</label>
-                <input type="text" class="form-control" placeholder="Naam" aria-label="Naam" name="naam" id="naam" />
+            <div class="col-9">
+                <div class="row mt-4 mb-4">
+                    <div class="col-8">
+                        <label for="naam" class="form-label">Naam koper</label>
+                        <input type="text" class="form-control" placeholder="Naam" aria-label="Naam" name="naam" id="naam" />
+                    </div>
+                    <div class="col-4">
+                        <label for="naam" class="form-label">Telefoon</label>
+                        <input type="text" class="form-control" placeholder="Telefoon" aria-label="Telefoon" name="telefoon" id="telefoon" />
+                    </div>
+                </div>
+                <div class="row mt-4 mb-4">
+                    <div class="col-2">
+                        <label for="zelfAfhalen" class="form-label">Zelf afhalen</label>
+                        <input type="checkbox" class="form-check-input" aria-label="Zelf Afhalen" name="zelfAfhalen" id="zelfAfhalen" />
+                    </div>
+                    <div class="col-6">
+                        <label for="straat" class="form-label">Straat</label>
+                        <select id="straat" class="form-select" aria-label="Straat">
+                            <option value=""></option>
+                            @foreach (var straat in Model.Straten)
+                            {
+                                <option value="@straat.Id" data-code="@straat.Code">@straat.Naam (@straat.Gemeente)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        <label for="code" class="form-label">Code</label>
+                        <input type="text" disabled class="form-control" placeholder="Code" aria-label="Code" name="code" id="code" />
+                    </div>
+                    <div class="col-2">
+                        <label for="nummer" class="form-label">Nummer</label>
+                        <input type="text" class="form-control" placeholder="Nummer" aria-label="Nummer" name="nummer" id="nummer" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-4">
+                        <label for="naam" class="form-label">Aantal pakken</label>
+                        <input type="number" class="form-control" aria-label="Aantal pakken" name="aantalPakken" id="aantalPakken" />
+                    </div>
+                    <div class="col-2">
+                        <label for="betaald" class="form-label">Betaald</label>
+                        <input type="checkbox" class="form-check-input" aria-label="Betaald" name="betaald" id="betaald" checked />
+                    </div>
+                    <div class="col-6">
+                        <label for="opmerkingen" class="form-label">Opmerkingen</label>
+                        <input type="text" class="form-control" aria-label="Opmerkingen" name="opmerkingen" id="opmerkingen" />
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <label for="lid" class="form-label">Lid</label>
+                        <select id="lid" class="form-select" aria-label="Lid">
+                            @foreach (var lid in Model.Leden)
+                            {
+                                <option value="@lid.Id">@lid.Achternaam @lid.Voornaam (@lid.TakNaam)</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">Opslaan</button>
+                    </div>
+                </div>
             </div>
-            <div class="col-4">
-                <label for="naam" class="form-label">Telefoon</label>
-                <input type="text" class="form-control" placeholder="Telefoon" aria-label="Telefoon" name="telefoon" id="telefoon" />
-            </div>
-        </div>
-        <div class="row mt-4 mb-4">
-            <div class="col-2">
-                <label for="zelfAfhalen" class="form-label">Zelf afhalen</label>
-                <input type="checkbox" class="form-check-input" aria-label="Zelf Afhalen" name="zelfAfhalen" id="zelfAfhalen" />
-            </div>
-            <div class="col-6">
-                <label for="straat" class="form-label">Straat</label>
-                <select id="straat" class="form-select" aria-label="Straat">
-                    <option value=""></option>
-                    @foreach (var straat in Model.Straten)
-                    {
-                        <option value="@straat.Id" data-code="@straat.Code">@straat.Naam (@straat.Gemeente)</option>
-                    }
-                </select>
-            </div>
-            <div class="col-2">
-                <label for="code" class="form-label">Code</label>
-                <input type="text" disabled class="form-control" placeholder="Code" aria-label="Code" name="code" id="code" />
-            </div>
-            <div class="col-2">
-                <label for="nummer" class="form-label">Nummer</label>
-                <input type="text" class="form-control" placeholder="Nummer" aria-label="Nummer" name="nummer" id="nummer" />
-            </div>
-        </div>
-        <div class="row mb-4">
-            <div class="col-4">
-                <label for="naam" class="form-label">Aantal pakken</label>
-                <input type="number" class="form-control" aria-label="Aantal pakken" name="aantalPakken" id="aantalPakken" />
-            </div>
-            <div class="col-2">
-                <label for="betaald" class="form-label">Betaald</label>
-                <input type="checkbox" class="form-check-input" aria-label="Betaald" name="betaald" id="betaald" checked />
-            </div>
-        </div>
-        <div class="row mb-4">
-            <div class="col-12">
-                <label for="opmerkingen" class="form-label">Opmerkingen</label>
-                <input type="text" class="form-control" aria-label="Opmerkingen" name="opmerkingen" id="opmerkingen" />
-            </div>
-        </div>
-        <div class="row mb-4">
-            <div class="col-12">
-                <label for="lid" class="form-label">Lid</label>
-                <select id="lid" class="form-select" aria-label="Lid">
-                    @foreach (var lid in Model.Leden)
-                    {
-                        <option value="@lid.Id">@lid.Achternaam @lid.Voornaam (@lid.TakNaam)</option>
-                    }
-                </select>
-            </div>
-        </div>
-        <div class="row mb-4">
-            <div class="col-12">
-                <button type="submit" class="btn btn-primary">Opslaan</button>
+            <div class="col-3">
+                <h2>Pakjes</h2>
+                <span id="aantalPakjes"></span>
+                <h2>Pannenkoenen</h2>
+                <span id="aantalPannenkoeken"></span>
             </div>
         </div>
     </form>
@@ -109,10 +117,16 @@
             }
 
             var json = await response.json();
+            var bestellingen = json.bestellingen;
+
+            $('#aantalPakjes').text(json.aantalPakjes);
+            $('#aantalPannenkoeken').text(json.aantalPannenkoeken);
+
             $('#bestellingenTable').DataTable({
                 destroy: true,
-                data: json,
+                data: bestellingen,
                 order: [[0, 'desc']],
+                pageLength: 100,
                 columns: [
                     { data: 'id' },
                     { data: 'naam' },
