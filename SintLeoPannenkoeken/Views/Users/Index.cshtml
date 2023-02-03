@@ -1,0 +1,103 @@
+﻿@{
+    ViewData["Title"] = "Gebruikers";
+}
+
+<div id="leden" class="container-fluid">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+    <form id="userForm">
+        <div class="row mt-4 mb-4">
+            <div class="col-6">
+                <label for="email" class="form-label">Email</label>
+                <input type="text" class="form-control" placeholder="Email" aria-label="Email" name="email" id="email">
+            </div>
+            <div class="col-6">
+                <label for="password" class="form-label">Paswoord</label>
+                <input type="password" class="form-control" placeholder="Paswoord" aria-label="Paswoord" name="password" id="password">
+            </div>
+        </div>
+        <div class="row mt-4 mb-4">
+            <div class="col-12">
+                <label for="admin" class="form-label">Admin</label>
+                <input type="checkbox" id="admin" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 mb-4">
+                <button type="submit" class="btn btn-primary">Opslaan</button>
+            </div>
+        </div>
+    </form>
+    <table id="usersTable" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Email</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        async function reloadUsers() {
+            var response = await fetch(`/api/users`);
+            if (!response.ok) {
+                // TODO: handle error
+            }
+
+            var json = await response.json();
+            $('#usersTable').DataTable({
+                destroy: true,
+                data: json,
+                pageLength: 100,
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/nl-NL.json'
+                },
+                columns: [
+                    { data: 'email' }
+                ]
+            });
+        }
+
+        async function submitUser() {
+            var data = {
+                email: $('#userForm #email').val(),
+                password: $('#userForm #password').val(),
+                admin: $('#userForm #admin').is(':checked')
+            };
+
+            var response = await fetch(`/api/users`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                // TODO: handle error
+            }
+
+            setFocus();
+        }
+
+        function setFocus() {
+            $('#userForm #email').focus();
+        }
+
+        function clearForm() {
+            $('#userForm')[0].reset();
+        }
+
+        $(async function () {
+            $('#userForm button.btn-primary').click(async function(event) {
+                event.preventDefault();
+                await submitUser();
+                await reloadUsers();
+                clearForm();
+            });
+
+            await reloadUsers();
+            setFocus();
+        });
+    </script>
+}
