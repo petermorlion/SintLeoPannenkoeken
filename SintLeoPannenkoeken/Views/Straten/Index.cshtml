@@ -4,38 +4,48 @@
 
 <div id="leden" class="container-fluid">
     <h1 class="display-4">@ViewData["Title"]</h1>
-    @*<form id="lidForm">
+    <form id="straatForm">
         <div class="row mt-4 mb-4">
-            <div class="col-6">
-                <label for="naam" class="form-label">Achternaam</label>
-                <input type="text" class="form-control" placeholder="Achternaam" aria-label="Achternaam" name="achternaam" id="achternaam">
-            </div>
-            <div class="col-6">
-                <label for="naam" class="form-label">Voornaam</label>
-                <input type="text" class="form-control" aria-label="Voornaam" name="voornaam" id="voornaam">
-            </div>
-        </div>
-        <div class="row mb-4">
-            <div class="col-6">
-                <label for="tak" class="form-label">Tak</label>
-                <select id="tak" class="form-select" aria-label="Tak">
-                    @foreach (var tak in Model.Takken)
+            <div class="col-2">
+                <label for="zone" class="form-label">Zone</label>
+                <select id="zone" class="form-select" aria-label="Zone">
+                    <option value=""></option>
+                    @foreach (var zone in Model.Zones)
                     {
-                        <option value="@tak.Id">@tak.Naam</option>
+                        <option value="@zone.Id" data-code="@zone.Naam">@zone.Naam</option>
                     }
                 </select>
             </div>
-            <div class="col-6">
-                <label for="functie" class="form-label">Functie</label>
-                <input type="text" class="form-control" aria-label="Functie" name="functie" id="functie">
+            <div class="col-2">
+                <label for="naam" class="form-label">Nummer</label>
+                <input type="number" class="form-control" aria-label="Nummer" placeholder="Nummer" name="nummer" id="nummer">
+            </div>
+            <div class="col-8">
+                <label for="naam" class="form-label">Naam</label>
+                <input type="text" class="form-control" placeholder="Naam" aria-label="Naam" name="naam" id="naam">
             </div>
         </div>
+        <div class="row mt-4 mb-4">
+            <div class="col-2">
+                <label for="postNummer" class="form-label">PostNummer</label>
+                <input type="number" class="form-control" placeholder="PostNummer" aria-label="PostNummer" name="postNummer" id="postNummer">
+            </div>
+            <div class="col-4">
+                <label for="gemeente" class="form-label">Gemeente</label>
+                <input type="text" class="form-control" aria-label="Gemeente" placeholder="Gemeente" name="gemeente" id="gemeente">
+            </div>
+            <div class="col-6">
+                <label for="omschrijving" class="form-label">Omschrijving</label>
+                <input type="text" class="form-control" placeholder="Omschrijving" aria-label="Omschrijving" name="omschrijving" id="omschrijving">
+            </div>
+        </div>
+       
         <div class="row">
             <div class="col-12 mb-4">
                 <button type="submit" class="btn btn-primary">Opslaan</button>
             </div>
         </div>
-    </form>*@
+    </form>
     <table id="stratenTable" class="table table-striped">
         <thead>
             <tr>

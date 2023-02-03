@@ -18,7 +18,8 @@ namespace SintLeoPannenkoeken.Controllers
         public IActionResult Index()
         {
             var straten = _dbContext.Straten.ToList();
-            return View(new IndexViewModel(straten));
+            var zones = _dbContext.Zones.ToList();
+            return View(new IndexViewModel(straten, zones));
         }
     }
 }
