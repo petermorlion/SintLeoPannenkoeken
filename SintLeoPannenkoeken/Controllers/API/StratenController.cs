@@ -32,19 +32,21 @@ namespace SintLeoPannenkoeken.Controllers.API
             return Ok(stratenViewModels);
         }
 
-        //[HttpPost]
-        //[Route("")]
-        //public IActionResult Put([FromBody] CreateLidViewModel createLidViewModel)
-        //{
-        //    var lid = new Lid(createLidViewModel.Voornaam, createLidViewModel.Achternaam)
-        //    {
-        //        Functie = createLidViewModel.Functie,
-        //        TakId = createLidViewModel.TakId
-        //    };
+        [HttpPost]
+        [Route("")]
+        public IActionResult Put([FromBody] CreateStraatViewModel createStraatViewModel)
+        {
+            var straat = new Straat(createStraatViewModel.Naam, createStraatViewModel.Gemeente)
+            {
+                PostNummer = createStraatViewModel.PostNummer,
+                Omschrijving = createStraatViewModel.Omschrijving,
+                Nummer = createStraatViewModel.Nummer,
+                ZoneId = createStraatViewModel.ZoneId
+            };
 
-        //    _dbContext.Leden.Add(lid);
-        //    _dbContext.SaveChanges();
-        //    return Created($"/api/leden/{lid.Id}", lid);
-        //}
+            _dbContext.Straten.Add(straat);
+            _dbContext.SaveChanges();
+            return Created($"/api/straten/{straat.Id}", straat);
+        }
     }
 }

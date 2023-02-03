@@ -87,15 +87,17 @@
             });
         }
 
-        async function submitLid() {
+        async function submitStraat() {
             var data = {
-                achternaam: $('#lidForm #achternaam').val(),
-                voornaam: $('#lidForm #voornaam').val(),
-                functie: $('#lidForm #functie').val(),
-                takId: $('#lidForm #tak').val()
+                naam: $('#straatForm #naam').val(),
+                gemeente: $('#straatForm #gemeente').val(),
+                postNummer: $('#straatForm #postNummer').val(),
+                omschrijving: $('#straatForm #omschrijving').val(),
+                nummer: $('#straatForm #nummer').val(),
+                zoneId: $('#straatForm #zone').val()
             };
 
-            var response = await fetch(`/api/leden`, {
+            var response = await fetch(`/api/straten`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -111,18 +113,18 @@
         }
 
         function setFocus() {
-            $('#lidForm #achternaam').focus();
+            $('#straatForm #naam').focus();
         }
 
         function clearForm() {
-            $('#lidForm')[0].reset();
+            $('#straatForm')[0].reset();
         }
 
         $(async function () {
-            $('#lidForm button.btn-primary').click(async function(event) {
+            $('#straatForm button.btn-primary').click(async function(event) {
                 event.preventDefault();
-                await submitLid();
-                await reloadLeden();
+                await submitStraat();
+                await reloadStraten();
                 clearForm();
             });
 
