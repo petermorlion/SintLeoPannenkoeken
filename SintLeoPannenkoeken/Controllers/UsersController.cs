@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SintLeoPannenkoeken.Data;
 using SintLeoPannenkoeken.ViewModels.Users;
+using System.Data;
 
 namespace SintLeoPannenkoeken.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private ILogger<UsersController> _logger;

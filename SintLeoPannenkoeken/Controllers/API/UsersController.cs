@@ -7,7 +7,7 @@ using SintLeoPannenkoeken.ViewModels.Users;
 namespace SintLeoPannenkoeken.Controllers.API
 {
     [Route("api/[controller]")]
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     [ApiController]
     public class UsersController : ControllerBase
     {
