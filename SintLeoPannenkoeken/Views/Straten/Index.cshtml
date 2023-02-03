@@ -1,10 +1,10 @@
 ﻿@{
-    ViewData["Title"] = "Leden";
+    ViewData["Title"] = "Straten";
 }
 
 <div id="leden" class="container-fluid">
     <h1 class="display-4">@ViewData["Title"]</h1>
-    <form id="lidForm">
+    @*<form id="lidForm">
         <div class="row mt-4 mb-4">
             <div class="col-6">
                 <label for="naam" class="form-label">Achternaam</label>
@@ -35,14 +35,16 @@
                 <button type="submit" class="btn btn-primary">Opslaan</button>
             </div>
         </div>
-    </form>
-    <table id="ledenTable" class="table table-striped">
+    </form>*@
+    <table id="stratenTable" class="table table-striped">
         <thead>
             <tr>
-                <th>Achternaam</th>
-                <th>Voornaam</th>
-                <th>Tak</th>
-                <th>Functie</th>
+                <th>Nummer</th>
+                <th>Zone</th>
+                <th>Naam</th>
+                <th>PostNummer</th>
+                <th>Gemeente</th>
+                <th>Omschrijving</th>
             </tr>
         </thead>
     </table>
@@ -50,14 +52,14 @@
 
 @section Scripts {
     <script>
-        async function reloadLeden() {
-            var response = await fetch(`/api/leden`);
+        async function reloadStraten() {
+            var response = await fetch(`/api/straten`);
             if (!response.ok) {
                 // TODO: handle error
             }
 
             var json = await response.json();
-            $('#ledenTable').DataTable({
+            $('#stratenTable').DataTable({
                 destroy: true,
                 data: json,
                 pageLength: 100,
@@ -65,10 +67,12 @@
                     url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/nl-NL.json'
                 },
                 columns: [
-                    { data: 'achternaam' },
-                    { data: 'voornaam' },
-                    { data: 'takNaam' },
-                    { data: 'functie' }
+                    { data: 'nummer' },
+                    { data: 'zone' },
+                    { data: 'naam' },
+                    { data: 'postNummer' },
+                    { data: 'gemeente' },
+                    { data: 'omschrijving' }
                 ]
             });
         }
@@ -112,7 +116,7 @@
                 clearForm();
             });
 
-            await reloadLeden();
+            await reloadStraten();
             setFocus();
         });
     </script>
