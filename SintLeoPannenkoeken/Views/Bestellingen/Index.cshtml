@@ -200,8 +200,11 @@
                 // TODO: handle error
             }
 
+            var bestelling = await response.json();
+
             await reloadBestellingen();
             clearForm();
+            $('#bestellingForm #lid').val(bestelling.lid.id)
             setFocus();
         }
 
