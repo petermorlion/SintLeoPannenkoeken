@@ -16,5 +16,6 @@ namespace SintLeoPannenkoeken.Models
         public int Begin { get; set; }
         public int Einde { get; set; }
         public List<Bestelling> Bestellingen { get; set; }
+        public List<StreefCijfer> StreefCijfers { get; set; }
     }
 }

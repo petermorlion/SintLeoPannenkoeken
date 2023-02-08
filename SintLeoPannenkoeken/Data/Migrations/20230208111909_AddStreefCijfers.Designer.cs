@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SintLeoPannenkoeken.Data;
 
@@ -11,9 +12,10 @@ using SintLeoPannenkoeken.Data;
 namespace SintLeoPannenkoeken.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230208111909_AddStreefCijfers")]
+    partial class AddStreefCijfers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -393,7 +395,7 @@ namespace SintLeoPannenkoeken.Data.Migrations
 
                     b.HasIndex("TakId");
 
-                    b.ToTable("StreefCijfers");
+                    b.ToTable("StreefCijfer");
                 });
 
             modelBuilder.Entity("SintLeoPannenkoeken.Models.Tak", b =>

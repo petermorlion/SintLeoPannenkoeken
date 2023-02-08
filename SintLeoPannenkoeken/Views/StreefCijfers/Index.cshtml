@@ -1,0 +1,106 @@
+﻿@{
+    ViewData["Title"] = "Streefcijfers";
+}
+
+<div id="streefCijfers" class="container-fluid" data-scoutsjaar="@Model.Scoutsjaar.Begin">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+    <form id="streefCijferForm">
+        <div class="row mb-4">
+            <div class="col-6">
+                <label for="tak" class="form-label">Tak</label>
+                <select id="tak" class="form-select" aria-label="Tak">
+                    @foreach (var tak in Model.Takken)
+                    {
+                        <option value="@tak.Id">@tak.Naam</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6">
+                <label for="aantal" class="form-label">Aantal</label>
+                <input type="number" class="form-control" aria-label="Aantal" name="aantal" id="aantal">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 mb-4">
+                <button type="submit" class="btn btn-primary">Opslaan</button>
+                <button type="reset" class="btn btn-secondary">Annuleren</button>
+            </div>
+        </div>
+    </form>
+    <table id="streefCijfersTable" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Tak</th>
+                <th>Aantal</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        async function reloadStreefCijfers() {
+            var scoutsjaar = $('#streefCijfers').data('scoutsjaar');
+            var response = await fetch(`/api/streefCijfers/${scoutsjaar}`);
+            if (!response.ok) {
+                // TODO: handle error
+            }
+
+            var json = await response.json();
+            $('#streefCijfersTable').DataTable({
+                destroy: true,
+                data: json.streefCijfers,
+                pageLength: 250,
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/nl-NL.json'
+                },
+                columns: [
+                    { data: 'takNaam' },
+                    { data: 'aantal' }
+                ]
+            });
+        }
+
+        async function submitStreefCijfer() {
+            var data = {
+                takId: $('#streefCijferForm #tak').val(),
+                aantal: $('#streefCijferForm #aantal').val(),
+            };
+
+            var scoutsjaar = $('#streefCijfers').data('scoutsjaar');
+            var response = await fetch(`/api/streefCijfers/${scoutsjaar}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                // TODO: handle error
+            }
+
+            setFocus();
+        }
+
+        function setFocus() {
+            $('#streefCijferForm #aantal').focus();
+        }
+
+        function clearForm() {
+            $('#streefCijferForm')[0].reset();
+        }
+
+        $(async function () {
+            $('#streefCijferForm button.btn-primary').click(async function(event) {
+                event.preventDefault();
+                await submitStreefCijfer();
+                await reloadStreefCijfers();
+                clearForm();
+            });
+
+            await reloadStreefCijfers();
+            setFocus();
+        });
+    </script>
+}
