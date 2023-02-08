@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Net.Mail;
 
 namespace SintLeoPannenkoeken.Models
 {
