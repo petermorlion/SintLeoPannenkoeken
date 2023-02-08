@@ -44,7 +44,10 @@ namespace SintLeoPannenkoeken.Controllers.API
 
             _dbContext.Leden.Add(lid);
             _dbContext.SaveChanges();
-            return Created($"/api/leden/{lid.Id}", lid);
+
+            lid = _dbContext.Leden.Include(l => l.Tak).Single(l => l.Id == lid.Id);
+            var lidViewModel = new LidViewModel(lid);
+            return Created($"/api/leden/{lid.Id}", lidViewModel);
         }
     }
 }

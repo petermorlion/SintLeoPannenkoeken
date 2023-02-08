@@ -46,7 +46,10 @@ namespace SintLeoPannenkoeken.Controllers.API
 
             _dbContext.Straten.Add(straat);
             _dbContext.SaveChanges();
-            return Created($"/api/straten/{straat.Id}", straat);
+
+            straat = _dbContext.Straten.Include(s => s.Zone).Single(s => s.Id == straat.Id);
+            var straatViewModel = new StraatViewModel(straat);
+            return Created($"/api/straten/{straat.Id}", straatViewModel);
         }
     }
 }

@@ -72,7 +72,9 @@ namespace SintLeoPannenkoeken.Controllers.API
                 }
             }
 
-            return Created($"/api/users/{user.Id}", user);
+            var userViewModel = new UserViewModel(user);
+
+            return Created($"/api/users/{user.Id}", userViewModel);
         }
     }
 }
