@@ -74,6 +74,7 @@
                 <div class="row mb-4">
                     <div class="col-12">
                         <button type="submit" class="btn btn-primary">Opslaan</button>
+                        <button type="reset" class="btn btn-secondary">Annuleren</button>
                     </div>
                 </div>
             </div>
@@ -270,6 +271,15 @@
             await reloadBestellingen();
 
             setFocus();
+        });
+
+        $(async function () {
+            $('#bestellingForm button.btn-secondary').click(async function(event) {
+                event.preventDefault();
+                clearForm();
+                enableAdres();
+                setFocus();
+            });
         });
     </script>
 }
