@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Data;
 using SintLeoPannenkoeken.Models;
-using SintLeoPannenkoeken.ViewModels.Bestellingen;
 using SintLeoPannenkoeken.ViewModels.StreefCijfers;
 
 namespace SintLeoPannenkoeken.Controllers.API
@@ -69,6 +68,17 @@ namespace SintLeoPannenkoeken.Controllers.API
 
             var streefCijferViewModel = new StreefCijferViewModel(streefCijfer);
             return Created($"/api/streefCijfers/{streefCijfer.Id}", streefCijferViewModel);
+        }
+
+        [HttpDelete]
+        [Route("{jaar:int}/{id:int}")]
+        public IActionResult Delete(int jaar, int id)
+        {
+            var streefCijfer = new StreefCijfer() { Id = id };
+            _dbContext.StreefCijfers.Attach(streefCijfer);
+            _dbContext.StreefCijfers.Remove(streefCijfer);
+            _dbContext.SaveChanges();
+            return NoContent();
         }
     }
 }

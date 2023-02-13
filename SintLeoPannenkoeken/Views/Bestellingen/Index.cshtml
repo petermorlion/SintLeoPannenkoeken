@@ -170,9 +170,11 @@
                 ]
             });
 
-            $('.bestellingen-delete').click(async function () {
-                await deleteBestelling($(this).data('id'));
-            });
+            setTimeout(function() {
+                $('.bestellingen-delete').click(async function () {
+                    await deleteBestelling($(this).data('id'));
+                });
+            }, 300);
         }
 
         async function submitBestelling() {
