@@ -164,7 +164,10 @@
                     { data: 'tak.afkorting' },
                     {
                         data: function(row, type, val, meta) {
-                            return `<a href='#' class='bestellingen-delete' title='Verwijderen' data-id='${row.id}'><i class="text-danger bi-x-circle-fill"></i></a>`;
+                            return `
+                                <a href='#' class='bestellingen-edit' title='Bewerken' data-id='${row.id}'><i class="bi bi-pencil-fill"></i></a>
+                                <a href='#' class='bestellingen-delete' title='Verwijderen' data-id='${row.id}'><i class="text-danger bi bi-x-circle-fill"></i></a>
+                                `;
                         }
                     }
                 ]
