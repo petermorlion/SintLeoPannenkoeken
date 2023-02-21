@@ -1,91 +1,43 @@
-﻿@model SintLeoPannenkoeken.ViewModels.Bestellingen.IndexViewModel
+﻿@using SintLeoPannenkoeken.ViewModels.Bestellingen;
+@model SintLeoPannenkoeken.ViewModels.Bestellingen.IndexViewModel
 @{
     ViewData["Title"] = "Bestellingen";
 }
 
 <div id="bestellingen" class="container-fluid" data-scoutsjaar="@Model.Scoutsjaar.Begin">
     <h1 class="display-4">@ViewData["Title"] @Model.Scoutsjaar.Begin</h1>
-    <form id="bestellingForm">
-        <div class="row mt-4 mb-4">
-            <div class="col-9">
-                <div class="row mt-4 mb-4">
-                    <div class="col-8">
-                        <label for="naam" class="form-label">Naam koper</label>
-                        <input type="text" class="form-control" placeholder="Naam" aria-label="Naam" name="naam" id="naam" />
-                    </div>
-                    <div class="col-4">
-                        <label for="naam" class="form-label">Telefoon</label>
-                        <input type="text" class="form-control" placeholder="Telefoon" aria-label="Telefoon" name="telefoon" id="telefoon" />
-                    </div>
+    <div class="row mt-4 mb-4">
+        <div class="col-9">
+            @await Component.InvokeAsync("Bestelling", new BestellingFormViewModel {
+                IndexViewModel = Model,
+                FormId = "createBestellingForm"
+            })
+        </div>
+        <div class="col-3">
+            <h2>Pakjes</h2>
+            <span id="aantalPakjes"></span>
+            <h2>Pannenkoeken</h2>
+            <span id="aantalPannenkoeken"></span>
+        </div>
+    </div>
+    <div class="modal fade" id="editBestellingModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Bestelling bewerken</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <div class="row mt-4 mb-4">
-                    <div class="col-2">
-                        <label for="zelfAfhalen" class="form-label">Zelf afhalen</label>
-                        <input type="checkbox" class="form-check-input" aria-label="Zelf Afhalen" name="zelfAfhalen" id="zelfAfhalen" />
-                    </div>
-                    <div class="col-5">
-                        <label for="straat" class="form-label">Straat</label>
-                        <select id="straat" class="form-select" aria-label="Straat">
-                            <option value=""></option>
-                            @foreach (var straat in Model.Straten)
-                            {
-                                <option value="@straat.Id" data-code="@straat.Code">@straat.Naam (@straat.Gemeente)</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="col-2">
-                        <label for="code" class="form-label">Code</label>
-                        <input type="text" disabled class="form-control" placeholder="Code" aria-label="Code" name="code" id="code" />
-                    </div>
-                    <div class="col-2">
-                        <label for="nummer" class="form-label">Nummer</label>
-                        <input type="text" class="form-control" placeholder="Nummer" aria-label="Nummer" name="nummer" id="nummer" />
-                    </div>
-                    <div class="col-1">
-                        <label for="bus" class="form-label">Bus</label>
-                        <input type="text" class="form-control" placeholder="Bus" aria-label="Bus" name="bus" id="bus" />
-                    </div>
+                <div class="modal-body">
+                    @await Component.InvokeAsync("Bestelling", new BestellingFormViewModel {
+                        IndexViewModel = Model,
+                        FormId = "updateBestellingForm"
+                    })
                 </div>
-                <div class="row mb-4">
-                    <div class="col-4">
-                        <label for="naam" class="form-label">Aantal pakken</label>
-                        <input type="number" class="form-control" aria-label="Aantal pakken" name="aantalPakken" id="aantalPakken" />
-                    </div>
-                    <div class="col-2">
-                        <label for="betaald" class="form-label">Betaald</label>
-                        <input type="checkbox" class="form-check-input" aria-label="Betaald" name="betaald" id="betaald" checked />
-                    </div>
-                    <div class="col-6">
-                        <label for="opmerkingen" class="form-label">Opmerkingen</label>
-                        <input type="text" class="form-control" aria-label="Opmerkingen" name="opmerkingen" id="opmerkingen" />
-                    </div>
-                </div>
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <label for="lid" class="form-label">Lid</label>
-                        <select id="lid" class="form-select" aria-label="Lid">
-                            @foreach (var lid in Model.Leden)
-                            {
-                                <option value="@lid.Id">@lid.Achternaam @lid.Voornaam (@lid.TakNaam)</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-primary">Opslaan</button>
-                        <button type="reset" class="btn btn-secondary">Annuleren</button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-3">
-                <h2>Pakjes</h2>
-                <span id="aantalPakjes"></span>
-                <h2>Pannenkoeken</h2>
-                <span id="aantalPannenkoeken"></span>
             </div>
         </div>
-    </form>
+    </div>
     <table id="bestellingenTable" class="table table-striped">
         <thead>
             <tr>
@@ -165,7 +117,7 @@
                     {
                         data: function(row, type, val, meta) {
                             return `
-                                <a href='#' class='bestellingen-edit' title='Bewerken' data-id='${row.id}'><i class="bi bi-pencil-fill"></i></a>
+                                <!--<a href='#' class='bestellingen-edit' title='Bewerken' data-id='${row.id}'><i class="bi bi-pencil-fill"></i></a>-->
                                 <a href='#' class='bestellingen-delete' title='Verwijderen' data-id='${row.id}'><i class="text-danger bi bi-x-circle-fill"></i></a>
                                 `;
                         }
@@ -177,21 +129,25 @@
                 $('.bestellingen-delete').click(async function () {
                     await deleteBestelling($(this).data('id'));
                 });
+
+                $('.bestellingen-edit').click(async function () {
+                    await editBestelling($(this).data('id'));
+                });
             }, 300);
         }
 
-        async function submitBestelling() {
+        async function createBestelling() {
             var scoutsjaar = $('#bestellingen').data('scoutsjaar');
             var data = {
-                naam: $('#bestellingForm #naam').val(),
-                telefoon: $('#bestellingForm #telefoon').val(),
-                aantalPakken: $('#bestellingForm #aantalPakken').val(),
-                betaald: $('#bestellingForm #betaald').is(':checked'),
-                opmerkingen: $('#bestellingForm #opmerkingen').val(),
-                lidId: $('#bestellingForm #lid').val(),
-                straatId: $('#bestellingForm #straat').val(),
-                nummer: $('#bestellingForm #nummer').val(),
-                bus: $('#bestellingForm #bus').val()
+                naam: $('#createBestellingForm #naam').val(),
+                telefoon: $('#createBestellingForm #telefoon').val(),
+                aantalPakken: $('#createBestellingForm #aantalPakken').val(),
+                betaald: $('#createBestellingForm #betaald').is(':checked'),
+                opmerkingen: $('#createBestellingForm #opmerkingen').val(),
+                lidId: $('#createBestellingForm #lid').val(),
+                straatId: $('#createBestellingForm #straat').val(),
+                nummer: $('#createBestellingForm #nummer').val(),
+                bus: $('#createBestellingForm #bus').val()
             };
 
             var response = await fetch(`/api/bestellingen/${scoutsjaar}`, {
@@ -209,9 +165,44 @@
             var bestelling = await response.json();
 
             await reloadBestellingen();
-            clearForm();
-            $('#bestellingForm #lid').val(bestelling.lid.id)
+            clearForms();
+            $('#createBestellingForm #lid').val(bestelling.lid.id)
             setFocus();
+        }
+
+        async function updateBestelling() {
+            //var scoutsjaar = $('#bestellingen').data('scoutsjaar');
+            //var data = {
+            //    naam: $('#bestellingForm #naam').val(),
+            //    telefoon: $('#bestellingForm #telefoon').val(),
+            //    aantalPakken: $('#bestellingForm #aantalPakken').val(),
+            //    betaald: $('#bestellingForm #betaald').is(':checked'),
+            //    opmerkingen: $('#bestellingForm #opmerkingen').val(),
+            //    lidId: $('#bestellingForm #lid').val(),
+            //    straatId: $('#bestellingForm #straat').val(),
+            //    nummer: $('#bestellingForm #nummer').val(),
+            //    bus: $('#bestellingForm #bus').val()
+            //};
+
+            //var response = await fetch(`/api/bestellingen/${scoutsjaar}`, {
+            //    method: 'POST',
+            //    headers: {
+            //        'Content-Type': 'application/json'
+            //    },
+            //    body: JSON.stringify(data)
+            //});
+
+            //if (!response.ok) {
+            //    // TODO: handle error
+            //}
+
+            //var bestelling = await response.json();
+
+            //await reloadBestellingen();
+            //clearForms();
+            //$('#bestellingForm #lid').val(bestelling.lid.id)
+            //setFocus();
+            alert('yes');
         }
 
         async function deleteBestelling(bestellingId) {
@@ -230,65 +221,86 @@
             await reloadBestellingen();
         }
 
+        async function editBestelling(bestellingId) {
+            $('#editBestellingModal #bestellingId').val(bestellingId);
+            $('#editBestellingModal').modal('show');
+        }
+
         function setFocus() {
-            $('#bestellingForm #naam').focus();
+            $('#createBestellingForm #naam').focus();
         }
 
-        function clearForm() {
-            $('#bestellingForm')[0].reset();
+        function clearForms() {
+            $('#createBestellingForm')[0].reset();
+            $('#updateBestellingForm')[0].reset();
         }
 
-        function disableAdres() {
-            $('#bestellingForm #straat').prop('disabled', true);
-            $('#bestellingForm #nummer').prop('disabled', true);
+        function disableAdres(formId) {
+            $(formId + ' #straat').prop('disabled', true);
+            $(formId + ' #nummer').prop('disabled', true);
+            $(formId + ' #bus').prop('disabled', true);
         }
 
-        function enableAdres() {
-            $('#bestellingForm #straat').prop('disabled', false);
-            $('#bestellingForm #nummer').prop('disabled', false);
+        function enableAdres(formId) {
+            $(formId + ' #straat').prop('disabled', false);
+            $(formId + ' #nummer').prop('disabled', false);
+            $(formId + ' #bus').prop('disabled', false);
         }
 
         $(async function () {
-            $('#bestellingForm button.btn-primary').click(async function(event) {
+            $('#createBestellingForm button.btn-primary').click(async function(event) {
                 event.preventDefault();
-                await submitBestelling();
-                enableAdres();
+                await createBestelling();
+                enableAdres('#createBestellingForm');
             });
 
-            $('#bestellingForm #zelfAfhalen').click(async function() {
+            $('#createBestellingForm button.btn-secondary').click(async function (event) {
+                event.preventDefault();
+                clearForms();
+                enableAdres('#createBestellingForm');
+                setFocus();
+            });
+
+            $('#editBestellingModal button.btn-primary').click(async function(event) {
+                event.preventDefault();
+                await updateBestelling();
+                enableAdres('#updateBestellingForm');
+            });
+
+            $('#editBestellingModal button.btn-secondary').click(async function (event) {
+                event.preventDefault();
+                clearForms();
+                enableAdres('#updateBestellingForm');
+                $('#editBestellingModal').modal('hide');
+            });
+
+            $('.zelf-afhalen-input').click(async function () {
                 var checked = $(this).is(':checked');
+                var formId = '#' + $(this).parents('form').eq(0).attr('id');
                 if (checked) {
-                    disableAdres();
-                    $('#bestellingForm #nummer').val('');
-                    $('#bestellingForm #straat').val(basisId);
+                    disableAdres(formId);
+                    $(formId + ' #nummer').val('');
+                    $(formId + ' #straat').val(basisId);
                 } else {
-                    enableAdres();
+                    enableAdres(formId);
                 }
             });
 
-            $('#straat').change(function() {
+            $('.straat-input').change(function() {
+                var formId = '#' + $(this).parents('form').eq(0).attr('id');
                 if ($(this).val() === basisId) {
-                    disableAdres();
-                    $('#bestellingForm #nummer').val('');
-                    $('#bestellingForm #zelfAfhalen').prop('checked', true);
+                    disableAdres(formId);
+                    $(formId + ' #nummer').val('');
+                    $(formId + ' #zelfAfhalen').prop('checked', true);
                 }
 
-                var selectedOptionCode = $('#straat option:selected').data('code');
-                $('#code').val(selectedOptionCode);
+                var selectedOptionCode = $(formId + ' #straat option:selected').data('code');
+                $(formId + ' #code').val(selectedOptionCode);
             });
 
             await reloadBestellingen();
 
             setFocus();
-        });
-
-        $(async function () {
-            $('#bestellingForm button.btn-secondary').click(async function(event) {
-                event.preventDefault();
-                clearForm();
-                enableAdres();
-                setFocus();
-            });
         });
     </script>
 }

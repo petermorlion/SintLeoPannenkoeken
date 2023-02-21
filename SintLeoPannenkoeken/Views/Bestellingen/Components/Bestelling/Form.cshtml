@@ -1,0 +1,108 @@
+﻿@model SintLeoPannenkoeken.ViewModels.Bestellingen.BestellingFormViewModel
+
+<form id="@Model.FormId">
+    <input type="hidden" id="bestellingId" />
+    <div class="row mt-4 mb-4">
+        <div class="col-8">
+            <label for="naam" class="form-label">Naam koper</label>
+            <input type="text" class="form-control" placeholder="Naam" aria-label="Naam" name="naam" id="naam" />
+        </div>
+        <div class="col-4">
+            <label for="naam" class="form-label">Telefoon</label>
+            <input type="text" class="form-control" placeholder="Telefoon" aria-label="Telefoon" name="telefoon" id="telefoon" />
+        </div>
+    </div>
+    <div class="row mt-4 mb-4">
+        <div class="col-2">
+            <label for="zelfAfhalen" class="form-label">Zelf afhalen</label>
+            <input type="checkbox" class="form-check-input zelf-afhalen-input" aria-label="Zelf Afhalen" name="zelfAfhalen" id="zelfAfhalen" />
+        </div>
+        <div class="col-5">
+            <label for="straat" class="form-label">Straat</label>
+            <select id="straat" class="form-select straat-input" aria-label="Straat">
+                <option value=""></option>
+                @foreach (var straat in Model.IndexViewModel.Straten)
+                {
+                    <option value="@straat.Id" data-code="@straat.Code">@straat.Naam (@straat.Gemeente)</option>
+                }
+            </select>
+        </div>
+        <div class="col-2">
+            <label for="code" class="form-label">Code</label>
+            <input type="text" disabled class="form-control" placeholder="Code" aria-label="Code" name="code" id="code" />
+        </div>
+        <div class="col-2">
+            <label for="nummer" class="form-label">Nummer</label>
+            <input type="text" class="form-control" placeholder="Nummer" aria-label="Nummer" name="nummer" id="nummer" />
+        </div>
+        <div class="col-1">
+            <label for="bus" class="form-label">Bus</label>
+            <input type="text" class="form-control" placeholder="Bus" aria-label="Bus" name="bus" id="bus" />
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-4">
+            <label for="naam" class="form-label">Aantal pakken</label>
+            <input type="number" class="form-control" aria-label="Aantal pakken" name="aantalPakken" id="aantalPakken" />
+        </div>
+        <div class="col-2">
+            <label for="betaald" class="form-label">Betaald</label>
+            <input type="checkbox" class="form-check-input" aria-label="Betaald" name="betaald" id="betaald" checked />
+        </div>
+        <div class="col-6">
+            <label for="opmerkingen" class="form-label">Opmerkingen</label>
+            <input type="text" class="form-control" aria-label="Opmerkingen" name="opmerkingen" id="opmerkingen" />
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-12">
+            <label for="lid" class="form-label">Lid</label>
+            <select id="lid" class="form-select" aria-label="Lid">
+                @foreach (var lid in Model.IndexViewModel.Leden)
+                {
+                    <option value="@lid.Id">@lid.Achternaam @lid.Voornaam (@lid.TakNaam)</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Opslaan</button>
+            <button type="reset" class="btn btn-secondary">Annuleren</button>
+        </div>
+    </div>
+</form>
+@*
+<script defer type="text/javascript">
+    function enableAdres() {
+        $('#@Model.FormId #straat').prop('disabled', false);
+        $('#@Model.FormId #nummer').prop('disabled', false);
+    }
+
+    function disableAdres() {
+        $('#@Model.FormId #straat').prop('disabled', true);
+        $('#@Model.FormId #nummer').prop('disabled', true);
+    }
+
+    $('#@Model.FormId #straat').change(function() {
+        if ($(this).val() === basisId) {
+            disableAdres();
+            $('#@Model.FormId #nummer').val('');
+            $('#@Model.FormId #zelfAfhalen').prop('checked', true);
+        }
+
+        var selectedOptionCode = $('#@Model.FormId #straat option:selected').data('code');
+        $('#@Model.FormId #code').val(selectedOptionCode);
+    });
+
+    $('#@Model.FormId #zelfAfhalen').click(async function () {
+        var checked = $(this).is(':checked');
+        if (checked) {
+            disableAdres();
+            $('#@Model.FormId #nummer').val('');
+            $('#@Model.FormId #straat').val(basisId);
+        } else {
+            enableAdres();
+        }
+    });
+</script>*@
