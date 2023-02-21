@@ -1,6 +1,4 @@
-﻿using SintLeoPannenkoeken.Models;
-
-namespace SintLeoPannenkoeken.ViewModels.Bestellingen
+﻿namespace SintLeoPannenkoeken.ViewModels.Bestellingen
 {
     public class CreateBestellingViewModel
     {
