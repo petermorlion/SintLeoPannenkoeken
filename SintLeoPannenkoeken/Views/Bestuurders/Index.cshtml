@@ -1,10 +1,10 @@
 ﻿@{
-    ViewData["Title"] = "Leden";
+    ViewData["Title"] = "Bestuurders";
 }
 
-<div id="leden" class="container-fluid">
+<div id="bestuurders" class="container-fluid">
     <h1 class="display-4">@ViewData["Title"]</h1>
-    <form id="lidForm">
+    <form id="bestuurderForm">
         <div class="row mt-4 mb-4">
             <div class="col-6">
                 <label for="achternaam" class="form-label">Achternaam</label>
@@ -15,21 +15,6 @@
                 <input type="text" class="form-control" aria-label="Voornaam" name="voornaam" id="voornaam">
             </div>
         </div>
-        <div class="row mb-4">
-            <div class="col-6">
-                <label for="tak" class="form-label">Tak</label>
-                <select id="tak" class="form-select" aria-label="Tak">
-                    @foreach (var tak in Model.Takken)
-                    {
-                        <option value="@tak.Id">@tak.Naam</option>
-                    }
-                </select>
-            </div>
-            <div class="col-6">
-                <label for="functie" class="form-label">Functie</label>
-                <input type="text" class="form-control" aria-label="Functie" name="functie" id="functie">
-            </div>
-        </div>
         <div class="row">
             <div class="col-12 mb-4">
                 <button type="submit" class="btn btn-primary">Opslaan</button>
@@ -37,13 +22,11 @@
             </div>
         </div>
     </form>
-    <table id="ledenTable" class="table table-striped">
+    <table id="bestuurdersTable" class="table table-striped">
         <thead>
             <tr>
                 <th>Achternaam</th>
                 <th>Voornaam</th>
-                <th>Tak</th>
-                <th>Functie</th>
             </tr>
         </thead>
     </table>
@@ -51,14 +34,14 @@
 
 @section Scripts {
     <script>
-        async function reloadLeden() {
-            var response = await fetch(`/api/leden`);
+        async function reloadBestuurders() {
+            var response = await fetch(`/api/bestuurders`);
             if (!response.ok) {
                 // TODO: handle error
             }
 
             var json = await response.json();
-            $('#ledenTable').DataTable({
+            $('#bestuurdersTable').DataTable({
                 destroy: true,
                 data: json,
                 pageLength: 250,
@@ -68,22 +51,18 @@
                 },
                 columns: [
                     { data: 'achternaam' },
-                    { data: 'voornaam' },
-                    { data: 'takNaam' },
-                    { data: 'functie' }
+                    { data: 'voornaam' }
                 ]
             });
         }
 
-        async function submitLid() {
+        async function submitBestuurder() {
             var data = {
-                achternaam: $('#lidForm #achternaam').val(),
-                voornaam: $('#lidForm #voornaam').val(),
-                functie: $('#lidForm #functie').val(),
-                takId: $('#lidForm #tak').val()
+                achternaam: $('#bestuurderForm #achternaam').val(),
+                voornaam: $('#bestuurderForm #voornaam').val()
             };
 
-            var response = await fetch(`/api/leden`, {
+            var response = await fetch(`/api/bestuurders`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -99,22 +78,22 @@
         }
 
         function setFocus() {
-            $('#lidForm #achternaam').focus();
+            $('#bestuurderForm #achternaam').focus();
         }
 
         function clearForm() {
-            $('#lidForm')[0].reset();
+            $('#bestuurderForm')[0].reset();
         }
 
         $(async function () {
-            $('#lidForm button.btn-primary').click(async function(event) {
+            $('#bestuurderForm button.btn-primary').click(async function(event) {
                 event.preventDefault();
-                await submitLid();
-                await reloadLeden();
+                await submitBestuurder();
+                await reloadBestuurders();
                 clearForm();
             });
 
-            await reloadLeden();
+            await reloadBestuurders();
             setFocus();
         });
     </script>

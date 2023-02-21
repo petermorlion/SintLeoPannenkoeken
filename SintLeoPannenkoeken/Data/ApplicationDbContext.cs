@@ -18,5 +18,7 @@ namespace SintLeoPannenkoeken.Data
         public DbSet<Zone> Zones { get; set; }
         public DbSet<Straat> Straten { get; set; }
         public DbSet<StreefCijfer> StreefCijfers { get; set; }
+        public DbSet<Bestuurder> Bestuurders { get; set; }
+        public DbSet<Ronde> Rondes { get; set; }
     }
 }
