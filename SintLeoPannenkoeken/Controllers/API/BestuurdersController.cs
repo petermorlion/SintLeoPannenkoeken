@@ -127,5 +127,16 @@ namespace SintLeoPannenkoeken.Controllers.API
             var rondeViewModel = new RondeViewModel(ronde, aantalPakken);
             return Created($"/api/bestuurders/{id}/rondes/{scoutsjaar}/{ronde.Id}", rondeViewModel);
         }
+
+        [HttpDelete]
+        [Route("{bestuurdersId:int}/rondes/{scoutsjaar:int}/{id:int}")]
+        public IActionResult Delete(int jaar, int bestuurdersId, int id)
+        {
+            var ronde = new Ronde { Id = id };
+            _dbContext.Rondes.Attach(ronde);
+            _dbContext.Rondes.Remove(ronde);
+            _dbContext.SaveChanges();
+            return NoContent();
+        }
     }
 }

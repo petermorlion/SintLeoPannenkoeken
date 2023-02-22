@@ -32,6 +32,7 @@
                 <th>Kaartnummer</th>
                 <th>Straten</th>
                 <th>Pakken</th>
+                <th></th>
             </tr>
         </thead>
     </table>
@@ -61,9 +62,22 @@
                     { data: 'zoneGemeente' },
                     { data: 'zoneKaartNummer' },
                     { data: 'aantalStraten' },
-                    { data: 'aantalPakken' }
+                    { data: 'aantalPakken' },
+                    {
+                        data: function(row, type, val, meta) {
+                            return `
+                                <a href='#' class='ronde-delete' title='Verwijderen' data-id='${row.id}'><i class="text-danger bi bi-x-circle-fill"></i></a>
+                                `;
+                        }
+                    }
                 ]
             });
+
+            setTimeout(function () {
+                $('.ronde-delete').click(async function () {
+                    await deleteRonde($(this).data('id'));
+                });
+            }, 300);
         }
 
         async function submitZone() {
@@ -87,6 +101,23 @@
             }
 
             setFocus();
+        }
+
+        async function deleteRonde(rondeId) {
+            var scoutsjaar = $('#rondes').data('scoutsjaar');
+            var bestuurderId = $('#rondes').data('bestuurderid');
+            var response = await fetch(`/api/bestuurders/${bestuurderId}/rondes/${scoutsjaar}/${rondeId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                // TODO: handle error
+            }
+
+            await reloadRondes();
         }
 
         function setFocus() {
