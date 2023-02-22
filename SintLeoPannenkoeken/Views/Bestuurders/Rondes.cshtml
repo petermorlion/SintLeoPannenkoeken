@@ -78,7 +78,8 @@
             });
 
             if (!response.ok) {
-                // TODO: handle error
+                var errorMessage = await(response.text());
+                alert(errorMessage);
             }
 
             setFocus();
