@@ -14,6 +14,8 @@ namespace SintLeoPannenkoeken.ViewModels.Bestuurders
         }
 
         public string ZoneNaam => _ronde.Zone.Naam;
+        public string ZoneGemeente => _ronde.Zone.Gemeente;
+        public string? ZoneKaartNummer => _ronde.Zone.KaartNummer;
         public int AantalStraten => _ronde.Zone.Straten.Count();
         public int AantalPakken => _aantalPakken;
     }

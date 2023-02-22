@@ -72,37 +72,3 @@
         </div>
     </div>
 </form>
-@*
-<script defer type="text/javascript">
-    function enableAdres() {
-        $('#@Model.FormId #straat').prop('disabled', false);
-        $('#@Model.FormId #nummer').prop('disabled', false);
-    }
-
-    function disableAdres() {
-        $('#@Model.FormId #straat').prop('disabled', true);
-        $('#@Model.FormId #nummer').prop('disabled', true);
-    }
-
-    $('#@Model.FormId #straat').change(function() {
-        if ($(this).val() === basisId) {
-            disableAdres();
-            $('#@Model.FormId #nummer').val('');
-            $('#@Model.FormId #zelfAfhalen').prop('checked', true);
-        }
-
-        var selectedOptionCode = $('#@Model.FormId #straat option:selected').data('code');
-        $('#@Model.FormId #code').val(selectedOptionCode);
-    });
-
-    $('#@Model.FormId #zelfAfhalen').click(async function () {
-        var checked = $(this).is(':checked');
-        if (checked) {
-            disableAdres();
-            $('#@Model.FormId #nummer').val('');
-            $('#@Model.FormId #straat').val(basisId);
-        } else {
-            enableAdres();
-        }
-    });
-</script>*@
