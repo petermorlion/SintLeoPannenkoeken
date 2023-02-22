@@ -59,7 +59,6 @@ namespace SintLeoPannenkoeken.Controllers.API
                 .SelectMany(scoutsjaar => scoutsjaar.Rondes)
                 .Include(ronde => ronde.Zone)
                 .ThenInclude(zone => zone.Straten)
-                .Include(ronde => ronde.Bestuurder)
                 .Where(ronde => ronde.BestuurderId == id)
                 .ToList();
 
@@ -112,7 +111,6 @@ namespace SintLeoPannenkoeken.Controllers.API
             ronde = _dbContext.Rondes
                 .Include(ronde => ronde.Zone)
                 .ThenInclude(zone => zone.Straten)
-                .Include(ronde => ronde.Bestuurder)
                 .Single(r => r.Id == ronde.Id);
 
             var bestellingen = _dbContext.Scoutsjaren

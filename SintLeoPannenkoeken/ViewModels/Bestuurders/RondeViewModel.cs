@@ -14,8 +14,6 @@ namespace SintLeoPannenkoeken.ViewModels.Bestuurders
         }
 
         public string ZoneNaam => _ronde.Zone.Naam;
-        public string BestuurderVoornaam => _ronde.Bestuurder.Voornaam;
-        public string BestuurderAchternaam => _ronde.Bestuurder.Achternaam;
         public int AantalStraten => _ronde.Zone.Straten.Count();
         public int AantalPakken => _aantalPakken;
     }
