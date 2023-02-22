@@ -7,5 +7,6 @@
         public Zone Zone { get; set; }
         public int BestuurderId { get; set; }
         public Bestuurder Bestuurder { get; set; }
+        public int ScoutsjaarId { get; set; }
     }
 }

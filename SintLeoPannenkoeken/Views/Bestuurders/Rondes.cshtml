@@ -1,0 +1,107 @@
+﻿@using SintLeoPannenkoeken.ViewModels.Bestuurders;
+@model SintLeoPannenkoeken.ViewModels.Bestuurders.BestuurderRondesViewModel;
+@{
+    ViewData["Title"] = "Ronde " + Model.Bestuurder.Achternaam + " " + Model.Bestuurder.Voornaam;
+}
+
+<div id="rondes" class="container-fluid" data-scoutsjaar="@Model.ScoutsjaarBegin" data-bestuurderid="@Model.Bestuurder.Id">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+    <form id="zoneForm">
+        <div class="row mt-4 mb-4">
+            <div class="col-6">
+                <label for="zoneId" class="form-label">Zone</label>
+                <select type="text" class="form-control" placeholder="Zone" aria-label="Zone" name="zoneId" id="zoneId">
+                    @foreach (var zone in Model.Zones)
+                    {
+                        <option value="@zone.Id">@zone.Naam</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 mb-4">
+                <button type="submit" class="btn btn-primary">Toevoegen</button>
+            </div>
+        </div>
+    </form>
+    <table id="rondesTable" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Zone</th>
+                <th>Straten</th>
+                <th>Pakken</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        async function reloadRondes() {
+            var scoutsjaar = $('#rondes').data('scoutsjaar');
+            var bestuurderId = $('#rondes').data('bestuurderid');
+            var response = await fetch(`/api/bestuurders/${bestuurderId}/rondes/${scoutsjaar}`);
+            if (!response.ok) {
+                // TODO: handle error
+            }
+
+            var json = await response.json();
+            $('#rondesTable').DataTable({
+                destroy: true,
+                data: json,
+                pageLength: 250,
+                lengthMenu: [50, 10, 250, 500],
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/nl-NL.json'
+                },
+                columns: [
+                    { data: 'zoneNaam' },
+                    { data: 'aantalStraten' },
+                    { data: 'aantalPakken' }
+                ]
+            });
+        }
+
+        async function submitZone() {
+            var scoutsjaar = $('#rondes').data('scoutsjaar');
+            var bestuurderId = $('#rondes').data('bestuurderid');
+            var data = {
+                zoneId: $('#zoneForm #zoneId').val()
+            };
+
+            var response = await fetch(`/api/bestuurders/${bestuurderId}/rondes/${scoutsjaar}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                // TODO: handle error
+            }
+
+            setFocus();
+        }
+
+        function setFocus() {
+            $('#zoneForm #zoneId').focus();
+        }
+
+        function clearForm() {
+            $('#zoneForm')[0].reset();
+        }
+
+        $(async function () {
+            $('#zoneForm button.btn-primary').click(async function(event) {
+                event.preventDefault();
+                await submitZone();
+                await reloadRondes();
+                clearForm();
+            });
+
+            await reloadRondes();
+            setFocus();
+        });
+    </script>
+}
