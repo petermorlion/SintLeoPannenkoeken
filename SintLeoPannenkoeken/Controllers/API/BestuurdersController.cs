@@ -20,14 +20,42 @@ namespace SintLeoPannenkoeken.Controllers.API
         }
 
         [HttpGet]
-        [Route("")]
-        public IActionResult Get()
+        [Route("{scoutsjaar:int}")]
+        public IActionResult Get(int scoutsjaar)
         {
             var bestuurders = _dbContext.Bestuurders.ToList();
+            var scoutsjaarModel = _dbContext.Scoutsjaren.Single(sj => sj.Begin == scoutsjaar);
+
+            var bestellingenPerZone = _dbContext.Scoutsjaren
+                .Include(sj => sj.Bestellingen)
+                .ThenInclude(b => b.Straat)
+                .Single(sj => sj.Begin == scoutsjaar)
+                .Bestellingen
+                .GroupBy(b => b.Straat.ZoneId)
+                .ToDictionary(group => group.Key, group => group.ToList());
+
+            var zonesPerBestuurder = _dbContext.Rondes
+                .Where(r => r.ScoutsjaarId == scoutsjaarModel.Id)
+                .ToList()
+                .GroupBy(r => r.BestuurderId, r => r.ZoneId)
+                .ToDictionary(group => group.Key, group => group.ToList());
 
             var bestuurderViewModels = bestuurders == null 
-                ? new List<BestuurderViewModel>() 
-                : bestuurders.Select(bestuurder => new BestuurderViewModel(bestuurder)).ToList();
+                ? new List<BestuurderMetAantallenViewModel>() 
+                : bestuurders.Select(bestuurder =>
+                {
+                    var aantalPakken = 0;
+                    var aantalBestellingen = 0;
+                    var zonesForBestuurder = zonesPerBestuurder.ContainsKey(bestuurder.Id) ? zonesPerBestuurder[bestuurder.Id] : new List<int>();
+                    foreach(var zoneId in zonesForBestuurder)
+                    {
+                        var bestellingenForZone = bestellingenPerZone.ContainsKey(zoneId) ? bestellingenPerZone[zoneId] : new List<Bestelling>();
+                        aantalPakken += bestellingenForZone.Sum(x => x.AantalPakken);
+                        aantalBestellingen += bestellingenForZone.Count;
+                    }
+
+                    return new BestuurderMetAantallenViewModel(bestuurder, aantalPakken, aantalBestellingen);
+                }).ToList();
 
             return Ok(bestuurderViewModels);
         }

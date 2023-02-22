@@ -2,7 +2,7 @@
     ViewData["Title"] = "Bestuurders";
 }
 
-<div id="bestuurders" class="container-fluid">
+<div id="bestuurders" class="container-fluid" data-scoutsjaar="@Model.Scoutsjaar.Begin">
     <h1 class="display-4">@ViewData["Title"]</h1>
     <form id="bestuurderForm">
         <div class="row mt-4 mb-4">
@@ -27,6 +27,8 @@
             <tr>
                 <th>Achternaam</th>
                 <th>Voornaam</th>
+                <th>Bestellingen</th>
+                <th>Pakken</th>
                 <th></th>
             </tr>
         </thead>
@@ -36,7 +38,8 @@
 @section Scripts {
     <script>
         async function reloadBestuurders() {
-            var response = await fetch(`/api/bestuurders`);
+            var scoutsjaar = $('#bestuurders').data('scoutsjaar');
+            var response = await fetch(`/api/bestuurders/${scoutsjaar}`);
             if (!response.ok) {
                 // TODO: handle error
             }
@@ -53,11 +56,12 @@
                 columns: [
                     { data: 'achternaam' },
                     { data: 'voornaam' },
+                    { data: 'aantalBestellingen' },
+                    { data: 'aantalPakken' },
                     {
                         data: function (row, type, val, meta) {
-                            // TODO: hard-coded scoutsjaar
                             return `
-                                        <a href='/Bestuurders/Rondes?bestuurderId=${row.id}&scoutsjaar=2023' class='bestellingen-delete' title='Rondes' data-id='${row.id}'><i class="bi bi-car-front-fill"></i></a>
+                                 <a href='/Bestuurders/Rondes?bestuurderId=${row.id}&scoutsjaar=${scoutsjaar}' class='bestellingen-delete' title='Rondes' data-id='${row.id}'><i class="bi bi-car-front-fill"></i></a>
                             `;
                         }
                     }
