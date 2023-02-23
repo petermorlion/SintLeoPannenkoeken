@@ -9,7 +9,7 @@ namespace SintLeoPannenkoeken.ViewModels.Rondes
             Scoutsjaar = new ScoutsjaarViewModel(scoutsjaar);
 
             var bestellingenPerZone = bestellingen.GroupBy(b => b.Straat.ZoneId).ToDictionary(g => g.Key, g => g.ToList());
-            Rondes = zones.Select(zone =>
+            Rondes = zones.OrderBy(zone => zone.Naam).Select(zone =>
             {
                 var bestellingenForZone = bestellingenPerZone.ContainsKey(zone.Id) ? bestellingenPerZone[zone.Id] : new List<Bestelling>();
                 var ronde = rondes.SingleOrDefault(r => r.ZoneId == zone.Id);
