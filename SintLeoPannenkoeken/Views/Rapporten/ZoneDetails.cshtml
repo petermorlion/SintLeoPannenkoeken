@@ -1,0 +1,63 @@
+﻿@model SintLeoPannenkoeken.ViewModels.Rapporten.ZoneDetailsViewModel;
+@{
+    ViewData["Title"] = "Zone " + Model.ZoneNaam;
+}
+
+<div id="rapporten" class="container-fluid">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+    <h2>@Model.ZoneNaam - @Model.PostNummer @Model.Gemeente - @Model.Bestuurder</h2>
+    <table id="zoneTable" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nr</th>
+                <th>Bus</th>
+                <th>Straat</th>
+                <th>Naam</th>
+                <th>Aantal</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        async function initTable(){
+            var json = @Json.Serialize(Model.VwRondes);
+            $('#zoneTable').DataTable({
+                destroy: true,
+                data: json,
+                dom: 'Bfrtip',
+                buttons: [
+                    'excelHtml5',
+                    'pdfHtml5',
+                    {
+                        extend: 'print',
+                        customize: function ( win ) {
+                            $(win.document.body)
+                                .prepend(
+                                    '<h2>@Model.ZoneNaam - @Model.PostNummer @Model.Gemeente - @Model.Bestuurder</h2>'
+                                );
+                            $(win.document.body).find('h1').remove();
+                        }
+                    }
+                ],
+                pageLength: 1000,
+                lengthMenu: [250, 500, 1000],
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/nl-NL.json'
+                },
+                columns: [
+                    { data: 'huisnummer' },
+                    { data: 'bus' },
+                    { data: 'straatnaam' },
+                    { data: 'naam' },
+                    { data: 'aantalPakken' }
+                ]
+            });
+        }
+    
+        $(async function () {
+            await initTable();
+        });
+    </script>
+}

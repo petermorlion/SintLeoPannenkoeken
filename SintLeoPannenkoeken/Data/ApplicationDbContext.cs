@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Models;
+using SintLeoPannenkoeken.Models.Views;
 
 namespace SintLeoPannenkoeken.Data
 {

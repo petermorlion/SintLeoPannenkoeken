@@ -14,6 +14,7 @@
                 <th>Bestellingen</th>
                 <th>Pakken</th>
                 <th>Bestuurder</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -29,6 +30,9 @@
                         @if (ronde != null && ronde.Bestuurder != null) {
                             <span>@ronde.Bestuurder.Achternaam @ronde.Bestuurder.Voornaam</span>
                         }
+                    </td>
+                    <td>
+                        <a title='Details' asp-controller="Rapporten" asp-action="ZoneDetails" asp-route-zoneNaam="@ronde.Zone.Naam"><i class="bi bi-printer-fill"></i></a>
                     </td>
                 </tr>
             }

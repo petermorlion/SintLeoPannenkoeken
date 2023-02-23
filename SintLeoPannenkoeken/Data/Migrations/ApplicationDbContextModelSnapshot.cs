@@ -345,7 +345,7 @@ namespace SintLeoPannenkoeken.Data.Migrations
                     b.Property<int>("BestuurderId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ScoutsjaarId")
+                    b.Property<int>("ScoutsjaarId")
                         .HasColumnType("int");
 
                     b.Property<int>("ZoneId")
@@ -602,7 +602,9 @@ namespace SintLeoPannenkoeken.Data.Migrations
 
                     b.HasOne("SintLeoPannenkoeken.Models.Scoutsjaar", null)
                         .WithMany("Rondes")
-                        .HasForeignKey("ScoutsjaarId");
+                        .HasForeignKey("ScoutsjaarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SintLeoPannenkoeken.Models.Zone", "Zone")
                         .WithMany()
