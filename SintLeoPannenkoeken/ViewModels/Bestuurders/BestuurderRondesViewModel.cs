@@ -13,8 +13,7 @@ namespace SintLeoPannenkoeken.ViewModels.Bestuurders
             Zones = zones.Select(zone =>
             {
                 var bestellingenForZone = bestellingenPerZone.ContainsKey(zone.Id) ? bestellingenPerZone[zone.Id] : new List<Bestelling>();
-                var aantalPakken = bestellingenForZone.Sum(b => b.AantalPakken);
-                return new ZoneViewModel(zone, bestellingenForZone.Count, aantalPakken);
+                return new ZoneViewModel(zone, bestellingenForZone);
             }).OrderBy(zone => zone.Naam).ToList();
         }
 

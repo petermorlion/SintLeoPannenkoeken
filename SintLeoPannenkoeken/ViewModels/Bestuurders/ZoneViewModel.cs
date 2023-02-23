@@ -6,15 +6,17 @@ namespace SintLeoPannenkoeken.ViewModels.Bestuurders
     {
         private readonly Zone _zone;
 
-        public ZoneViewModel(Zone zone, int aantalBestellingen, int aantalPakken)
+        public ZoneViewModel(Zone zone, IList<Bestelling> bestellingen)
         {
             _zone = zone;
-            AantalBestellingen = aantalBestellingen;
-            AantalPakken = aantalPakken;
+            AantalBestellingen = bestellingen.Count;
+            AantalPakken = bestellingen.Sum(b => b.AantalPakken);
+            AantalAdressen = bestellingen.GroupBy(b => $"{b.StraatId}-{b.Nummer}").Count();
         }
 
         public int Id => _zone.Id;
         public string Naam => _zone.Naam;
+        public int AantalAdressen{ get; }
         public int AantalBestellingen { get; }
         public int AantalPakken { get; }
     }

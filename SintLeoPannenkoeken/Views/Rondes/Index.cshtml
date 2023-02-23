@@ -1,0 +1,110 @@
+﻿@model SintLeoPannenkoeken.ViewModels.Rondes.IndexViewModel
+@{
+    ViewData["Title"] = "Rondes";
+}
+
+<div id="bestuurders" class="container-fluid" data-scoutsjaar="@Model.Scoutsjaar.Begin">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+    <table id="bestuurdersTable" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Zone</th>
+                <th>Gemeente</th>
+                <th>Adressen</th>
+                <th>Bestellingen</th>
+                <th>Pakken</th>
+                <th>Bestuurder</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ronde in Model.Rondes)
+            {
+                <tr>
+                    <td>@ronde.Zone.Naam</td>
+                    <td>@ronde.Zone.Gemeente</td>
+                    <td>@ronde.AantalAdressen</td>
+                    <td>@ronde.AantalBestellingen</td>
+                    <td>@ronde.AantalPakken</td>
+                    <td>@ronde.Bestuurder.Achternaam @ronde.Bestuurder.Voornaam</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        async function reloadBestuurders() {
+            var scoutsjaar = $('#bestuurders').data('scoutsjaar');
+            var response = await fetch(`/api/bestuurders/${scoutsjaar}`);
+            if (!response.ok) {
+                // TODO: handle error
+            }
+
+            var json = await response.json();
+            $('#bestuurdersTable').DataTable({
+                destroy: true,
+                data: json,
+                pageLength: 250,
+                lengthMenu: [50, 10, 250, 500],
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/nl-NL.json'
+                },
+                columns: [
+                    { data: 'achternaam' },
+                    { data: 'voornaam' },
+                    { data: 'aantalBestellingen' },
+                    { data: 'aantalPakken' },
+                    {
+                        data: function (row, type, val, meta) {
+                            return `
+                                 <a href='/Bestuurders/Rondes?bestuurderId=${row.id}&scoutsjaar=${scoutsjaar}' class='bestellingen-delete' title='Rondes' data-id='${row.id}'><i class="bi bi-car-front-fill"></i></a>
+                            `;
+                        }
+                    }
+                ]
+            });
+        }
+
+        async function submitBestuurder() {
+            var data = {
+                achternaam: $('#bestuurderForm #achternaam').val(),
+                voornaam: $('#bestuurderForm #voornaam').val()
+            };
+
+            var response = await fetch(`/api/bestuurders`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                // TODO: handle error
+            }
+
+            setFocus();
+        }
+
+        function setFocus() {
+            $('#bestuurderForm #achternaam').focus();
+        }
+
+        function clearForm() {
+            $('#bestuurderForm')[0].reset();
+        }
+
+        $(async function () {
+            $('#bestuurderForm button.btn-primary').click(async function(event) {
+                event.preventDefault();
+                await submitBestuurder();
+                await reloadBestuurders();
+                clearForm();
+            });
+
+            await reloadBestuurders();
+            setFocus();
+        });
+    </script>
+}
