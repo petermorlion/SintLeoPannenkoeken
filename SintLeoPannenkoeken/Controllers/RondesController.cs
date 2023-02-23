@@ -45,7 +45,9 @@ namespace SintLeoPannenkoeken.Controllers
                 .Bestellingen
                 .ToList();
 
-            return View(new IndexViewModel(sj, rondes, bestellingen));
+            var zones = _dbContext.Zones.ToList();
+
+            return View(new IndexViewModel(sj, rondes, bestellingen, zones));
         }
     }
 }
