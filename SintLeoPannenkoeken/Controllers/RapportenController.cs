@@ -65,5 +65,50 @@ namespace SintLeoPannenkoeken.Controllers
 
             return View(viewModel);
         }
+
+        public async Task<IActionResult> BestuurderDetails(int bestuurderId)
+        {
+            var connection = _dbContext.Database.GetDbConnection();
+            var command = new CommandDefinition(
+                "SELECT " +
+                    "[bestelnummer], " +
+                    "[zone_naam], " +
+                    "[zone_gemeente], " +
+                    "[zone_postnummer], " +
+                    "[zone_omschrijving], " +
+                    "[KaartNummer], " +
+                    "[bestuurder], " +
+                    "[bestuurder_id], " +
+                    "[huisnummer], " +
+                    "[Bus], " +
+                    "[Naam], " +
+                    "[Opmerkingen], " +
+                    "[AantalPakken], " +
+                    "[Telefoon], " +
+                    "[straatnaam], " +
+                    "[Postcode], " +
+                    "[straat_gemeente], " +
+                    "[straat_omschrijving], " +
+                    "[straatnummer] " +
+                    "FROM [vw_rondes] " +
+                    "WHERE [bestuurder_id] = @bestuurderId",
+                new
+                {
+                    bestuurderId = bestuurderId
+                }
+            );
+
+            var bestuurder = _dbContext.Bestuurders.Single(b => b.Id == bestuurderId);
+
+            var vwRondes = await connection.QueryAsync<VwRonde>(command);
+
+            var viewModel = new BestuurderDetailsViewModel
+            {
+                BestuurderNaam = bestuurder.Achternaam + " " + bestuurder.Voornaam,
+                VwRondes = vwRondes.ToList()
+            };
+
+            return View(viewModel);
+        }
     }
 }

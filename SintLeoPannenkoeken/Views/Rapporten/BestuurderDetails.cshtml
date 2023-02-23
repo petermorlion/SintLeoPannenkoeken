@@ -1,14 +1,15 @@
-﻿@model SintLeoPannenkoeken.ViewModels.Rapporten.ZoneDetailsViewModel;
+﻿@model SintLeoPannenkoeken.ViewModels.Rapporten.BestuurderDetailsViewModel;
 @{
-    ViewData["Title"] = "Zone " + Model.ZoneNaam;
+    ViewData["Title"] = Model.BestuurderNaam;
 }
 
 <div id="rapporten" class="container-fluid">
     <h1 class="display-4">@ViewData["Title"]</h1>
-    <h2>@Model.ZoneNaam - @Model.PostNummer @Model.Gemeente - @Model.Bestuurder</h2>
-    <table id="zoneTable" class="table table-striped">
+    <h2>@Model.BestuurderNaam</h2>
+    <table id="bestuurderTable" class="table table-striped">
         <thead>
             <tr>
+                <th>Zone</th>
                 <th>Nr</th>
                 <th>Bus</th>
                 <th>Straat</th>
@@ -23,7 +24,7 @@
     <script>
         async function initTable(){
             var json = @Json.Serialize(Model.VwRondes);
-            $('#zoneTable').DataTable({
+            $('#bestuurderTable').DataTable({
                 destroy: true,
                 data: json,
                 dom: 'Bfrtip',
@@ -33,7 +34,7 @@
                         customize: function ( win ) {
                             $(win.document.body)
                                 .prepend(
-                                    '<h2>@Model.ZoneNaam - @Model.PostNummer @Model.Gemeente - @Model.Bestuurder</h2>'
+                                    '<h2>@Model.BestuurderNaam</h2>'
                                 );
                             $(win.document.body).find('h1').remove();
                         }
@@ -45,6 +46,7 @@
                     url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/nl-NL.json'
                 },
                 columns: [
+                    { data: 'zone_naam' },
                     { data: 'huisnummer' },
                     { data: 'bus' },
                     { data: 'straatnaam' },
