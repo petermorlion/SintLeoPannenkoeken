@@ -13,7 +13,7 @@
                 <select type="text" class="form-control" placeholder="Zone" aria-label="Zone" name="zoneId" id="zoneId">
                     @foreach (var zone in Model.Zones)
                     {
-                        <option value="@zone.Id">@zone.Naam</option>
+                        <option value="@zone.Id">@zone.Naam (@zone.AantalBestellingen bestellingen, @zone.AantalPakken pakken)</option>
                     }
                 </select>
             </div>

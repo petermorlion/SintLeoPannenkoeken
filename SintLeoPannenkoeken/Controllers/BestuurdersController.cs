@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Data;
 using SintLeoPannenkoeken.Models;
 using SintLeoPannenkoeken.ViewModels.Bestuurders;
@@ -38,7 +39,15 @@ namespace SintLeoPannenkoeken.Controllers
         {
             var zones = _dbContext.Zones.ToList();
             var bestuurder = _dbContext.Bestuurders.Single(bestuurder => bestuurder.Id == bestuurderId);
-            var viewModel = new BestuurderRondesViewModel(scoutsjaar, bestuurder, zones);
+            var bestellingen = _dbContext.Scoutsjaren
+                .Include(sj => sj.Bestellingen)
+                .ThenInclude(bestelling => bestelling.Straat)
+                .ThenInclude(straat => straat.Zone)
+                .Single(sj => sj.Begin == scoutsjaar)
+                .Bestellingen
+                .ToList();
+
+            var viewModel = new BestuurderRondesViewModel(scoutsjaar, bestuurder, zones, bestellingen);
 
             return View(viewModel);
         }
