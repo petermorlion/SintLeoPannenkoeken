@@ -66,18 +66,12 @@
                     {
                         data: function(row, type, val, meta) {
                             return `
-                                <a href='#' class='ronde-delete' title='Verwijderen' data-id='${row.id}'><i class="text-danger bi bi-x-circle-fill"></i></a>
+                                    <a href='#' onclick="deleteRonde(${row.id})" title='Verwijderen'><i class="text-danger bi bi-x-circle-fill"></i></a>
                                 `;
                         }
                     }
                 ]
             });
-
-            setTimeout(function () {
-                $('.ronde-delete').click(async function () {
-                    await deleteRonde($(this).data('id'));
-                });
-            }, 300);
         }
 
         async function submitZone() {

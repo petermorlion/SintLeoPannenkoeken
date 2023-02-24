@@ -61,17 +61,11 @@
                     { data: 'aantal' },
                     {
                         data: function (row, type, val, meta) {
-                            return `<a href='#' class='streefcijfer-delete' title='Verwijderen' data-id='${row.id}'><i class="text-danger bi-x-circle-fill"></i></a>`;
+                            return `<a href='#' onclick="deleteStreefCijfer(${row.id})" title='Verwijderen'><i class="text-danger bi-x-circle-fill"></i></a>`;
                         }
                     }
                 ]
             });
-
-            setTimeout(function() {
-                $('.streefcijfer-delete').click(async function () {
-                    await deleteStreefCijfer($(this).data('id'));
-                });
-            }, 300);
         }
 
         async function submitStreefCijfer() {

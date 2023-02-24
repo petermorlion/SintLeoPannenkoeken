@@ -117,19 +117,13 @@
                     {
                         data: function(row, type, val, meta) {
                             return `
-                                <!--<a href='#' class='bestellingen-edit' title='Bewerken' data-id='${row.id}'><i class="bi bi-pencil-fill"></i></a>-->
+                                <!--<a href='#' onclick="editBestelling(${row.id})" title='Bewerken'><i class="bi bi-pencil-fill"></i></a>-->
                                 <a href='#' onclick="deleteBestelling(${row.id})" title='Verwijderen'><i class="text-danger bi bi-x-circle-fill"></i></a>
                                 `;
                         }
                     }
                 ]
             });
-
-            setTimeout(function() {
-                $('.bestellingen-edit').click(async function () {
-                    await editBestelling($(this).data('id'));
-                });
-            }, 300);
         }
 
         async function createBestelling() {
