@@ -65,7 +65,8 @@
             var scoutsjaar = $('#bestellingen').data('scoutsjaar');
             var response = await fetch(`/api/bestellingen/${scoutsjaar}`);
             if (!response.ok) {
-                // TODO: handle error
+                var errorMessage = await (response.text());
+                alert(errorMessage);
             }
 
             var json = await response.json();
@@ -117,7 +118,7 @@
                     {
                         data: function(row, type, val, meta) {
                             return `
-                                <!--<a href='#' onclick="editBestelling(${row.id})" title='Bewerken'><i class="bi bi-pencil-fill"></i></a>-->
+                                <a href='#' onclick="editBestelling(${row.id})" title='Bewerken'><i class="bi bi-pencil-fill"></i></a>
                                 <a href='#' onclick="deleteBestelling(${row.id})" title='Verwijderen'><i class="text-danger bi bi-x-circle-fill"></i></a>
                                 `;
                         }
@@ -149,7 +150,8 @@
             });
 
             if (!response.ok) {
-                // TODO: handle error
+                var errorMessage = await(response.text());
+                alert(errorMessage);
             }
 
             var bestelling = await response.json();
@@ -161,38 +163,37 @@
         }
 
         async function updateBestelling() {
-            //var scoutsjaar = $('#bestellingen').data('scoutsjaar');
-            //var data = {
-            //    naam: $('#bestellingForm #naam').val(),
-            //    telefoon: $('#bestellingForm #telefoon').val(),
-            //    aantalPakken: $('#bestellingForm #aantalPakken').val(),
-            //    betaald: $('#bestellingForm #betaald').is(':checked'),
-            //    opmerkingen: $('#bestellingForm #opmerkingen').val(),
-            //    lidId: $('#bestellingForm #lid').val(),
-            //    straatId: $('#bestellingForm #straat').val(),
-            //    nummer: $('#bestellingForm #nummer').val(),
-            //    bus: $('#bestellingForm #bus').val()
-            //};
+            var scoutsjaar = $('#bestellingen').data('scoutsjaar');
+            var data = {
+                naam: $('#updateBestellingForm #naam').val(),
+                telefoon: $('#updateBestellingForm #telefoon').val(),
+                aantalPakken: $('#updateBestellingForm #aantalPakken').val(),
+                betaald: $('#updateBestellingForm #betaald').is(':checked'),
+                opmerkingen: $('#updateBestellingForm #opmerkingen').val(),
+                lidId: $('#updateBestellingForm #lid').val(),
+                straatId: $('#updateBestellingForm #straat').val(),
+                nummer: $('#updateBestellingForm #nummer').val(),
+                bus: $('#updateBestellingForm #bus').val()
+            };
 
-            //var response = await fetch(`/api/bestellingen/${scoutsjaar}`, {
-            //    method: 'POST',
-            //    headers: {
-            //        'Content-Type': 'application/json'
-            //    },
-            //    body: JSON.stringify(data)
-            //});
+            var bestellingId = $('#updateBestellingForm #bestellingId').val();
 
-            //if (!response.ok) {
-            //    // TODO: handle error
-            //}
+            var response = await fetch(`/api/bestellingen/${scoutsjaar}/${bestellingId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
 
-            //var bestelling = await response.json();
+            if (!response.ok) {
+                var errorMessage = await(response.text());
+                alert(errorMessage);
+            }
 
-            //await reloadBestellingen();
-            //clearForms();
-            //$('#bestellingForm #lid').val(bestelling.lid.id)
-            //setFocus();
-            alert('yes');
+            await reloadBestellingen();
+            clearForms();
+            setFocus();
         }
 
         async function deleteBestelling(bestellingId) {
@@ -205,14 +206,35 @@
             });
 
             if (!response.ok) {
-                // TODO: handle error
+                var errorMessage = await(response.text());
+                alert(errorMessage);
             }
 
             await reloadBestellingen();
         }
 
         async function editBestelling(bestellingId) {
+            var scoutsjaar = $('#bestellingen').data('scoutsjaar');
             $('#editBestellingModal #bestellingId').val(bestellingId);
+
+            var response = await fetch(`/api/bestellingen/${scoutsjaar}/${bestellingId}`);
+            if (!response.ok) {
+                var errorMessage = await (response.text());
+                alert(errorMessage);
+            }
+
+            var bestelling = await response.json();
+            
+            $('#updateBestellingForm #naam').val(bestelling.naam);
+            $('#updateBestellingForm #telefoon').val(bestelling.telefoon);
+            $('#updateBestellingForm #aantalPakken').val(bestelling.aantalPakken);
+            $('#updateBestellingForm #betaald').prop('checked', bestelling.betaald);
+            $('#updateBestellingForm #opmerkingen').val(bestelling.opmerkingen);
+            $('#updateBestellingForm #lid').val(bestelling.lid.id);
+            $('#updateBestellingForm #straat').val(bestelling.straatId);
+            $('#updateBestellingForm #nummer').val(bestelling.nummer);
+            $('#updateBestellingForm #bus').val(bestelling.bus);
+
             $('#editBestellingModal').modal('show');
         }
 
@@ -254,6 +276,7 @@
             $('#editBestellingModal button.btn-primary').click(async function(event) {
                 event.preventDefault();
                 await updateBestelling();
+                $('#editBestellingModal').modal('hide');
                 enableAdres('#updateBestellingForm');
             });
 

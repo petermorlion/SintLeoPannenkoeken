@@ -42,7 +42,8 @@
         async function reloadUsers() {
             var response = await fetch(`/api/users`);
             if (!response.ok) {
-                // TODO: handle error
+                var errorMessage = await(response.text());
+                alert(errorMessage);
             }
 
             var json = await response.json();
@@ -76,7 +77,8 @@
             });
 
             if (!response.ok) {
-                // TODO: handle error
+                var errorMessage = await(response.text());
+                alert(errorMessage);
             }
 
             setFocus();

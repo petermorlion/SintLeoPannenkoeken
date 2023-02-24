@@ -54,7 +54,8 @@
         async function reloadLeden() {
             var response = await fetch(`/api/leden`);
             if (!response.ok) {
-                // TODO: handle error
+                var errorMessage = await(response.text());
+                alert(errorMessage);
             }
 
             var json = await response.json();
@@ -92,7 +93,8 @@
             });
 
             if (!response.ok) {
-                // TODO: handle error
+                var errorMessage = await(response.text());
+                alert(errorMessage);
             }
 
             setFocus();

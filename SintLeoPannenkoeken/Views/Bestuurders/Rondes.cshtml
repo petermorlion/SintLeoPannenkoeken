@@ -45,7 +45,8 @@
             var bestuurderId = $('#rondes').data('bestuurderid');
             var response = await fetch(`/api/bestuurders/${bestuurderId}/rondes/${scoutsjaar}`);
             if (!response.ok) {
-                // TODO: handle error
+                var errorMessage = await (response.text());
+                alert(errorMessage);
             }
 
             var json = await response.json();
@@ -108,7 +109,8 @@
             });
 
             if (!response.ok) {
-                // TODO: handle error
+                var errorMessage = await (response.text());
+                alert(errorMessage);
             }
 
             await reloadRondes();

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Data;
 using SintLeoPannenkoeken.Models;
 using SintLeoPannenkoeken.ViewModels.Bestellingen;
+using System.Net.NetworkInformation;
 
 namespace SintLeoPannenkoeken.Controllers.API
 {
@@ -43,6 +44,37 @@ namespace SintLeoPannenkoeken.Controllers.API
             return Ok(bestellingenViewModel);
         }
 
+        [HttpGet]
+        [Route("{jaar:int}/{id:int}")]
+        public IActionResult GetBestelling(int jaar, int id)
+        {
+            var scoutsjaar = _dbContext.Scoutsjaren.SingleOrDefault(s => s.Begin == jaar);
+            if (scoutsjaar == null)
+            {
+                return BadRequest("Onbekend scoutsjaar");
+            }
+
+            var bestelling = _dbContext.Scoutsjaren
+                .Include(scoutsjaar => scoutsjaar.Bestellingen)
+                .ThenInclude(bestelling => bestelling.Straat)
+                .ThenInclude(straat => straat.Zone)
+                .Include(scoutsjaar => scoutsjaar.Bestellingen)
+                .ThenInclude(bestelling => bestelling.Lid)
+                .ThenInclude(lid => lid.Tak)
+                .SingleOrDefault(scoutsjaar => scoutsjaar.Begin == jaar)
+                ?.Bestellingen
+                .SingleOrDefault(bestelling => bestelling.Id == id);
+
+            if (bestelling == null)
+            {
+                return BadRequest("Onbekende bestelling");
+            }
+
+            var bestellingViewModel = new BestellingViewModel(bestelling);
+
+            return Ok(bestellingViewModel);
+        }
+
         [HttpPost]
         [Route("{jaar:int}")]
         public IActionResult Post(int jaar, [FromBody] CreateBestellingViewModel createBestellingViewModel)
@@ -76,7 +108,7 @@ namespace SintLeoPannenkoeken.Controllers.API
                 .Single(b => b.Id == bestelling.Id);
 
             var bestellingViewModel = new BestellingViewModel(bestelling);
-            return Created($"/api/bestellingen/{bestelling.Id}", bestellingViewModel);
+            return Created($"/api/bestellingen/{scoutsjaar}/{bestelling.Id}", bestellingViewModel);
         }
 
         [HttpDelete]
@@ -87,6 +119,46 @@ namespace SintLeoPannenkoeken.Controllers.API
             _dbContext.Bestellingen.Attach(bestelling);
             _dbContext.Bestellingen.Remove(bestelling);
             _dbContext.SaveChanges();
+            return NoContent();
+        }
+
+        [HttpPut]
+        [Route("{jaar:int}/{bestellingId:int}")]
+        public IActionResult Put(int jaar, int bestellingId, [FromBody] UpdateBestellingViewModel updateBestellingViewModel)
+        {
+            var scoutsjaar = _dbContext.Scoutsjaren.SingleOrDefault(s => s.Begin == jaar);
+            if (scoutsjaar == null)
+            {
+                return BadRequest("Onbekend scoutsjaar");
+            }
+
+            var bestelling = _dbContext.Bestellingen.SingleOrDefault(bestelling => bestelling.Id == bestellingId);
+            if (bestelling == null)
+            {
+                return BadRequest("Onbekende bestelling");
+            }
+
+            var takId = _dbContext.Leden.Single(lid => lid.Id == updateBestellingViewModel.LidId).TakId;
+
+            bestelling.Naam = updateBestellingViewModel.Naam;
+            bestelling.AantalPakken = updateBestellingViewModel.AantalPakken;
+            bestelling.Telefoon = updateBestellingViewModel.Telefoon != null ? updateBestellingViewModel.Telefoon : "";
+            bestelling.Opmerkingen = updateBestellingViewModel.Opmerkingen != null ? updateBestellingViewModel.Opmerkingen : "";
+            bestelling.Betaald = updateBestellingViewModel.Betaald;
+            bestelling.LidId = updateBestellingViewModel.LidId;
+            bestelling.TakId = takId;
+            bestelling.StraatId = updateBestellingViewModel.StraatId;
+            bestelling.Nummer = updateBestellingViewModel.Nummer;
+            bestelling.Bus = updateBestellingViewModel.Bus;
+
+            _dbContext.SaveChanges();
+            bestelling = _dbContext.Bestellingen
+                .Include(b => b.Tak)
+                .Include(b => b.Lid)
+                .Include(b => b.Straat)
+                .Single(b => b.Id == bestelling.Id);
+
+            var bestellingViewModel = new BestellingViewModel(bestelling);
             return NoContent();
         }
     }
