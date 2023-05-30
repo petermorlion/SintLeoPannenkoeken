@@ -16,3 +16,7 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.bestellingen-summary {
+    font-size: 5em;
+}
