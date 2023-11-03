@@ -1,0 +1,102 @@
+﻿@{
+    ViewData["Title"] = "Scoutsjaren";
+}
+
+<div id="scoutsjaren" class="container-fluid">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+    <form id="scoutsjaarForm">
+        <div class="row mt-4 mb-4">
+            <div class="col-6">
+                <label for="begin" class="form-label">Begin</label>
+                <input type="number" class="form-control" aria-label="Begin" name="begin" id="begin">
+            </div>
+            <div class="col-6">
+                <label for="einde" class="form-label">Einde</label>
+                <input type="number" class="form-control" aria-label="Einde" name="einde" id="einde">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 mb-4">
+                <button type="submit" class="btn btn-primary">Opslaan</button>
+                <button type="reset" class="btn btn-secondary">Annuleren</button>
+            </div>
+        </div>
+    </form>
+    <table id="scoutsjarenTable" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Begin</th>
+                <th>Einde</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        async function reloadScoutsjaren() {
+            var response = await fetch(`/api/scoutsjaren`);
+            if (!response.ok) {
+                var errorMessage = await(response.text());
+                alert(errorMessage);
+            }
+
+            var json = await response.json();
+            $('#scoutsjarenTable').DataTable({
+                destroy: true,
+                data: json,
+                pageLength: 250,
+                lengthMenu: [50, 10, 250, 500],
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/nl-NL.json'
+                },
+                columns: [
+                    { data: 'begin' },
+                    { data: 'einde' },
+                ]
+            });
+        }
+
+        async function submitScoutsjaar() {
+            var data = {
+                begin: $('#scoutsjaarForm #begin').val(),
+                einde: $('#scoutsjaarForm #einde').val()
+            };
+
+            var response = await fetch(`/api/scoutsjaren`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                var errorMessage = await(response.text());
+                alert(errorMessage);
+            }
+
+            setFocus();
+        }
+
+        function setFocus() {
+            $('#scoutsjaarForm #begin').focus();
+        }
+
+        function clearForm() {
+            $('#scoutsjaarForm')[0].reset();
+        }
+
+        $(async function () {
+            $('#scoutsjaarForm button.btn-primary').click(async function (event) {
+                event.preventDefault();
+                await submitScoutsjaar();
+                await reloadScoutsjaren();
+                clearForm();
+            });
+
+            await reloadScoutsjaren();
+            setFocus();
+        });
+    </script>
+}
