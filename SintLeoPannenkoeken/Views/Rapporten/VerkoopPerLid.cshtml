@@ -29,39 +29,40 @@
                 order: [[2, 'desc']],
                 pageLength: 1000,
                 lengthMenu: [250, 500, 1000],
-                // language: {
-                //     url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/nl-NL.json'
-                // },
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/nl-NL.json'
+                },
                 columns: [
                     { data: 'naam' },
                     { data: 'takNaam' },
                     { data: 'aantalPakkenVerkocht' }
-                ]
+                ],
+                initComplete: function(settings, json) {
+                    const select = $('<select><option value="all">Alle</option></select>')
+                        .appendTo(
+                            $('#takFilterWrapper')
+                        )
+                        .on('change', function () {
+                            var val = $(this).val();
+                            if (val === 'all') {
+                                val = '';
+                            }
+
+                            table.column(1)
+                                .search(val)
+                                .draw();
+                        });
+
+                    table
+                        .column(1)
+                        .cache('search')
+                        .sort()
+                        .unique()
+                        .each(function (o) {
+                            select.append($('<option value="' + o + '">' + o + '</option>'));
+                        });
+                }
             });
-
-            const select = $('<select><option value="all">Alle</option></select>')
-                .appendTo(
-                    $('#takFilterWrapper')
-                )
-                .on('change', function () {
-                    var val = $(this).val();
-                    if (val === 'all') {
-                        val = '';
-                    }
-
-                    table.column(1)
-                        .search(val)
-                        .draw();
-                });
-
-            table
-                .column(1)
-                .cache('search')
-                .sort()
-                .unique()
-                .each(function (o) {
-                    select.append($('<option value="' + o + '">' + o + '</option>'));
-                });
         }
 
         $(async function () {
