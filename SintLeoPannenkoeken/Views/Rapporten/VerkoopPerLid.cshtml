@@ -6,7 +6,14 @@
 <div id="rapporten" class="container-fluid">
     <h1 class="display-4">@ViewData["Title"]</h1>
     
-    <div id="takFilterWrapper"></div>
+    <div class="row mb-3">
+        <label for="takFilter" class="col-sm-2 col-form-label">Filter op tak:</label>
+        <div class="col-sm-3">
+            <select id="takFilter" class="form-select">
+                <option value="all">Alle</option>
+            </select>
+        </div>
+    </div>
     <table id="verkoopPerLidTable" class="table table-striped">
         <thead>
             <tr>
@@ -38,10 +45,7 @@
                     { data: 'aantalPakkenVerkocht' }
                 ],
                 initComplete: function(settings, json) {
-                    const select = $('<select><option value="all">Alle</option></select>')
-                        .appendTo(
-                            $('#takFilterWrapper')
-                        )
+                    const select = $('#takFilter')
                         .on('change', function () {
                             var val = $(this).val();
                             if (val === 'all') {
