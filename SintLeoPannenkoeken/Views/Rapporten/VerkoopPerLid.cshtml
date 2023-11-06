@@ -6,6 +6,7 @@
 <div id="rapporten" class="container-fluid">
     <h1 class="display-4">@ViewData["Title"]</h1>
     
+    <div id="takFilterWrapper"></div>
     <table id="verkoopPerLidTable" class="table table-striped">
         <thead>
             <tr>
@@ -20,23 +21,47 @@
 @section Scripts {
     <script>
         async function initTable() {
-            var json = @Json.Serialize(Model.LidVerkoopViewModels);
-            $('#verkoopPerLidTable').DataTable({
+            const json = @Json.Serialize(Model.LidVerkoopViewModels);
+            const table = $('#verkoopPerLidTable').DataTable({
                 destroy: true,
                 data: json,
                 dom: 'frtip',
                 order: [[2, 'desc']],
                 pageLength: 1000,
                 lengthMenu: [250, 500, 1000],
-                language: {
-                    url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/nl-NL.json'
-                },
+                // language: {
+                //     url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/nl-NL.json'
+                // },
                 columns: [
                     { data: 'naam' },
                     { data: 'takNaam' },
                     { data: 'aantalPakkenVerkocht' }
                 ]
             });
+
+            const select = $('<select><option value="all">Alle</option></select>')
+                .appendTo(
+                    $('#takFilterWrapper')
+                )
+                .on('change', function () {
+                    var val = $(this).val();
+                    if (val === 'all') {
+                        val = '';
+                    }
+
+                    table.column(1)
+                        .search(val)
+                        .draw();
+                });
+
+            table
+                .column(1)
+                .cache('search')
+                .sort()
+                .unique()
+                .each(function (o) {
+                    select.append($('<option value="' + o + '">' + o + '</option>'));
+                });
         }
 
         $(async function () {
