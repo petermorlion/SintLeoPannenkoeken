@@ -150,5 +150,39 @@ namespace SintLeoPannenkoeken.Controllers
             
             return View(viewModel);
         }
+
+        public async Task<IActionResult> VerkoopPerLid(int? scoutsjaar)
+        {
+            if (scoutsjaar == null)
+            {
+                var currentScoutsjaar = _dbContext.Scoutsjaren.OrderByDescending(s => s.Begin).First();
+                return Redirect($"/rapporten/verkoopperlid?scoutsjaar={currentScoutsjaar.Begin}");
+            }
+
+            Scoutsjaar? sj = _dbContext
+                .Scoutsjaren
+                .Include(x => x.StreefCijfers)
+                .ThenInclude(x => x.Tak)
+                .SingleOrDefault(s => s.Begin == scoutsjaar);
+            if (sj == null)
+            {
+                var currentScoutsjaar = _dbContext.Scoutsjaren.OrderByDescending(s => s.Begin).First();
+                return Redirect($"/rapporten/verkoopperlid?scoutsjaar={currentScoutsjaar.Begin}");
+            }
+
+            var bestellingen = _dbContext.Scoutsjaren
+                .Include(scoutsjaar => scoutsjaar.Bestellingen)
+                .ThenInclude(bestelling => bestelling.Lid)
+                .ThenInclude(lid => lid.Tak)
+                .SingleOrDefault(scoutsjaar => scoutsjaar.Id == sj.Id)
+                ?.Bestellingen
+                ?.ToList();
+
+            var verkoopPerLid = bestellingen
+                .GroupBy(x => x.Lid)
+                .ToDictionary(x => x.Key, x => x.Sum(y => y.AantalPakken));
+
+            return View(new VerkoopPerLidViewModel(verkoopPerLid));
+        }
     }
 }

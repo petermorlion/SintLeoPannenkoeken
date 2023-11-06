@@ -1,0 +1,46 @@
+﻿@model SintLeoPannenkoeken.ViewModels.Rapporten.VerkoopPerLidViewModel;
+@{
+    ViewData["Title"] = "Verkoop per lid";
+}
+
+<div id="rapporten" class="container-fluid">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+    
+    <table id="verkoopPerLidTable" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Naam</th>
+                <th>Tak</th>
+                <th>Verkocht</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        async function initTable() {
+            var json = @Json.Serialize(Model.LidVerkoopViewModels);
+            $('#verkoopPerLidTable').DataTable({
+                destroy: true,
+                data: json,
+                dom: 'frtip',
+                order: [[2, 'desc']],
+                pageLength: 1000,
+                lengthMenu: [250, 500, 1000],
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/nl-NL.json'
+                },
+                columns: [
+                    { data: 'naam' },
+                    { data: 'takNaam' },
+                    { data: 'aantalPakkenVerkocht' }
+                ]
+            });
+        }
+
+        $(async function () {
+            await initTable();
+        });
+    </script>
+}
