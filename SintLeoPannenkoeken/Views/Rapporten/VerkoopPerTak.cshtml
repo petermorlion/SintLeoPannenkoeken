@@ -1,0 +1,49 @@
+﻿@model SintLeoPannenkoeken.ViewModels.Rapporten.VerkoopPerTakViewModel;
+@{
+    ViewData["Title"] = "Verkoop per tak";
+}
+
+<div id="rapporten" class="container-fluid">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+    
+    <div id="rapport">
+        <canvas id="chart"></canvas>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="https://unpkg.com/chart.js@4.2.0/dist/chart.umd.js"></script>
+    <script>
+        const data = @Html.Raw(Json.Serialize(Model));
+        const rapport = document.getElementById('chart');
+        const chart = new Chart(
+            rapport,
+            {
+                type: 'bar',
+                data: {
+                    labels: data.takVerkoopViewModels.map(getRowLabel),
+                    datasets: [
+                        {
+                            label: 'Verkoop',
+                            data: data.takVerkoopViewModels.map(row => row.aantalPakkenVerkocht)
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y'
+                }
+            }
+        );
+
+        function getRowLabel(row) {
+            return [
+                row.naam,
+                `Verkocht: ${row.aantalPakkenVerkocht}`,
+                `Streefcijfer: ${row.streefcijfer}`,
+                `% Verkocht: ${(row.aantalPakkenVerkocht / row.streefcijfer * 100).toFixed(2)}%`,
+                `Leden: ${row.leden}`                
+            ]
+        }
+    </script>
+}

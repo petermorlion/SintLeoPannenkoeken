@@ -17,12 +17,8 @@ namespace SintLeoPannenkoeken.Controllers.API
     {
         private readonly ILogger<ScoutsjarenController> _logger;
         private readonly ApplicationDbContext _dbContext;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public ScoutsjarenController(
-            ILogger<ScoutsjarenController> logger, 
-            ApplicationDbContext dbContext)
+        public ScoutsjarenController(ILogger<ScoutsjarenController> logger, ApplicationDbContext dbContext)
         {
             _logger = logger;
             _dbContext = dbContext;

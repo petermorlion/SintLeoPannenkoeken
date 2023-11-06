@@ -1,7 +1,9 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Framework;
 using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Data;
+using SintLeoPannenkoeken.Models;
 using SintLeoPannenkoeken.Models.Views;
 using SintLeoPannenkoeken.ViewModels.Rapporten;
 
@@ -108,6 +110,44 @@ namespace SintLeoPannenkoeken.Controllers
                 VwRondes = vwRondes.ToList()
             };
 
+            return View(viewModel);
+        }
+
+        public async Task<IActionResult> VerkoopPerTak(int? scoutsjaar)
+        {
+            if (scoutsjaar == null)
+            {
+                var currentScoutsjaar = _dbContext.Scoutsjaren.OrderByDescending(s => s.Begin).First();
+                return Redirect($"/rapporten/verkooppertak?scoutsjaar={currentScoutsjaar.Begin}");
+            }
+
+            Scoutsjaar? sj = _dbContext
+                .Scoutsjaren
+                .Include(x => x.StreefCijfers)
+                .ThenInclude(x => x.Tak)
+                .SingleOrDefault(s => s.Begin == scoutsjaar);
+            if (sj == null)
+            {
+                var currentScoutsjaar = _dbContext.Scoutsjaren.OrderByDescending(s => s.Begin).First();
+                return Redirect($"/rapporten/verkooppertak?scoutsjaar={currentScoutsjaar.Begin}");
+            }
+
+            var bestellingen = _dbContext.Scoutsjaren
+                .Include(scoutsjaar => scoutsjaar.Bestellingen)
+                .ThenInclude(bestelling => bestelling.Tak)
+                .SingleOrDefault(scoutsjaar => scoutsjaar.Id == sj.Id)
+                ?.Bestellingen
+                ?.ToList();
+
+            var verkoopPerTak = bestellingen
+                .GroupBy(x => x.Tak)
+                .ToDictionary(x => x.Key.Id, x => x.Sum(y => y.AantalPakken));
+
+            var streefcijfersPerTak = sj.StreefCijfers.ToDictionary(x => x.Tak.Id, x => x.Aantal);
+            var takken = _dbContext.Takken.Include(x => x.Leden).ToList();
+
+            var viewModel = new VerkoopPerTakViewModel(verkoopPerTak, streefcijfersPerTak, takken);
+            
             return View(viewModel);
         }
     }
