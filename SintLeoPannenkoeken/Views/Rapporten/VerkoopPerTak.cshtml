@@ -14,6 +14,7 @@
 @section Scripts
 {
     <script src="https://unpkg.com/chart.js@4.2.0/dist/chart.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/3.0.1/chartjs-plugin-annotation.min.js" integrity="sha512-Hn1w6YiiFw6p6S2lXv6yKeqTk0PLVzeCwWY9n32beuPjQ5HLcvz5l2QsP+KilEr1ws37rCTw3bZpvfvVIeTh0Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
         const data = @Html.Raw(Json.Serialize(Model));
         const rapport = document.getElementById('chart');
@@ -31,7 +32,12 @@
                     ]
                 },
                 options: {
-                    indexAxis: 'y'
+                    indexAxis: 'y',
+                    plugins: {
+                        annotation: {
+                            annotations: getStreefcijferAnnotations(data)
+                        }
+                    }
                 }
             }
         );
@@ -44,6 +50,38 @@
                 `% Verkocht: ${(row.aantalPakkenVerkocht / row.streefcijfer * 100).toFixed(2)}%`,
                 `Leden: ${row.leden}`                
             ]
+        }
+
+        function getStreefcijferAnnotations(data) {
+            var annotations = {};
+            for (var i = 0; i < data.takVerkoopViewModels.length; i++) {
+                var row = data.takVerkoopViewModels[i];
+                annotations['line' + i] = {
+                    type: 'line',
+                    xMin: row.streefcijfer,
+                    xMax: row.streefcijfer,
+                    yMin: i - 0.5,
+                    yMax: i + 0.5,
+                    borderColor: '#7C9885',
+                    borderWidth: 2,
+                    label: {
+                        display: true,
+                        content: row.streefcijfer
+                    }
+                };
+
+                annotations['label' + i] = {
+                    type: 'label',
+                    xValue: row.aantalPakkenVerkocht,
+                    yValue: i,
+                    content: row.aantalPakkenVerkocht,
+                    backgroundColor: '#0d6efd',
+                    color: 'white',
+                    borderRadius: 6
+                };
+            }
+
+            return annotations;
         }
     </script>
 }
