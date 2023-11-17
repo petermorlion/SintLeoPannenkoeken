@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SintLeoPannenkoeken.Data;
 using SintLeoPannenkoeken.ViewModels.Scoutsjaren;
-using System.Data;
 
 namespace SintLeoPannenkoeken.Controllers
 {

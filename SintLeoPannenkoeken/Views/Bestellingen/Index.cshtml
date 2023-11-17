@@ -5,7 +5,10 @@
 }
 
 <div id="bestellingen" class="container-fluid" data-scoutsjaar="@Model.Scoutsjaar.Begin">
-    <h1 class="display-4">@ViewData["Title"] @Model.Scoutsjaar.Begin</h1>
+    <h1 class="display-4">
+        @ViewData["Title"] 
+        @await Component.InvokeAsync("Scoutsjaar")
+    </h1>
     <div class="row mt-4 mb-4">
         <div class="col-9">
             @await Component.InvokeAsync("Bestelling", new BestellingFormViewModel {

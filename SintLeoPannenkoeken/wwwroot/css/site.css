@@ -18,5 +18,10 @@ body {
 }
 
 .bestellingen-summary {
-    font-size: 5em;
+  font-size: 5em;
+}
+
+.pagetitle-scoutsjaarselector {
+  border: 0;
+  outline: none;
 }
