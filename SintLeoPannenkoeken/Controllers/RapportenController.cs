@@ -19,8 +19,21 @@ namespace SintLeoPannenkoeken.Controllers
             _dbContext = dbContext;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int? scoutsjaar)
         {
+            if (scoutsjaar == null)
+            {
+                var currentScoutsjaar = _dbContext.Scoutsjaren.OrderByDescending(s => s.Begin).First();
+                return Redirect($"/rapporten?scoutsjaar={currentScoutsjaar.Begin}");
+            }
+
+            Scoutsjaar? sj = _dbContext.Scoutsjaren.SingleOrDefault(s => s.Begin == scoutsjaar);
+            if (sj == null)
+            {
+                var currentScoutsjaar = _dbContext.Scoutsjaren.OrderByDescending(s => s.Begin).First();
+                return Redirect($"/rapporten?scoutsjaar={currentScoutsjaar.Begin}");
+            }
+
             return View();
         }
 

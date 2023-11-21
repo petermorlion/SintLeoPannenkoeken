@@ -3,7 +3,10 @@
 }
 
 <div id="bestuurders" class="container-fluid" data-scoutsjaar="@Model.Scoutsjaar.Begin">
-    <h1 class="display-4">@ViewData["Title"]</h1>
+    <h1 class="display-4">
+        @ViewData["Title"]
+        @await Component.InvokeAsync("Scoutsjaar")
+    </h1>
     <form id="bestuurderForm">
         <div class="row mt-4 mb-4">
             <div class="col-6">

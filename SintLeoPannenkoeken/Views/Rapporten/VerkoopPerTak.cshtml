@@ -4,7 +4,10 @@
 }
 
 <div id="rapporten" class="container-fluid">
-    <h1 class="display-4">@ViewData["Title"]</h1>
+    <h1 class="display-4">
+        @ViewData["Title"]
+        @await Component.InvokeAsync("Scoutsjaar")
+    </h1>
     
     <div id="rapport">
         <canvas id="chart"></canvas>

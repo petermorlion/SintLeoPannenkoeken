@@ -4,7 +4,10 @@
 }
 
 <div id="rapporten" class="container-fluid">
-    <h1 class="display-4">@ViewData["Title"]</h1>
+    <h1 class="display-4">
+        @ViewData["Title"]
+        @await Component.InvokeAsync("Scoutsjaar")
+    </h1>
     
     <div class="row mb-3">
         <label for="takFilter" class="col-sm-2 col-form-label">Filter op tak:</label>
