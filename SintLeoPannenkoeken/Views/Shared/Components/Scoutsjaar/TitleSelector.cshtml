@@ -3,6 +3,6 @@
 <select class="pagetitle-scoutsjaarselector">
     @foreach (var item in Model.ScoutsjarenViewModels)
     {
-        <option value="@item.Id" selected="@(item.Id == Model.SelectedScoutsjaarId ? "selected" : "")">@item.Begin - @item.Einde</option>
+        <option value="@item.Begin" selected="@(item.Id == Model.SelectedScoutsjaar ? "selected" : "")">@item.Begin - @item.Einde</option>
     }
 </select>

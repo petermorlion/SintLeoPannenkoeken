@@ -15,11 +15,15 @@ namespace SintLeoPannenkoeken.ViewComponents
             _dbContext = dbContext;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync()
+        public async Task<IViewComponentResult> InvokeAsync(int? selectedScoutsjaar)
         {
+            if (selectedScoutsjaar == null)
+            {
+                selectedScoutsjaar = _dbContext.Scoutsjaren.OrderByDescending(sj => sj.Begin).First().Begin;
+            }
+            
             var scoutsjaren = _dbContext.Scoutsjaren.ToList();
-            var selectedScoutsjaarId = scoutsjaren.First().Id;
-            var scoutsjarenViewModel = new ScoutsjarenViewModel(scoutsjaren, selectedScoutsjaarId);
+            var scoutsjarenViewModel = new ScoutsjarenViewModel(scoutsjaren, (int)selectedScoutsjaar);
             return View("TitleSelector", scoutsjarenViewModel);
         }
     }
