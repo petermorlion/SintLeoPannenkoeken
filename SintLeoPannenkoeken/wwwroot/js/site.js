@@ -6,7 +6,7 @@
 $(document).ready(function () {
     $('.pagetitle-scoutsjaarselector').change(function () {
         var selectedScoutsjaar = $(this).val();
-
+        
         var searchParams = new URLSearchParams(window.location.search);
         searchParams.set('scoutsjaar', selectedScoutsjaar);
         window.location.search = searchParams.toString();
