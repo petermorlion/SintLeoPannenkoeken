@@ -7,7 +7,7 @@
 <div id="bestellingen" class="container-fluid" data-scoutsjaar="@Model.Scoutsjaar.Begin">
     <h1 class="display-4">
         @ViewData["Title"] 
-        @await Component.InvokeAsync("Scoutsjaar")
+        @await Component.InvokeAsync("Scoutsjaar", new { selectedScoutsjaar = Model.Scoutsjaar.Begin })
     </h1>
     <div class="row mt-4 mb-4">
         <div class="col-9">

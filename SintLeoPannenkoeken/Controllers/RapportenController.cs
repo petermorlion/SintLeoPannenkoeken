@@ -34,7 +34,7 @@ namespace SintLeoPannenkoeken.Controllers
                 return Redirect($"/rapporten?scoutsjaar={currentScoutsjaar.Begin}");
             }
 
-            return View();
+            return View(scoutsjaar);
         }
 
         public async Task<IActionResult> ZoneDetails(string zoneNaam)
@@ -158,7 +158,7 @@ namespace SintLeoPannenkoeken.Controllers
             var streefcijfersPerTak = sj.StreefCijfers.ToDictionary(x => x.Tak.Id, x => x.Aantal);
             var takken = _dbContext.Takken.Include(x => x.Leden).ToList();
 
-            var viewModel = new VerkoopPerTakViewModel(verkoopPerTak, streefcijfersPerTak, takken);
+            var viewModel = new VerkoopPerTakViewModel(verkoopPerTak, streefcijfersPerTak, takken, sj.Begin);
             
             return View(viewModel);
         }
@@ -194,7 +194,7 @@ namespace SintLeoPannenkoeken.Controllers
                 .GroupBy(x => x.Lid)
                 .ToDictionary(x => x.Key, x => x.Sum(y => y.AantalPakken));
 
-            return View(new VerkoopPerLidViewModel(verkoopPerLid));
+            return View(new VerkoopPerLidViewModel(verkoopPerLid, sj.Begin));
         }
     }
 }

@@ -4,7 +4,7 @@ namespace SintLeoPannenkoeken.ViewModels.Rapporten
 {
     public class VerkoopPerLidViewModel
     {
-        public VerkoopPerLidViewModel(IDictionary<Lid, int> verkoopPerLid)
+        public VerkoopPerLidViewModel(IDictionary<Lid, int> verkoopPerLid, int scoutsjaarBegin)
         {
             LidVerkoopViewModels = new List<LidVerkoopViewModel>();
             foreach (var lidVerkoop in verkoopPerLid)
@@ -16,8 +16,11 @@ namespace SintLeoPannenkoeken.ViewModels.Rapporten
                     AantalPakkenVerkocht = lidVerkoop.Value
                 });
             }
+
+            ScoutsjaarBegin = scoutsjaarBegin;
         }
 
         public IList<LidVerkoopViewModel> LidVerkoopViewModels { get; set; }
+        public int ScoutsjaarBegin { get; set; }
     }
 }

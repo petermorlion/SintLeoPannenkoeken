@@ -4,7 +4,7 @@ namespace SintLeoPannenkoeken.ViewModels.Rapporten
 {
     public class VerkoopPerTakViewModel
     {
-        public VerkoopPerTakViewModel(IDictionary<int, int> verkoopPerTak, IDictionary<int, int> streefcijfersPerTak, IList<Tak> takken)
+        public VerkoopPerTakViewModel(IDictionary<int, int> verkoopPerTak, IDictionary<int, int> streefcijfersPerTak, IList<Tak> takken, int scoutsjaarBegin)
         {
             TakVerkoopViewModels = new List<TakVerkoopViewModel>();
             foreach (var tak in takken)
@@ -18,8 +18,11 @@ namespace SintLeoPannenkoeken.ViewModels.Rapporten
 
                 });
             }
+
+            ScoutsjaarBegin = scoutsjaarBegin;
         }
 
         public IList<TakVerkoopViewModel> TakVerkoopViewModels { get; set; }
+        public int ScoutsjaarBegin { get; }
     }
 }

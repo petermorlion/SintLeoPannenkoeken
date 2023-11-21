@@ -2,10 +2,12 @@
     ViewData["Title"] = "Rapporten";
 }
 
+@model int
+
 <div id="rapporten" class="container-fluid">
     <h1 class="display-4">
         @ViewData["Title"]
-        @await Component.InvokeAsync("Scoutsjaar")
+        @await Component.InvokeAsync("Scoutsjaar", new { selectedScoutsjaar = Model })
     </h1>
     <ul>
         <li>
