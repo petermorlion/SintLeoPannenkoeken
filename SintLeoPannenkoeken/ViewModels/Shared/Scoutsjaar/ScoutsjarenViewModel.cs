@@ -10,7 +10,7 @@ namespace SintLeoPannenkoeken.ViewModels.Shared.Scoutsjaar
 
         public ScoutsjarenViewModel(IList<Models.Scoutsjaar> scoutsjaren, int selectedScoutsjaar)
         {
-            _scoutsjarenViewModels = scoutsjaren.Select(x => new ScoutsjaarViewModel(x)).ToList();
+            _scoutsjarenViewModels = scoutsjaren.OrderByDescending(x => x.Begin).Select(x => new ScoutsjaarViewModel(x)).ToList();
             _selectedScoutsjaar = selectedScoutsjaar;
         }
 
