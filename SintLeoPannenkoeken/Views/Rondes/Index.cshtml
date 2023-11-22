@@ -4,7 +4,10 @@
 }
 
 <div id="rondes" class="container-fluid" data-scoutsjaar="@Model.Scoutsjaar.Begin">
-    <h1 class="display-4">@ViewData["Title"]</h1>
+    <h1 class="display-4">
+        @ViewData["Title"]
+        @await Component.InvokeAsync("Scoutsjaar", new { selectedScoutsjaar = Model.Scoutsjaar.Begin })
+    </h1>
     <table id="rondesTable" class="table table-striped">
         <thead>
             <tr>
