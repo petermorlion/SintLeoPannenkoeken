@@ -14,7 +14,6 @@
         public int AantalPakken { get; set; }
         public string Opmerkingen { get; set; }
         public bool Betaald { get; set; }
-
         public int LidId { get; set; }
         public Lid Lid { get; set; }
         public int TakId { get; set; }
@@ -23,5 +22,6 @@
         public Straat Straat { get; set; }
         public string Nummer { get; set; }
         public string Bus { get; set; }
+        public DateTime IngaveDatum { get; set; }
     }
 }

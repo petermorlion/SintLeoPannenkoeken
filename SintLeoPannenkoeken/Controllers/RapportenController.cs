@@ -196,5 +196,68 @@ namespace SintLeoPannenkoeken.Controllers
 
             return View(new VerkoopPerLidViewModel(verkoopPerLid, sj.Begin));
         }
+
+        public async Task<IActionResult> IngaveTotalen(int? scoutsjaar)
+        {
+            if (scoutsjaar == null)
+            {
+                var currentScoutsjaar = _dbContext.Scoutsjaren.OrderByDescending(s => s.Begin).First();
+                return Redirect($"/rapporten/ingavetotalen?scoutsjaar={currentScoutsjaar.Begin}");
+            }
+
+            Scoutsjaar? sj = _dbContext
+                .Scoutsjaren
+                .Include(x => x.StreefCijfers)
+                .ThenInclude(x => x.Tak)
+                .SingleOrDefault(s => s.Begin == scoutsjaar);
+            if (sj == null)
+            {
+                var currentScoutsjaar = _dbContext.Scoutsjaren.OrderByDescending(s => s.Begin).First();
+                return Redirect($"/rapporten/ingavetotalen?scoutsjaar={currentScoutsjaar.Begin}");
+            }
+
+            var bestellingen = _dbContext.Scoutsjaren
+                .Include(scoutsjaar => scoutsjaar.Bestellingen)
+                .ThenInclude(bestelling => bestelling.Tak)
+                .SingleOrDefault(scoutsjaar => scoutsjaar.Id == sj.Id)
+                ?.Bestellingen
+                ?.ToList();
+
+            var bestellingenByDate = bestellingen
+                .GroupBy(x => x.IngaveDatum)
+                .OrderBy(x => x.Key);
+
+            var ingaveTotalenViewModel = new IngaveTotalenViewModel
+            {
+                ScoutsjaarBegin = sj.Begin,
+                Takken = _dbContext.Takken.OrderBy(x => x.Afkorting).ToList().Select(x => x.Afkorting).ToList(),
+                IngaveTotalen = new List<IngaveTotalenRowViewModel>()
+            };
+
+            foreach (var bestellingenOnDate in bestellingenByDate)
+            {
+                var ingaveTotalenRowViewModel = new IngaveTotalenRowViewModel
+                {
+                    IngaveDatum = bestellingenOnDate.Key.Date,
+                    AantalPerTak = new Dictionary<string, int>()
+                };
+
+                foreach (var bestelling in bestellingenOnDate)
+                {
+                    if (ingaveTotalenRowViewModel.AantalPerTak.ContainsKey(bestelling.Tak.Afkorting))
+                    {
+                        ingaveTotalenRowViewModel.AantalPerTak[bestelling.Tak.Afkorting] += bestelling.AantalPakken;
+                    }
+                    else
+                    {
+                        ingaveTotalenRowViewModel.AantalPerTak.Add(bestelling.Tak.Afkorting, bestelling.AantalPakken);
+                    }
+                }
+
+                ingaveTotalenViewModel.IngaveTotalen.Add(ingaveTotalenRowViewModel);
+            }
+
+            return View(ingaveTotalenViewModel);
+        }
     }
 }
