@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Data;
+using SintLeoPannenkoeken.Filters;
 using SintLeoPannenkoeken.Models;
 using SintLeoPannenkoeken.ViewModels.Rondes;
 
@@ -17,21 +18,10 @@ namespace SintLeoPannenkoeken.Controllers
             _dbContext = dbContext;
         }
 
+        [TypeFilter(typeof(ScoutsjaarRedirectionFilter))]
         public IActionResult Index(int? scoutsjaar)
         {
-            if (scoutsjaar == null)
-            {
-                var currentScoutsjaar = _dbContext.Scoutsjaren.OrderByDescending(s => s.Begin).First();
-                return Redirect($"/rondes?scoutsjaar={currentScoutsjaar.Begin}");
-            }
-
             Scoutsjaar? sj = _dbContext.Scoutsjaren.SingleOrDefault(s => s.Begin == scoutsjaar);
-            if (sj == null)
-            {
-                var currentScoutsjaar = _dbContext.Scoutsjaren.OrderByDescending(s => s.Begin).First();
-                return Redirect($"/rondes?scoutsjaar={currentScoutsjaar.Begin}");
-            }
-
             var rondes = _dbContext.Rondes
                 .Include(ronde => ronde.Bestuurder)
                 .Include(ronde => ronde.Zone)

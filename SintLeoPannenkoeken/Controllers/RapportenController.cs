@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Data;
+using SintLeoPannenkoeken.Filters;
 using SintLeoPannenkoeken.Models;
 using SintLeoPannenkoeken.Models.Views;
 using SintLeoPannenkoeken.ViewModels.Rapporten;
@@ -19,21 +20,10 @@ namespace SintLeoPannenkoeken.Controllers
             _dbContext = dbContext;
         }
 
+        [TypeFilter(typeof(ScoutsjaarRedirectionFilter))]
         public IActionResult Index(int? scoutsjaar)
         {
-            if (scoutsjaar == null)
-            {
-                var currentScoutsjaar = _dbContext.Scoutsjaren.OrderByDescending(s => s.Begin).First();
-                return Redirect($"/rapporten?scoutsjaar={currentScoutsjaar.Begin}");
-            }
-
             Scoutsjaar? sj = _dbContext.Scoutsjaren.SingleOrDefault(s => s.Begin == scoutsjaar);
-            if (sj == null)
-            {
-                var currentScoutsjaar = _dbContext.Scoutsjaren.OrderByDescending(s => s.Begin).First();
-                return Redirect($"/rapporten?scoutsjaar={currentScoutsjaar.Begin}");
-            }
-
             return View(scoutsjaar);
         }
 
@@ -125,24 +115,14 @@ namespace SintLeoPannenkoeken.Controllers
             return View(viewModel);
         }
 
+        [TypeFilter(typeof(ScoutsjaarRedirectionFilter))]
         public async Task<IActionResult> VerkoopPerTak(int? scoutsjaar)
         {
-            if (scoutsjaar == null)
-            {
-                var currentScoutsjaar = _dbContext.Scoutsjaren.OrderByDescending(s => s.Begin).First();
-                return Redirect($"/rapporten/verkooppertak?scoutsjaar={currentScoutsjaar.Begin}");
-            }
-
             Scoutsjaar? sj = _dbContext
                 .Scoutsjaren
                 .Include(x => x.StreefCijfers)
                 .ThenInclude(x => x.Tak)
                 .SingleOrDefault(s => s.Begin == scoutsjaar);
-            if (sj == null)
-            {
-                var currentScoutsjaar = _dbContext.Scoutsjaren.OrderByDescending(s => s.Begin).First();
-                return Redirect($"/rapporten/verkooppertak?scoutsjaar={currentScoutsjaar.Begin}");
-            }
 
             var bestellingen = _dbContext.Scoutsjaren
                 .Include(scoutsjaar => scoutsjaar.Bestellingen)
@@ -163,25 +143,15 @@ namespace SintLeoPannenkoeken.Controllers
             return View(viewModel);
         }
 
+        [TypeFilter(typeof(ScoutsjaarRedirectionFilter))]
         public async Task<IActionResult> VerkoopPerLid(int? scoutsjaar)
         {
-            if (scoutsjaar == null)
-            {
-                var currentScoutsjaar = _dbContext.Scoutsjaren.OrderByDescending(s => s.Begin).First();
-                return Redirect($"/rapporten/verkoopperlid?scoutsjaar={currentScoutsjaar.Begin}");
-            }
-
             Scoutsjaar? sj = _dbContext
                 .Scoutsjaren
                 .Include(x => x.StreefCijfers)
                 .ThenInclude(x => x.Tak)
                 .SingleOrDefault(s => s.Begin == scoutsjaar);
-            if (sj == null)
-            {
-                var currentScoutsjaar = _dbContext.Scoutsjaren.OrderByDescending(s => s.Begin).First();
-                return Redirect($"/rapporten/verkoopperlid?scoutsjaar={currentScoutsjaar.Begin}");
-            }
-
+            
             var bestellingen = _dbContext.Scoutsjaren
                 .Include(scoutsjaar => scoutsjaar.Bestellingen)
                 .ThenInclude(bestelling => bestelling.Lid)
@@ -197,25 +167,15 @@ namespace SintLeoPannenkoeken.Controllers
             return View(new VerkoopPerLidViewModel(verkoopPerLid, sj.Begin));
         }
 
+        [TypeFilter(typeof(ScoutsjaarRedirectionFilter))]
         public async Task<IActionResult> IngaveTotalen(int? scoutsjaar)
         {
-            if (scoutsjaar == null)
-            {
-                var currentScoutsjaar = _dbContext.Scoutsjaren.OrderByDescending(s => s.Begin).First();
-                return Redirect($"/rapporten/ingavetotalen?scoutsjaar={currentScoutsjaar.Begin}");
-            }
-
             Scoutsjaar? sj = _dbContext
                 .Scoutsjaren
                 .Include(x => x.StreefCijfers)
                 .ThenInclude(x => x.Tak)
                 .SingleOrDefault(s => s.Begin == scoutsjaar);
-            if (sj == null)
-            {
-                var currentScoutsjaar = _dbContext.Scoutsjaren.OrderByDescending(s => s.Begin).First();
-                return Redirect($"/rapporten/ingavetotalen?scoutsjaar={currentScoutsjaar.Begin}");
-            }
-
+            
             var bestellingen = _dbContext.Scoutsjaren
                 .Include(scoutsjaar => scoutsjaar.Bestellingen)
                 .ThenInclude(bestelling => bestelling.Tak)
