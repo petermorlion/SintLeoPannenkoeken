@@ -11,13 +11,13 @@
     </h1>
     <ul>
         <li>
-            <a class="nav-link" asp-area="" asp-controller="Rapporten" asp-action="VerkoopPerTak">Verkoop per tak</a>
+            <a class="nav-link" asp-area="" asp-controller="Rapporten" asp-action="VerkoopPerTak" asp-route-scoutsjaar="@Model">Verkoop per tak</a>
         </li>
         <li>
-            <a class="nav-link" asp-area="" asp-controller="Rapporten" asp-action="VerkoopPerLid">Verkoop per lid</a>
+            <a class="nav-link" asp-area="" asp-controller="Rapporten" asp-action="VerkoopPerLid" asp-route-scoutsjaar="@Model">Verkoop per lid</a>
         </li>
         <li>
-            <a class="nav-link" asp-area="" asp-controller="Rapporten" asp-action="IngaveTotalen">Totaal ingegeven</a>
+            <a class="nav-link" asp-area="" asp-controller="Rapporten" asp-action="IngaveTotalen" asp-route-scoutsjaar="@Model">Totaal ingegeven</a>
         </li>
     </ul>
 </div>
