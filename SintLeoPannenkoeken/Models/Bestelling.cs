@@ -9,6 +9,11 @@
         }
 
         public int Id { get; set; }
+
+        /// <summary>
+        /// Uniek nummer per verkoopsjaar. Elk jaar begint terug vanaf 1.
+        /// </summary>
+        public int BestellingNummer { get; set; }
         public string Naam { get; set; }
         public string Telefoon { get; set; }
         public int AantalPakken { get; set; }

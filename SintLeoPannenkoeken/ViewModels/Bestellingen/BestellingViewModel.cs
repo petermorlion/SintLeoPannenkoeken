@@ -12,6 +12,7 @@ namespace SintLeoPannenkoeken.ViewModels.Bestellingen
         }
 
         public int Id => _bestelling.Id;
+        public int BestellingNummer => _bestelling.BestellingNummer;
         public string Naam => _bestelling.Naam;
         public string Telefoon => _bestelling.Telefoon;
         public int AantalPakken => _bestelling.AantalPakken;
