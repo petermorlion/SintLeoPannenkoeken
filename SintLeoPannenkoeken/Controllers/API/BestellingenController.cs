@@ -92,6 +92,8 @@ namespace SintLeoPannenkoeken.Controllers.API
                 .OrderByDescending(b => b.Id)
                 .FirstOrDefault();
 
+            // I totally realize this could lead to duplicate bestellinNummers, but the chances are slim
+            // because only about 2 users (maximum) will be active at the same time.
             var bestellingNummer = lastBestelling != null ? lastBestelling.BestellingNummer + 1 : 1;
 
             var bestelling = new Bestelling(createBestellingViewModel.Naam, createBestellingViewModel.AantalPakken)
