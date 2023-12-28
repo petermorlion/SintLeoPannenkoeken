@@ -87,8 +87,16 @@ namespace SintLeoPannenkoeken.Controllers.API
 
             var takId = _dbContext.Leden.Single(lid => lid.Id == createBestellingViewModel.LidId).TakId;
 
+            var lastBestelling = _dbContext.Bestellingen
+                .Where(b => b.ScoutsjaarId == scoutsjaar.Id)
+                .OrderByDescending(b => b.Id)
+                .FirstOrDefault();
+
+            var bestellingNummer = lastBestelling != null ? lastBestelling.BestellingNummer + 1 : 1;
+
             var bestelling = new Bestelling(createBestellingViewModel.Naam, createBestellingViewModel.AantalPakken)
             {
+                BestellingNummer = bestellingNummer,
                 IngaveDatum = DateTime.Now,
                 Telefoon = createBestellingViewModel.Telefoon != null ? createBestellingViewModel.Telefoon : "",
                 Opmerkingen = createBestellingViewModel.Opmerkingen != null ? createBestellingViewModel.Opmerkingen : "",
