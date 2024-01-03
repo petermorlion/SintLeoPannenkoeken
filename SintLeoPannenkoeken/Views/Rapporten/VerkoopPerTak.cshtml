@@ -55,11 +55,10 @@
 
         function getRowLabel(row) {
             return [
-                row.naam,
+                `${row.naam} (${row.leden} leden)`,
                 `Verkocht: ${row.aantalPakkenVerkocht}`,
                 `Streefcijfer: ${row.streefcijfer}`,
-                `% Verkocht: ${(row.aantalPakkenVerkocht / row.streefcijfer * 100).toFixed(2)}%`,
-                `Leden: ${row.leden}`                
+                `% Verkocht: ${(row.aantalPakkenVerkocht / row.streefcijfer * 100).toFixed(2)}%`
             ]
         }
 
