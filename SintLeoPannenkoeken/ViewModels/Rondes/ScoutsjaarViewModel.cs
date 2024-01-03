@@ -12,6 +12,5 @@ namespace SintLeoPannenkoeken.ViewModels.Rondes
         }
 
         public int Begin => _scoutsjaar.Begin;
-        public int Einde => _scoutsjaar.Einde;
     }
 }

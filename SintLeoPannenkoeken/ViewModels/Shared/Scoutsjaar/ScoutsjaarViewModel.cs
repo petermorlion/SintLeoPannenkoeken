@@ -13,6 +13,5 @@ namespace SintLeoPannenkoeken.ViewModels.Shared.Scoutsjaar
 
         public int Id => _scoutsjaar.Id;
         public int Begin => _scoutsjaar.Begin;
-        public int Einde => _scoutsjaar.Einde;
     }
 }

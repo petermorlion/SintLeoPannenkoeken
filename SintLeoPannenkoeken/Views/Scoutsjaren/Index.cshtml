@@ -7,12 +7,8 @@
     <form id="scoutsjaarForm">
         <div class="row mt-4 mb-4">
             <div class="col-6">
-                <label for="begin" class="form-label">Begin</label>
-                <input type="number" class="form-control" aria-label="Begin" name="begin" id="begin">
-            </div>
-            <div class="col-6">
-                <label for="einde" class="form-label">Einde</label>
-                <input type="number" class="form-control" aria-label="Einde" name="einde" id="einde">
+                <label for="begin" class="form-label">Jaar</label>
+                <input type="number" class="form-control" aria-label="Jaar" name="begin" id="begin">
             </div>
         </div>
         <div class="row">
@@ -25,8 +21,7 @@
     <table id="scoutsjarenTable" class="table table-striped">
         <thead>
             <tr>
-                <th>Begin</th>
-                <th>Einde</th>
+                <th>Jaar</th>
             </tr>
         </thead>
     </table>
@@ -51,16 +46,15 @@
                     url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/nl-NL.json'
                 },
                 columns: [
-                    { data: 'begin' },
-                    { data: 'einde' },
+                    { data: 'begin' }
                 ]
             });
         }
 
         async function submitScoutsjaar() {
+            debugger;
             var data = {
-                begin: $('#scoutsjaarForm #begin').val(),
-                einde: $('#scoutsjaarForm #einde').val()
+                begin: $('#scoutsjaarForm #begin').val()
             };
 
             var response = await fetch(`/api/scoutsjaren`, {

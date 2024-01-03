@@ -41,7 +41,7 @@ namespace SintLeoPannenkoeken.Controllers.API
         [Route("")]
         public async Task<IActionResult> Post([FromBody] CreateScoutsjaarViewModel createScoutsjaarViewModel)
         {
-            var scoutsjaar = new Scoutsjaar(createScoutsjaarViewModel.Begin, createScoutsjaarViewModel.Einde);
+            var scoutsjaar = new Scoutsjaar(createScoutsjaarViewModel.Begin);
             _dbContext.Scoutsjaren.Add(scoutsjaar);
             _dbContext.SaveChanges();
 
