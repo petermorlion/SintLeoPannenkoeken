@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Data;
 using SintLeoPannenkoeken.Models;
@@ -8,6 +9,7 @@ using System.Net.NetworkInformation;
 namespace SintLeoPannenkoeken.Controllers.API
 {
     [Route("api/[controller]")]
+    [Authorize(Roles = "Admin,FinanciePloeg")]
     [ApiController]
     public class BestellingenController : ControllerBase
     {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Data;
 using SintLeoPannenkoeken.Filters;
@@ -6,6 +7,7 @@ using SintLeoPannenkoeken.Models;
 
 namespace SintLeoPannenkoeken.Controllers
 {
+    [Authorize(Roles = "Admin,FinanciePloeg")]
     public class BestellingenController : Controller
     {
         private readonly ILogger<BestellingenController> _logger;

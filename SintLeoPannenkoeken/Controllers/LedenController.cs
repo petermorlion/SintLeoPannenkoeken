@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SintLeoPannenkoeken.Data;
 using SintLeoPannenkoeken.ViewModels.Leden;
 
 namespace SintLeoPannenkoeken.Controllers
 {
+    [Authorize(Roles = "Admin,FinanciePloeg")]
     public class LedenController : Controller
     {
         private ILogger<LedenController> _logger;
