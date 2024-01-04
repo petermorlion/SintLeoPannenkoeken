@@ -44,7 +44,7 @@ namespace SintLeoPannenkoeken.Controllers
             using (var readStream = importFile.OpenReadStream())
             using (var stringReader = new StreamReader(readStream))
             {
-                while (readStream.Position < readStream.Length)
+                while (!stringReader.EndOfStream)
                 {
                     try
                     {
