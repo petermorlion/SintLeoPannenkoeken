@@ -78,6 +78,7 @@ namespace SintLeoPannenkoeken.Controllers
                         var lid = leden.SingleOrDefault(l => l.Voornaam == voornaam && l.Achternaam == achternaam);
                         if (lid == null)
                         {
+                            results.Add($"Nieuw lid: '{voornaam}' '{achternaam}'.");
                             lid = new Lid(voornaam, achternaam);
                             _dbContext.Leden.Add(lid);
                         }
