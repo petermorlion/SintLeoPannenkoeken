@@ -21,6 +21,14 @@ namespace SintLeoPannenkoeken.Data.Migrations
             return migrationBuilder.Sql($"INSERT INTO Takken ([Naam]) VALUES ('{naam}');");
         }
 
+        public static OperationBuilder<SqlOperation> InsertTak(
+            this MigrationBuilder migrationBuilder,
+            string naam,
+            string afkorting)
+        {
+            return migrationBuilder.Sql($"INSERT INTO Takken ([Naam], [Afkorting]) VALUES ('{naam}', '{afkorting}');");
+        }
+
         public static OperationBuilder<SqlOperation> InsertZone(
             this MigrationBuilder migrationBuilder,
             string naam,

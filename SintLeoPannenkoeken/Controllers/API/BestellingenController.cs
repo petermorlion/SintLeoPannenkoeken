@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Data;
 using SintLeoPannenkoeken.Models;
 using SintLeoPannenkoeken.ViewModels.Bestellingen;
-using System.Net.NetworkInformation;
 
 namespace SintLeoPannenkoeken.Controllers.API
 {

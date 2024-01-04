@@ -1,0 +1,44 @@
+﻿@model List<string>
+
+@{
+    ViewData["Title"] = "Import";
+}
+
+<div id="leden" class="container-fluid">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+    <p>
+        Maak een CSV bestand met volgende kolommen:
+    </p>
+    <ul>
+        <li>Voornaam</li>
+        <li>Achternaam</li>
+        <li>Functie</li>
+    </ul>
+    <p>
+        De eerste rij van het bestand wordt genegeerd.
+    </p>
+    <p>
+        De functie kolom moet zowel de tak als de functie bevatten, in de vorm "ZSXX_TAK_FUNCTIE".
+        Bijvoorbeeld: "ZS12_ZEEWOLF_LEIDING". De tak mag ook afgekort worden, bijvoorbeeld "ZS12_ZW_LEIDING".
+        Na het importeren krijg je een lijst van lijnen die niet geïmporteerd konden worden.
+    </p>
+    <form id="importForm" method="post" enctype="multipart/form-data">
+        <div class="row mt-4 mb-4">
+            <div class="col-6">
+                <label for="importFile" class="form-label">Ledenlijst</label>
+                <input type="file" accept=".csv" class="form-control" placeholder="Ledenlijst.csv" aria-label="Ledenlijst" name="importFile" id="importFile">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 mb-4">
+                <button type="submit" class="btn btn-primary">Importeren</button>
+            </div>
+        </div>
+    </form>
+    <p>
+        @foreach (var lijn in Model)
+        {
+            @lijn<br /><br />
+        }
+    </p>
+</div>
