@@ -87,7 +87,8 @@ namespace SintLeoPannenkoeken.Controllers
                         lid.TakId = tak.Id;
 
                         importedCount++;
-                    } catch (Exception e)
+                    } 
+                    catch (Exception e)
                     {
                         results.Add($"Fout op lijn {lineCounter}: {e.Message}");
                     }
