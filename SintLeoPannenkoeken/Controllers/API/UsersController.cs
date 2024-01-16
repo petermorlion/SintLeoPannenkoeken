@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using NuGet.Common;
 using SintLeoPannenkoeken.Data;
 using SintLeoPannenkoeken.ViewModels.Users;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace SintLeoPannenkoeken.Controllers.API
 {
@@ -48,8 +52,10 @@ namespace SintLeoPannenkoeken.Controllers.API
             var user = new IdentityUser(createUserViewModel.Email);
             user.Email = createUserViewModel.Email;
             user.EmailConfirmed = true;
+
+            var randomPassword = GetRandomPassword();
             // TODO: check for result?
-            var userResult = await _userManager.CreateAsync(user, createUserViewModel.Password);
+            var userResult = await _userManager.CreateAsync(user, randomPassword);
             if (!userResult.Succeeded)
             {
                 // TODO: handle error
@@ -72,9 +78,25 @@ namespace SintLeoPannenkoeken.Controllers.API
                 }
             }
 
-            var userViewModel = new UserViewModel(user);
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var passwordResetLink = Url.Action("ResetPassword", "Account", new { token, email = user.Email }, Request.Scheme);
 
-            return Created($"/api/users/{user.Id}", userViewModel);
+            var userCreatedViewModel = new UserCreatedViewModel(user, passwordResetLink);
+
+            return Created($"/api/users/{user.Id}", userCreatedViewModel);
+        }
+
+        private string GetRandomPassword()
+        {
+            var length = 32;
+            var alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890&é'(§è!çà)";
+            var secret = new StringBuilder();
+            while (length-- > 0)
+            {
+                secret.Append(alphabet[RandomNumberGenerator.GetInt32(alphabet.Length)]);
+            }
+
+            return secret.ToString();
         }
     }
 }

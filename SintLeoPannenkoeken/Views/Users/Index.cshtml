@@ -10,10 +10,6 @@
                 <label for="email" class="form-label">Email</label>
                 <input type="text" class="form-control" placeholder="Email" aria-label="Email" name="email" id="email">
             </div>
-            <div class="col-6">
-                <label for="password" class="form-label">Paswoord</label>
-                <input type="password" class="form-control" placeholder="Paswoord" aria-label="Paswoord" name="password" id="password">
-            </div>
         </div>
         <div class="row mt-4 mb-4">
             <div class="col-12">
@@ -23,11 +19,14 @@
         </div>
         <div class="row">
             <div class="col-12 mb-4">
-                <button type="submit" class="btn btn-primary">Opslaan</button>
+                <button type="submit" class="btn btn-primary">Toevoegen</button>
                 <button type="reset" class="btn btn-secondary">Annuleren</button>
             </div>
         </div>
     </form>
+    <div id="passwordResetLink">
+
+    </div>
     <table id="usersTable" class="table table-striped">
         <thead>
             <tr>
@@ -64,7 +63,6 @@
         async function submitUser() {
             var data = {
                 email: $('#userForm #email').val(),
-                password: $('#userForm #password').val(),
                 admin: $('#userForm #admin').is(':checked')
             };
 
@@ -77,8 +75,12 @@
             });
 
             if (!response.ok) {
-                var errorMessage = await(response.text());
+                var errorMessage = await response.text();
                 alert(errorMessage);
+            } else {
+                debugger;
+                var body = await response.json();
+                $('#passwordResetLink').html(`<p>Klik <a href="${body.passwordResetLink}">hier</a> om je paswoord opnieuw in te stellen.</p>`);
             }
 
             setFocus();
