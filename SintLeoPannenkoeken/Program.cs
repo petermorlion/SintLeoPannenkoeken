@@ -13,6 +13,10 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+   options.TokenLifespan = TimeSpan.FromDays(2));
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
