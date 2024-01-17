@@ -4,10 +4,11 @@ namespace SintLeoPannenkoeken.ViewModels.Rapporten
 {
     public class ZoneDetailsViewModel
     {
+        public int ScoutsjaarBegin { get; set; }
         public string ZoneNaam { get; set;}
-        public IList<VwRonde> VwRondes { get; set;}
-        public string PostNummer => VwRondes.Count > 0 ? VwRondes[0].zone_postnummer : "";
-        public string Gemeente => VwRondes.Count > 0 ? VwRondes[0].zone_gemeente: "";
-        public string Bestuurder => VwRondes.Count > 0 ? VwRondes[0].bestuurder : "";
+        public IList<BestellingViewModel> Bestellingen { get; set;}
+        public int? PostNummer { get; set; }
+        public string Gemeente { get; set; }
+        public string Bestuurder { get; set; }
     }
 }

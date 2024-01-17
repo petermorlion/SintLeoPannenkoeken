@@ -27,44 +27,33 @@ namespace SintLeoPannenkoeken.Controllers
             return View(scoutsjaar);
         }
 
-        public async Task<IActionResult> ZoneDetails(string zoneNaam)
+        [TypeFilter(typeof(ScoutsjaarRedirectionFilter))]
+        public async Task<IActionResult> ZoneDetails(int? scoutsjaar, int zoneId)
         {
-            var connection = _dbContext.Database.GetDbConnection();
-            var command = new CommandDefinition(
-                "SELECT " +
-                    "[bestelnummer], " +
-                    "[zone_naam], " +
-                    "[zone_gemeente], " +
-                    "[zone_postnummer], " +
-                    "[zone_omschrijving], " +
-                    "[KaartNummer], " +
-                    "[bestuurder], " +
-                    "[bestuurder_id], " +
-                    "[huisnummer], " +
-                    "[Bus], " +
-                    "[Naam], " +
-                    "[Opmerkingen], " +
-                    "[AantalPakken], " +
-                    "[Telefoon], " +
-                    "[straatnaam], " +
-                    "[Postcode], " +
-                    "[straat_gemeente], " +
-                    "[straat_omschrijving], " +
-                    "[straatnummer] " +
-                    "FROM [vw_rondes] " +
-                    "WHERE [zone_naam] = @zoneNaam",
-                new
-                {
-                    zoneNaam = zoneNaam
-                }
-            );
+            Scoutsjaar? sj = _dbContext.Scoutsjaren.SingleOrDefault(s => s.Begin == scoutsjaar);
+            var bestellingen = await _dbContext.Bestellingen
+                .Include(b => b.Straat)
+                .Where(b => b.Straat.ZoneId == zoneId && b.ScoutsjaarId == sj.Id)
+                .ToListAsync();
 
-            var vwRondes = await connection.QueryAsync<VwRonde>(command);
+            var zone = await _dbContext.Zones.SingleOrDefaultAsync(z => z.Id == zoneId);
+            var ronde = await _dbContext.Rondes.Include(r => r.Bestuurder).SingleOrDefaultAsync(r => r.ZoneId == zoneId);
 
             var viewModel = new ZoneDetailsViewModel
             {
-                ZoneNaam = zoneNaam,
-                VwRondes = vwRondes.ToList()
+                ScoutsjaarBegin = sj.Begin,
+                ZoneNaam = zone != null ? zone.Naam : "",
+                Bestuurder = ronde != null && ronde.Bestuurder != null ? $"{ronde.Bestuurder.Voornaam} {ronde.Bestuurder.Achternaam}" : "",
+                Gemeente = zone != null ? zone.Gemeente : "",
+                PostNummer = zone.PostNummer,
+                Bestellingen = bestellingen.Select(b => new BestellingViewModel
+                {
+                    Naam = b.Naam,
+                    Straat = b.Straat.Naam,
+                    Nummer = b.Nummer,
+                    Bus = b.Bus,
+                    Aantal = b.AantalPakken
+                }).ToList()
             };
 
             return View(viewModel);

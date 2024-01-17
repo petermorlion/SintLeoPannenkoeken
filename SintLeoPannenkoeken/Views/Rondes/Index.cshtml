@@ -35,7 +35,7 @@
                         }
                     </td>
                     <td>
-                        <a title='Details' asp-controller="Rapporten" asp-action="ZoneDetails" asp-route-zoneNaam="@ronde.Zone.Naam"><i class="bi bi-printer-fill"></i></a>
+                        <a title='Details' asp-controller="Rapporten" asp-action="ZoneDetails" asp-route-zoneId="@ronde.Zone.Id" asp-route-scoutsjaar="@Model.Scoutsjaar.Begin"><i class="bi bi-printer-fill"></i></a>
                     </td>
                 </tr>
             }

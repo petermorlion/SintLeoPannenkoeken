@@ -5,7 +5,7 @@
 
 <div id="rapporten" class="container-fluid">
     <h1 class="display-4">@ViewData["Title"]</h1>
-    <h2>@Model.ZoneNaam - @Model.PostNummer @Model.Gemeente - @Model.Bestuurder</h2>
+    <h2>@Model.ZoneNaam - @Model.PostNummer @Model.Gemeente - @Model.Bestuurder - @Model.ScoutsjaarBegin</h2>
     <table id="zoneTable" class="table table-striped">
         <thead>
             <tr>
@@ -22,7 +22,7 @@
 @section Scripts {
     <script>
         async function initTable(){
-            var json = @Json.Serialize(Model.VwRondes);
+            var json = @Json.Serialize(Model.Bestellingen);
             $('#zoneTable').DataTable({
                 destroy: true,
                 data: json,
@@ -34,7 +34,7 @@
                         customize: function ( win ) {
                             $(win.document.body)
                                 .prepend(
-                                    '<h2>@Model.ZoneNaam - @Model.PostNummer @Model.Gemeente - @Model.Bestuurder</h2>'
+                                    '<h2>@Model.ZoneNaam - @Model.PostNummer @Model.Gemeente - @Model.Bestuurder - @Model.ScoutsjaarBegin</h2>'
                                 );
                             $(win.document.body).find('h1').remove();
                         }
@@ -46,11 +46,11 @@
                     url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/nl-NL.json'
                 },
                 columns: [
-                    { data: 'huisnummer' },
+                    { data: 'straat' },
+                    { data: 'nummer' },
                     { data: 'bus' },
-                    { data: 'straatnaam' },
                     { data: 'naam' },
-                    { data: 'aantalPakken' }
+                    { data: 'aantal' }
                 ]
             });
         }
