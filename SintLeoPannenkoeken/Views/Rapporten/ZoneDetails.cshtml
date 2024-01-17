@@ -78,7 +78,6 @@
         }
 
         async function toggleDeliveryStatus(bestellingId) {
-            debugger;
             var geleverd = $(`#${bestellingId}`).data('geleverd');
             var response = await fetch(`/api/bestellingen/${bestellingId}/delivery`, {
                 method: 'POST',
@@ -96,7 +95,7 @@
                 alert(errorMessage);
             } else {
                 $(`#${bestellingId}`).data('geleverd', !geleverd);
-                $(`#${bestellingId}`).title = getGeleverdText(!geleverd);
+                $(`#${bestellingId}`).prop('title', getGeleverdText(!geleverd));
                 $(`#${bestellingId}`).removeClass(getGeleverdClass(geleverd));
                 $(`#${bestellingId}`).addClass(getGeleverdClass(!geleverd));
             }
