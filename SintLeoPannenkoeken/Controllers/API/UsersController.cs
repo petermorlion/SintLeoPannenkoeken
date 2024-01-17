@@ -78,8 +78,9 @@ namespace SintLeoPannenkoeken.Controllers.API
                 }
             }
 
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var passwordResetLink = Url.Action("ResetPassword", "Account", new { token, email = user.Email }, Request.Scheme);
+            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var encodedCode = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            var passwordResetLink = Url.Action("ResetPassword", "Account", new { code = encodedCode, email = user.Email, Area = "Identity" }, Request.Scheme);
 
             var userCreatedViewModel = new UserCreatedViewModel(user, passwordResetLink);
 
