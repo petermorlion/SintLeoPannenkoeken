@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using NuGet.Common;
 using SintLeoPannenkoeken.Data;
+using SintLeoPannenkoeken.Models;
 using SintLeoPannenkoeken.ViewModels.Users;
 using System.Security.Cryptography;
 using System.Text;
@@ -85,6 +86,25 @@ namespace SintLeoPannenkoeken.Controllers.API
             var userCreatedViewModel = new UserCreatedViewModel(user, passwordResetLink);
 
             return Created($"/api/users/{user.Id}", userCreatedViewModel);
+        }
+
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return NoContent();
         }
 
         private string GetRandomPassword()

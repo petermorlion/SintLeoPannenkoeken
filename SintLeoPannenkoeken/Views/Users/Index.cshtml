@@ -31,6 +31,7 @@
         <thead>
             <tr>
                 <th>Email</th>
+                <th></th>
             </tr>
         </thead>
     </table>
@@ -55,7 +56,14 @@
                     url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/nl-NL.json'
                 },
                 columns: [
-                    { data: 'email' }
+                    { data: 'email' },
+                    {
+                        data: function (row, type, val, meta) {
+                            return `
+                                <a href='#' onclick="deleteUser('${row.email}', '${row.id}')" title='Verwijderen'><i class="text-danger bi bi-x-circle-fill"></i></a>
+                            `;
+                        }
+                    }
                 ]
             });
         }
@@ -78,12 +86,32 @@
                 var errorMessage = await response.text();
                 alert(errorMessage);
             } else {
-                debugger;
                 var body = await response.json();
                 $('#passwordResetLink').html(`<p>Klik <a href="${body.passwordResetLink}">hier</a> om je paswoord opnieuw in te stellen.</p>`);
             }
 
             setFocus();
+        }
+
+        async function deleteUser(email, userId) {
+            var text = `Ben je zeker dat je deze gebruiker (${email}) wil verwijderen?`;
+            if (confirm(text) !== true) {
+                return;
+            }
+
+            var response = await fetch(`/api/users/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                var errorMessage = await (response.text());
+                alert(errorMessage);
+            }
+
+            await reloadUsers();
         }
 
         function setFocus() {
