@@ -67,6 +67,7 @@
                             return `
                                 <a href='/Bestuurders/Rondes?bestuurderId=${row.id}&scoutsjaar=${scoutsjaar}' class='bestellingen-delete' title='Rondes' data-id='${row.id}'><i class="bi bi-car-front-fill"></i></a>
                                 <a href='/Rapporten/BestuurderDetails?bestuurderId=${row.id}' title='Details'><i class="bi bi-printer-fill"></i></a>
+                                <a href='#' onclick="deleteBestuurder(${row.id})" title='Verwijderen'><i class="text-danger bi bi-x-circle-fill"></i></a>
                             `;
                         }
                     }
@@ -102,6 +103,27 @@
 
         function clearForm() {
             $('#bestuurderForm')[0].reset();
+        }
+        
+        async function deleteBestuurder(bestuurderId) {
+            var text = `Ben je zeker dat je deze bestuurder wil verwijderen?`;
+            if (confirm(text) !== true) {
+                return;
+            }
+
+            var response = await fetch(`/api/bestuurders/${bestuurderId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                var errorMessage = await response.text();
+                alert(errorMessage);
+            }
+
+            await reloadBestuurders();
         }
 
         $(async function () {

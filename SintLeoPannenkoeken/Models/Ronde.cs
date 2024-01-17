@@ -1,5 +1,8 @@
 ﻿namespace SintLeoPannenkoeken.Models
 {
+    /// <summary>
+    /// De link tussen een bestuurder en een zone. Dit duidt aan dat deze bestuurder deze zone moet doen, in een bepaald scoutsjaar.
+    /// </summary>
     public class Ronde
     {
         public int Id { get; set; }

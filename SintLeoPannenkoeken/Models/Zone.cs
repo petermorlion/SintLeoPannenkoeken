@@ -1,5 +1,8 @@
 ﻿namespace SintLeoPannenkoeken.Models
 {
+    /// <summary>
+    /// Een groepering straten.
+    /// </summary>
     public class Zone
     {
         public Zone()

@@ -168,5 +168,21 @@ namespace SintLeoPannenkoeken.Controllers.API
             _dbContext.SaveChanges();
             return NoContent();
         }
+
+        [HttpDelete]
+        [Route("{bestuurdersId:int}")]
+        public async Task<IActionResult> Delete(int bestuurdersId)
+        {
+            var bestuurder = await _dbContext.Bestuurders.SingleOrDefaultAsync(b => b.Id == bestuurdersId);
+            if (bestuurder == null)
+            {
+                return NotFound();
+            }
+
+            _dbContext.Bestuurders.Attach(bestuurder);
+            _dbContext.Bestuurders.Remove(bestuurder);
+            _dbContext.SaveChanges();
+            return NoContent();
+        }
     }
 }
