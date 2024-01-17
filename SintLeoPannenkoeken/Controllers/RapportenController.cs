@@ -48,11 +48,13 @@ namespace SintLeoPannenkoeken.Controllers
                 PostNummer = zone.PostNummer,
                 Bestellingen = bestellingen.Select(b => new BestellingViewModel
                 {
+                    BestellingId = b.Id,
                     Naam = b.Naam,
                     Straat = b.Straat.Naam,
                     Nummer = b.Nummer,
                     Bus = b.Bus,
-                    Aantal = b.AantalPakken
+                    Aantal = b.AantalPakken,
+                    Geleverd = b.Geleverd
                 }).ToList()
             };
 

@@ -173,5 +173,21 @@ namespace SintLeoPannenkoeken.Controllers.API
             var bestellingViewModel = new BestellingViewModel(bestelling);
             return NoContent();
         }
+
+        [HttpPost]
+        [Route("{bestellingId:int}/delivery")]
+        public async Task<IActionResult> Delivery(int bestellingId, [FromBody] UpdateGeleverdViewModel viewModel)
+        {
+            var bestelling = await _dbContext.Bestellingen.SingleOrDefaultAsync(b => b.Id == bestellingId);
+            if (bestelling == null)
+            {
+                return NotFound();
+            }
+
+            bestelling.Geleverd = viewModel.Geleverd;
+            _dbContext.SaveChanges();
+
+            return NoContent();
+        }
     }
 }

@@ -29,5 +29,6 @@
         public string Bus { get; set; }
         public DateTime IngaveDatum { get; set; }
         public int ScoutsjaarId { get; set; }
+        public bool Geleverd { get; set; }
     }
 }
