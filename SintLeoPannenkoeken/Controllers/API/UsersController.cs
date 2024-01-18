@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
-using NuGet.Common;
 using SintLeoPannenkoeken.Data;
-using SintLeoPannenkoeken.Models;
 using SintLeoPannenkoeken.ViewModels.Users;
 using System.Security.Cryptography;
 using System.Text;
@@ -35,13 +33,16 @@ namespace SintLeoPannenkoeken.Controllers.API
 
         [HttpGet]
         [Route("")]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             var users = _dbContext.Users.ToList();
-
-            var userViewModels = users == null 
-                ? new List<UserViewModel>() 
-                : users.Select(user => new UserViewModel(user)).ToList();
+            
+            
+            var userViewModels = users.Select(async user =>
+                {
+                    var roles = await _userManager.GetRolesAsync(user);
+                    return new UserViewModel(user, roles);
+                }).Select(t => t.Result).ToList();
 
             return Ok(userViewModels);
         }
@@ -63,7 +64,7 @@ namespace SintLeoPannenkoeken.Controllers.API
                 return BadRequest(userResult.Errors);
             }
 
-            if (createUserViewModel.Admin)
+            if (createUserViewModel.Role == "admin")
             {
                 var adminRoleExists = await _roleManager.RoleExistsAsync("Admin");
                 if (!adminRoleExists)
@@ -72,6 +73,21 @@ namespace SintLeoPannenkoeken.Controllers.API
                 }
 
                 var roleResult = await _userManager.AddToRoleAsync(user, "Admin");
+                if (!roleResult.Succeeded)
+                {
+                    // TODO: handle error
+                    return BadRequest(roleResult.Errors);
+                }
+            } 
+            else if (createUserViewModel.Role == "financieploeg")
+            {
+                var financiePloegRoleExists = await _roleManager.RoleExistsAsync("FinanciePloeg");
+                if (!financiePloegRoleExists)
+                {
+                    await _roleManager.CreateAsync(new IdentityRole("FinanciePloeg"));
+                }
+
+                var roleResult = await _userManager.AddToRoleAsync(user, "FinanciePloeg");
                 if (!roleResult.Succeeded)
                 {
                     // TODO: handle error

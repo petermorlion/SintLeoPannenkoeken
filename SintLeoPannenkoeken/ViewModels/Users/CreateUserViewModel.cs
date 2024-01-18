@@ -3,6 +3,6 @@
     public class CreateUserViewModel
     {
         public string Email { get; set; }
-        public bool Admin { get; set; }
+        public string Role { get; set; }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SintLeoPannenkoeken.Data;
 using SintLeoPannenkoeken.ViewModels.Users;
-using System.Data;
 
 namespace SintLeoPannenkoeken.Controllers
 {
@@ -11,16 +11,26 @@ namespace SintLeoPannenkoeken.Controllers
     {
         private ILogger<UsersController> _logger;
         private ApplicationDbContext _dbContext;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public UsersController(ILogger<UsersController> logger, ApplicationDbContext dbContext)
+        public UsersController(ILogger<UsersController> logger, ApplicationDbContext dbContext, UserManager<IdentityUser> userManager)
         {
             _logger = logger;
             _dbContext = dbContext;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
         {
-            var users = _dbContext.Users.ToList();
+            var users = _dbContext.Users.ToList()
+                .Select(async user =>
+                {
+                    var roles = await _userManager.GetRolesAsync(user);
+                    return new UserViewModel(user, roles);
+                })
+                .Select(t => t.Result)
+                .OrderBy(u => u.Email)
+                .ToList();
             return View(new IndexViewModel(users));
         }
     }

@@ -13,9 +13,14 @@
         </div>
         <div class="row mt-4 mb-4">
             <div class="col-12">
-                <label for="admin" class="form-label">Admin</label>
-                <input type="checkbox" id="admin" />
-            </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="admin" name="role" value="admin" />
+                    <label for="admin" class="form-check-label">Admin</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" class="form-check-input" id="financieploeg" name="role" value="financieploeg" />
+                    <label for="financieploeg" class="form-check-label">Financieploeg</label>
+                </div>
         </div>
         <div class="row">
             <div class="col-12 mb-4">
@@ -31,6 +36,7 @@
         <thead>
             <tr>
                 <th>Email</th>
+                <th>Rol</th>
                 <th></th>
             </tr>
         </thead>
@@ -57,6 +63,7 @@
                 },
                 columns: [
                     { data: 'email' },
+                    { data: 'role' },
                     {
                         data: function (row, type, val, meta) {
                             return `
@@ -71,7 +78,7 @@
         async function submitUser() {
             var data = {
                 email: $('#userForm #email').val(),
-                admin: $('#userForm #admin').is(':checked')
+                role: $('#userForm input[name="role"]:checked').val()
             };
 
             var response = await fetch(`/api/users`, {

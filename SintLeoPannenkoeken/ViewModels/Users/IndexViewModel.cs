@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace SintLeoPannenkoeken.ViewModels.Users
+﻿namespace SintLeoPannenkoeken.ViewModels.Users
 {
     public class IndexViewModel
     {
-        public IndexViewModel(ICollection<IdentityUser> users)
+        public IndexViewModel(IList<UserViewModel> users)
         {
-            Users = users.Select(user => new UserViewModel(user)).OrderBy(user => user.Email).ToList();
+            Users = users;
         }
 
         public IList<UserViewModel> Users { get; set; }
