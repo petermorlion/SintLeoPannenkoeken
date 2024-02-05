@@ -32,7 +32,7 @@
                 buttons: [
                     {
                         extend: 'print',
-                        customize: function ( win ) {
+                        customize: function (win) {
                             $(win.document.body)
                                 .prepend(
                                     '<h2>@Model.ZoneNaam - @Model.PostNummer @Model.Gemeente - @Model.Bestuurder - @Model.ScoutsjaarBegin</h2>'
@@ -53,11 +53,24 @@
                     { data: 'naam' },
                     { data: 'aantal' },
                     {
+                        title: 'Geleverd',
+                        orderable: false,
                         data: function (row, type, val, meta) {
-                            return `<a href='#' onclick="toggleDeliveryStatus(${row.bestellingId})" id='${row.bestellingId}' data-geleverd='${row.geleverd}' title="` + getGeleverdText(row.geleverd) + `" class="` + getGeleverdClass(row.geleverd) + `"><i class="bi bi-house-check-fill"></i></a>`;
+                            return `<span class="d-none">Ja</span><a href='#' onclick="toggleDeliveryStatus(${row.bestellingId})" id='${row.bestellingId}' data-geleverd='${row.geleverd}' title="` + getGeleverdText(row.geleverd) + `" class="` + getGeleverdClass(row.geleverd) + `"><i class="bi bi-house-check-fill"></i></a>`;
                         }
                     }
-                ]
+                ],
+                initComplete: function() {
+                    var columnIndex = 5;
+                    var api = this.api();
+                    var headerCell = api.column(columnIndex).header();
+                    var select = $('<select class="ms-3"><option value="">Alle</option><option value="Ja">Ja</option><option value="Nee">Nee</option></select>');
+                    select.on('change', function (e) { 
+                        var selectedValue = this.value;
+                        api.column(columnIndex).search(selectedValue).draw();
+                    });
+                    $(headerCell).append(select);
+                }
             });
         }
 
