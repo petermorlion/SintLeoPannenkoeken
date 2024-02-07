@@ -37,6 +37,8 @@
                             $(win.document.body)
                                 .prepend(
                                     '<h2>@Model.ZoneNaam - @Model.PostNummer @Model.Gemeente - @Model.Bestuurder - @Model.ScoutsjaarBegin</h2>'
+                                    +
+                                    '<p>Geleverd: @Model.AantalGeleverd / Niet geleverd: @Model.AantalNietGeleverd / Totaal: @Model.Aantal</p>'
                                 );
                             $(win.document.body).find('h1').remove();
                         }
