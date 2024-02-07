@@ -6,7 +6,7 @@
 <div id="rapporten" class="container-fluid">
     <h1 class="display-4">@ViewData["Title"]</h1>
     <h2>@Model.ZoneNaam - @Model.PostNummer @Model.Gemeente - @Model.Bestuurder - @Model.ScoutsjaarBegin</h2>
-    <p>Pakjes geleverd: @Model.AantalGeleverd / niet geleverd: @Model.AantalNietGeleverd / totaal: @Model.Aantal</p>
+    <p id="totalen">Pakjes geleverd: @Model.AantalGeleverd / niet geleverd: @Model.AantalNietGeleverd / totaal: @Model.Aantal</p>
     <table id="zoneTable" class="table table-striped">
         <thead>
             <tr>
@@ -33,12 +33,13 @@
                 buttons: [
                     {
                         extend: 'print',
-                        customize: function (win) {
+                        customize: async function (win) {
+                            var totalenText = await fetchTotalenText();
                             $(win.document.body)
                                 .prepend(
                                     '<h2>@Model.ZoneNaam - @Model.PostNummer @Model.Gemeente - @Model.Bestuurder - @Model.ScoutsjaarBegin</h2>'
                                     +
-                                    '<p>Pakjes geleverd: @Model.AantalGeleverd / niet geleverd: @Model.AantalNietGeleverd / totaal: @Model.Aantal</p>'
+                                    `<p>${totalenText}</p>`
                                 );
                             $(win.document.body).find('h1').remove();
                         }
@@ -122,11 +123,30 @@
                 $(`#${bestellingId}`).prop('title', getGeleverdText(!geleverd));
                 $(`#${bestellingId}`).removeClass(getGeleverdClass(geleverd));
                 $(`#${bestellingId}`).addClass(getGeleverdClass(!geleverd));
+
+                var totalenText = await fetchTotalenText();
+                $('#totalen').text(totalenText);
             }
+        }
+
+        async function fetchTotalenText() {
+            var zoneTotalenResponse = await fetch(`/api/rapporten/zonetotalen/${@Model.ScoutsjaarBegin}/${@Model.ZoneId}`);
+            if (!zoneTotalenResponse.ok) {
+                var errorMessage = await (zoneTotalenResponse.text());
+                alert(errorMessage);
+                return null;
+            }
+
+            var zoneTotalen = await zoneTotalenResponse.json();
+            return `Pakjes geleverd: ${zoneTotalen.aantalPakkenGeleverd} /
+                    niet geleverd: ${zoneTotalen.aantalPakkenNietGeleverd} /
+                    totaal: ${zoneTotalen.aantalPakken}`;
         }
     
         $(async function () {
             await initTable();
+            var totalenText = await fetchTotalenText();
+            $('#totalen').text(totalenText);
         });
     </script>
 }

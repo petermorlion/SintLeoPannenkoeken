@@ -42,6 +42,7 @@ namespace SintLeoPannenkoeken.Controllers
             var viewModel = new ZoneDetailsViewModel
             {
                 ScoutsjaarBegin = sj.Begin,
+                ZoneId = zone != null ? zone.Id : 0,
                 ZoneNaam = zone != null ? zone.Naam : "",
                 Bestuurder = ronde != null && ronde.Bestuurder != null ? $"{ronde.Bestuurder.Voornaam} {ronde.Bestuurder.Achternaam}" : "",
                 Gemeente = zone != null ? zone.Gemeente : "",
