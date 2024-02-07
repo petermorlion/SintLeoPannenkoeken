@@ -10,5 +10,9 @@ namespace SintLeoPannenkoeken.ViewModels.Rapporten
         public int? PostNummer { get; set; }
         public string Gemeente { get; set; }
         public string Bestuurder { get; set; }
+
+        public int AantalGeleverd => Bestellingen.Where(x => x.Geleverd).Sum(x => x.Aantal);
+        public int AantalNietGeleverd => Bestellingen.Where(x => !x.Geleverd).Sum(x => x.Aantal);
+        public int Aantal => Bestellingen.Sum(x => x.Aantal);
     }
 }
