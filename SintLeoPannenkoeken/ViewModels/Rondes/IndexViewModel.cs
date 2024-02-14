@@ -12,7 +12,7 @@ namespace SintLeoPannenkoeken.ViewModels.Rondes
             Rondes = zones.OrderBy(zone => zone.Naam).Select(zone =>
             {
                 var bestellingenForZone = bestellingenPerZone.ContainsKey(zone.Id) ? bestellingenPerZone[zone.Id] : new List<Bestelling>();
-                var ronde = rondes.SingleOrDefault(r => r.ZoneId == zone.Id);
+                var ronde = rondes.SingleOrDefault(r => r.ScoutsjaarId == scoutsjaar.Id && r.ZoneId == zone.Id);
                 return new RondeViewModel(zone, ronde, bestellingenForZone);
             }).ToList();
         }
