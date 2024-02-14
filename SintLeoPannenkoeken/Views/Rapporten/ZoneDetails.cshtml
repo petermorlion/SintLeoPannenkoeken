@@ -64,6 +64,9 @@
                         }
                     }
                 ],
+                rowCallback: function (row, data) {
+                    $(row).addClass(getGeleverdRowClass(data.geleverd));
+                },
                 initComplete: function() {
                     var columnIndex = 5;
                     var api = this.api();
@@ -102,6 +105,14 @@
             }
         }
 
+        function getGeleverdRowClass(geleverd) {
+            if (geleverd) {
+                return 'text-decoration-line-through';
+            } else {
+                return '';
+            }
+        }
+
         async function toggleDeliveryStatus(bestellingId) {
             var geleverd = $(`#${bestellingId}`).data('geleverd');
             var response = await fetch(`/api/bestellingen/${bestellingId}/delivery`, {
@@ -123,6 +134,8 @@
                 $(`#${bestellingId}`).prop('title', getGeleverdText(!geleverd));
                 $(`#${bestellingId}`).removeClass(getGeleverdClass(geleverd));
                 $(`#${bestellingId}`).addClass(getGeleverdClass(!geleverd));
+                $(`#${bestellingId}`).closest('tr').removeClass(getGeleverdRowClass(geleverd));
+                $(`#${bestellingId}`).closest('tr').addClass(getGeleverdRowClass(!geleverd));
 
                 var totalenText = await fetchTotalenText();
                 $('#totalen').text(totalenText);
