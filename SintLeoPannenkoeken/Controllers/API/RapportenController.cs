@@ -32,7 +32,7 @@ namespace SintLeoPannenkoeken.Controllers.API
                 .ToListAsync();
 
             var zone = await _dbContext.Zones.SingleOrDefaultAsync(z => z.Id == zoneId);
-            var ronde = await _dbContext.Rondes.Include(r => r.Bestuurder).SingleOrDefaultAsync(r => r.ZoneId == zoneId);
+            var ronde = await _dbContext.Rondes.Include(r => r.Bestuurder).SingleOrDefaultAsync(r => sj.Id == r.ScoutsjaarId && r.ZoneId == zoneId);
 
             var viewModel = new ZoneTotalenViewModel
             {
