@@ -60,7 +60,7 @@
                         title: 'Geleverd',
                         orderable: false,
                         data: function (row, type, val, meta) {
-                            return `<span class="d-none">` + getGeleverdSearchValue(row.geleverd) + `</span><a href='#' onclick="toggleDeliveryStatus(${row.bestellingId})" id='${row.bestellingId}' data-geleverd='${row.geleverd}' title="` + getGeleverdText(row.geleverd) + `" class="` + getGeleverdClass(row.geleverd) + `"><i class="bi bi-house-check-fill"></i></a>`;
+                            return `<span class="d-none">` + getGeleverdSearchValue(row.geleverd) + `</span><a href='#!' onclick="toggleDeliveryStatus(${row.bestellingId})" id='${row.bestellingId}' data-geleverd='${row.geleverd}' title="` + getGeleverdText(row.geleverd) + `" class="` + getGeleverdClass(row.geleverd) + `"><i class="bi bi-house-check-fill"></i></a>`;
                         }
                     }
                 ],
