@@ -52,6 +52,7 @@
                 <th>Aantal pakken</th>
                 <th>Opmerkingen</th>
                 <th>Betaald</th>
+                <th>Geleverd</th>
                 <th>Lid</th>
                 <th>Tak</th>
                 <th></th>
@@ -103,12 +104,21 @@
                     },
                     { data: 'aantalPakken' },
                     { data: 'opmerkingen' },
-                    { 
-                        data: function(row, type, val, meta) {
+                    {
+                        data: function (row, type, val, meta) {
                             if (row.betaald) {
                                 return '<i class="bi-check-lg"></i>';
                             }
-                            
+
+                            return '';
+                        }
+                    },
+                    {
+                        data: function (row, type, val, meta) {
+                            if (row.geleverd) {
+                                return '<i class="bi-check-lg"></i>';
+                            }
+
                             return '';
                         }
                     },
@@ -137,6 +147,7 @@
                 telefoon: $('#createBestellingForm #telefoon').val(),
                 aantalPakken: $('#createBestellingForm #aantalPakken').val(),
                 betaald: $('#createBestellingForm #betaald').is(':checked'),
+                geleverd: $('#createBestellingForm #geleverd').is(':checked'),
                 opmerkingen: $('#createBestellingForm #opmerkingen').val(),
                 lidId: $('#createBestellingForm #lid').val(),
                 straatId: $('#createBestellingForm #straat').val(),
@@ -172,6 +183,7 @@
                 telefoon: $('#updateBestellingForm #telefoon').val(),
                 aantalPakken: $('#updateBestellingForm #aantalPakken').val(),
                 betaald: $('#updateBestellingForm #betaald').is(':checked'),
+                geleverd: $('#updateBestellingForm #geleverd').is(':checked'),
                 opmerkingen: $('#updateBestellingForm #opmerkingen').val(),
                 lidId: $('#updateBestellingForm #lid').val(),
                 straatId: $('#updateBestellingForm #straat').val(),
@@ -232,6 +244,7 @@
             $('#updateBestellingForm #telefoon').val(bestelling.telefoon);
             $('#updateBestellingForm #aantalPakken').val(bestelling.aantalPakken);
             $('#updateBestellingForm #betaald').prop('checked', bestelling.betaald);
+            $('#updateBestellingForm #geleverd').prop('checked', bestelling.geleverd);
             $('#updateBestellingForm #opmerkingen').val(bestelling.opmerkingen);
             $('#updateBestellingForm #lid').val(bestelling.lid.id);
             $('#updateBestellingForm #straat').val(bestelling.straatId);

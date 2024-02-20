@@ -104,6 +104,7 @@ namespace SintLeoPannenkoeken.Controllers.API
                 Telefoon = createBestellingViewModel.Telefoon != null ? createBestellingViewModel.Telefoon : "",
                 Opmerkingen = createBestellingViewModel.Opmerkingen != null ? createBestellingViewModel.Opmerkingen : "",
                 Betaald = createBestellingViewModel.Betaald,
+                Geleverd = createBestellingViewModel.Geleverd,
                 LidId = createBestellingViewModel.LidId,
                 TakId = takId,
                 StraatId = createBestellingViewModel.StraatId,
@@ -157,6 +158,7 @@ namespace SintLeoPannenkoeken.Controllers.API
             bestelling.Telefoon = updateBestellingViewModel.Telefoon != null ? updateBestellingViewModel.Telefoon : "";
             bestelling.Opmerkingen = updateBestellingViewModel.Opmerkingen != null ? updateBestellingViewModel.Opmerkingen : "";
             bestelling.Betaald = updateBestellingViewModel.Betaald;
+            bestelling.Geleverd = updateBestellingViewModel.Geleverd;
             bestelling.LidId = updateBestellingViewModel.LidId;
             bestelling.TakId = takId;
             bestelling.StraatId = updateBestellingViewModel.StraatId;

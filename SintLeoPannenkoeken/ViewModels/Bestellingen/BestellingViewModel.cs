@@ -25,5 +25,6 @@ namespace SintLeoPannenkoeken.ViewModels.Bestellingen
         public string Nummer => _bestelling.Nummer;
         public string Bus => _bestelling.Bus;
         public string Code => $"{_bestelling?.Straat?.Zone?.Naam} {_bestelling?.Straat?.Nummer}";
+        public bool Geleverd => _bestelling.Geleverd;
     }
 }
