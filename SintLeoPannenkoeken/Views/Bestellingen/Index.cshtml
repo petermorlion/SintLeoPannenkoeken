@@ -41,6 +41,54 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="deleteBestellingModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Bestelling bewerken</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="deleteBestellingId" />
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <p>Ben je zeker dat je deze bestelling wil verwijderen?</p>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Nr</th>
+                                    <th scope="col">Naam koper</th>
+                                    <th scope="col">Aantal pakken</th>
+                                    <th scope="col">Betaald</th>
+                                    <th scope="col">Geleverd</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td id="deleteNummer"></td>
+                                    <td id="deleteNaam"></td>
+                                    <td id="deleteAantalPakken"></td>
+                                    <td id="deleteBetaald"></td>
+                                    <td id="deleteGeleverd"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-danger">Ja</button>
+                            <button type="reset" class="btn btn-secondary">Nee</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <table id="bestellingenTable" class="table table-hover">
         <thead>
             <tr>
@@ -214,6 +262,38 @@
         }
 
         async function deleteBestelling(bestellingId) {
+            $('#deleteBestellingId').val(bestellingId);
+
+            var scoutsjaar = $('#bestellingen').data('scoutsjaar');
+
+            var response = await fetch(`/api/bestellingen/${scoutsjaar}/${bestellingId}`);
+            if (!response.ok) {
+                var errorMessage = await (response.text());
+                alert(errorMessage);
+                return;
+            }
+
+            var bestelling = await response.json();
+
+            $('#deleteNummer').text(bestelling.bestellingNummer);
+            $('#deleteNaam').text(bestelling.naam);
+            $('#deleteAantalPakken').text(bestelling.aantalPakken);
+            if (bestelling.geleverd) {
+                $('#deleteGeleverd').html('<i class="bi-check-lg"></i>');
+            } else {
+                $('#deleteGeleverd').html('');
+            }
+
+            if (bestelling.betaald) {
+                $('#deleteBetaald').html('<i class="bi-check-lg"></i>');
+            } else {
+                $('#deleteBetaald').html('');
+            }
+            
+            $('#deleteBestellingModal').modal('show');
+        }
+
+        async function confirmDeleteBestelling(bestellingId) {
             var scoutsjaar = $('#bestellingen').data('scoutsjaar');
             var response = await fetch(`/api/bestellingen/${scoutsjaar}/${bestellingId}`, {
                 method: 'DELETE',
@@ -303,6 +383,17 @@
                 clearForms();
                 enableAdres('#updateBestellingForm');
                 $('#editBestellingModal').modal('hide');
+            });
+
+            $('#deleteBestellingModal button.btn-danger').click(async function (event) {
+                event.preventDefault();
+                await confirmDeleteBestelling($('#deleteBestellingModal #deleteBestellingId').val());
+                $('#deleteBestellingModal').modal('hide');
+            });
+
+            $('#deleteBestellingModal button.btn-secondary').click(async function (event) {
+                event.preventDefault();
+                $('#deleteBestellingModal').modal('hide');
             });
 
             $('.zelf-afhalen-input').click(async function () {
