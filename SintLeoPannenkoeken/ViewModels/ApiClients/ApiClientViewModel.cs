@@ -17,6 +17,5 @@ namespace SintLeoPannenkoeken.ViewModels.ApiClients
 
         public int Id => _apiClient.Id;
         public string Naam => _apiClient.Naam;
-        public string ApiKey => _apiClient.ApiKey;
     }
 }

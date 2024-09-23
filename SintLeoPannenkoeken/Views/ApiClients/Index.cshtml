@@ -1,0 +1,131 @@
+﻿@{
+    ViewData["Title"] = "Api Clients";
+}
+
+<div id="apiClients" class="container-fluid">
+    <h1 class="display-4">
+        @ViewData["Title"]
+    </h1>
+    <form id="apiClientForm">
+        <div class="row mt-4 mb-4">
+            <div class="col-6">
+                <label for="naam" class="form-label">Naam</label>
+                <input type="text" class="form-control" placeholder="Naam" aria-label="Naam" name="naam" id="naam">
+            </div>
+            <div class="col-6">
+                <label for="apiKey" class="form-label">API Key</label>
+                <input type="password" class="form-control" aria-label="API Key" name="apiKey" id="apiKey">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 mb-4">
+                <button type="submit" class="btn btn-primary">Opslaan</button>
+                <button type="reset" class="btn btn-secondary">Annuleren</button>
+            </div>
+        </div>
+    </form>
+    <table id="apiClientsTable" class="table table-hover">
+        <thead>
+            <tr>
+                <th>Naam</th>
+                <th></th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        async function reloadApiClients() {
+            var response = await fetch(`/api/apiClients`);
+            if (!response.ok) {
+                var errorMessage = await (response.text());
+                alert(errorMessage);
+            }
+
+            var json = await response.json();
+            $('#apiClientsTable').DataTable({
+                destroy: true,
+                data: json,
+                pageLength: 250,
+                lengthMenu: [50, 10, 250, 500],
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/nl-NL.json'
+                },
+                columns: [
+                    { data: 'naam' },
+                    {
+                        data: function (row, type, val, meta) {
+                            return `
+                                <a href='#' onclick="deleteApiClient(${row.id})" title='Verwijderen'><i class="text-danger bi bi-x-circle-fill"></i></a>
+                            `;
+                        }
+                    }
+                ]
+            });
+        }
+
+        async function submitApiClient() {
+            var data = {
+                naam: $('#apiClientForm #naam').val(),
+                apiKey: $('#apiClientForm #apiKey').val()
+            };
+
+            var response = await fetch(`/api/apiClients`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                var errorMessage = await(response.text());
+                alert(errorMessage);
+            }
+
+            setFocus();
+        }
+
+        function setFocus() {
+            $('#apiClientForm #naam').focus();
+        }
+
+        function clearForm() {
+            $('#apiClientForm')[0].reset();
+        }
+        
+        async function deleteApiClient(apiClientId) {
+            var text = `Ben je zeker dat je deze API Client wil verwijderen?`;
+            if (confirm(text) !== true) {
+                return;
+            }
+
+            var response = await fetch(`/api/apiClients/${apiClientId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                var errorMessage = await response.text();
+                alert(errorMessage);
+            }
+
+            await reloadApiClients();
+        }
+
+        $(async function () {
+            $('#apiClientForm button.btn-primary').click(async function(event) {
+                event.preventDefault();
+                await submitApiClient();
+                await reloadApiClients();
+                clearForm();
+            });
+
+            await reloadApiClients();
+            setFocus();
+        });
+    </script>
+}

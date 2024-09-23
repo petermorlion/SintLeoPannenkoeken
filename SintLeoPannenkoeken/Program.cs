@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Authentication;
@@ -20,10 +21,10 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
 
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddAuthentication("ApiKey")
-    .AddScheme<ApiKeyAuthenticationSchemeOptions, ApiKeyAuthenticationSchemeHandler>(
+builder.Services.AddAuthentication()
+    .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationSchemeHandler>(
         "ApiKey",
-        opts => opts.ApiKey = builder.Configuration.GetValue<string>("api-key")
+         options => { }
     );
 
 var app = builder.Build();

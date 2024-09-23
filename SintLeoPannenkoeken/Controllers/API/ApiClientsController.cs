@@ -47,7 +47,11 @@ namespace SintLeoPannenkoeken.Controllers.API
         [Route("")]
         public async Task<IActionResult> Post([FromBody] CreateApiClientViewModel createApiClientViewModel)
         {
-            var apiClient = new ApiClient(createApiClientViewModel.Naam, createApiClientViewModel.ApiKey);
+            var passwordHasher = new PasswordHasher<IdentityUser>();
+            // The user parameter isn't used (see https://github.com/dotnet/AspNetCore/blob/main/src/Identity/Extensions.Core/src/PasswordHasher.cs)
+            var hashedApiKey = passwordHasher.HashPassword(null, createApiClientViewModel.ApiKey);
+
+            var apiClient = new ApiClient(createApiClientViewModel.Naam, hashedApiKey);
 
             _dbContext.ApiClients.Add(apiClient);
             await _dbContext.SaveChangesAsync();

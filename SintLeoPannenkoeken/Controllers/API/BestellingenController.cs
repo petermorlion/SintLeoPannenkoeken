@@ -8,7 +8,7 @@ using SintLeoPannenkoeken.ViewModels.Bestellingen;
 namespace SintLeoPannenkoeken.Controllers.API
 {
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin,FinanciePloeg")]
+    [Authorize(Roles = "Admin,FinanciePloeg,ApiClient")]
     [ApiController]
     public class BestellingenController : ControllerBase
     {
@@ -78,6 +78,7 @@ namespace SintLeoPannenkoeken.Controllers.API
 
         [HttpPost]
         [Route("{jaar:int}")]
+        [Authorize(AuthenticationSchemes = "Identity.Application,ApiKey", Roles = "Admin,FinanciePloeg,ApiClient")]
         public IActionResult Post(int jaar, [FromBody] CreateBestellingViewModel createBestellingViewModel)
         {
             var scoutsjaar = _dbContext.Scoutsjaren.SingleOrDefault(s => s.Begin == jaar);
@@ -93,7 +94,7 @@ namespace SintLeoPannenkoeken.Controllers.API
                 .OrderByDescending(b => b.Id)
                 .FirstOrDefault();
 
-            // I totally realize this could lead to duplicate bestellinNummers, but the chances are slim
+            // I totally realize this could lead to duplicate bestellingNummers, but the chances are slim
             // because only about 2 users (maximum) will be active at the same time.
             var bestellingNummer = lastBestelling != null ? lastBestelling.BestellingNummer + 1 : 1;
 
