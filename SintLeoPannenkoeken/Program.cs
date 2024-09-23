@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SintLeoPannenkoeken.Authentication;
 using SintLeoPannenkoeken.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,12 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
    options.TokenLifespan = TimeSpan.FromDays(2));
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthentication("ApiKey")
+    .AddScheme<ApiKeyAuthenticationSchemeOptions, ApiKeyAuthenticationSchemeHandler>(
+        "ApiKey",
+        opts => opts.ApiKey = builder.Configuration.GetValue<string>("api-key")
+    );
 
 var app = builder.Build();
 
