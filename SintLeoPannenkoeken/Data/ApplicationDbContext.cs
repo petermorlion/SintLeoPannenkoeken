@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Models;
-using SintLeoPannenkoeken.Models.Views;
 
 namespace SintLeoPannenkoeken.Data
 {
@@ -21,5 +20,6 @@ namespace SintLeoPannenkoeken.Data
         public DbSet<StreefCijfer> StreefCijfers { get; set; }
         public DbSet<Bestuurder> Bestuurders { get; set; }
         public DbSet<Ronde> Rondes { get; set; }
+        public DbSet<ApiClient> ApiClients { get; set; }
     }
 }

@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SintLeoPannenkoeken.Authentication;
 using SintLeoPannenkoeken.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +20,12 @@ builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
    options.TokenLifespan = TimeSpan.FromDays(2));
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthentication()
+    .AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationSchemeHandler>(
+        "ApiKey",
+         options => { }
+    );
 
 var app = builder.Build();
 
