@@ -71,8 +71,8 @@ namespace SintLeoPannenkoeken.Controllers
                         var tak = takken.SingleOrDefault(t => t.Afkorting == takAfkorting);
                         if (tak == null)
                         {
-                            results.Add($"Fout op lijn {lineCounter}: Onbekende tak ({takNaam}).");
-                            continue;
+                            tak = takken.SingleOrDefault(t => t.Afkorting == "AN");
+                            results.Add($"Onbekende tak op lijn {lineCounter}. Lid {voornaam} {achternaam} wordt toegevoegd aan \"Andere\".");
                         }
 
                         var lid = leden.SingleOrDefault(l => l.Voornaam == voornaam && l.Achternaam == achternaam);
