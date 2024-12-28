@@ -6,9 +6,13 @@
     <h1 class="display-4">@ViewData["Title"]</h1>
     <form id="scoutsjaarForm">
         <div class="row mt-4 mb-4">
-            <div class="col-6">
+            <div class="col-3">
                 <label for="begin" class="form-label">Jaar</label>
                 <input type="number" class="form-control" aria-label="Jaar" name="begin" id="begin">
+            </div>
+            <div class="col-3">
+                <label for="pannenkoekenPerPak" class="form-label">Pannenkoeken per pak</label>
+                <input type="number" class="form-control" aria-label="Pannenkoeken per pak" name="pannenkoekenPerPak" id="pannenkoekenPerPak">
             </div>
         </div>
         <div class="row">
@@ -22,6 +26,7 @@
         <thead>
             <tr>
                 <th>Jaar</th>
+                <th>Pannenkoeken per pak</th>
             </tr>
         </thead>
     </table>
@@ -46,14 +51,16 @@
                     url: 'https://cdn.datatables.net/plug-ins/1.13.1/i18n/nl-NL.json'
                 },
                 columns: [
-                    { data: 'begin' }
+                    { data: 'begin' },
+                    { data: 'pannenkoekenPerPak' }
                 ]
             });
         }
 
         async function submitScoutsjaar() {
             var data = {
-                begin: $('#scoutsjaarForm #begin').val()
+                begin: $('#scoutsjaarForm #begin').val(),
+                pannenkoekenPerPak: $('#scoutsjaarForm #pannenkoekenPerPak').val()
             };
 
             var response = await fetch(`/api/scoutsjaren`, {

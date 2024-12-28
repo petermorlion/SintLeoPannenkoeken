@@ -5,9 +5,10 @@ namespace SintLeoPannenkoeken.Models
     [Index(nameof(Begin), IsUnique = true)]
     public class Scoutsjaar
     {
-        public Scoutsjaar(int begin)
+        public Scoutsjaar(int begin, int pannenkoekenPerPak)
         {
             Begin = begin;
+            PannenkoekenPerPak = pannenkoekenPerPak;
             Bestellingen = new List<Bestelling>();
         }
 

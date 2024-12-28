@@ -12,5 +12,6 @@ namespace SintLeoPannenkoeken.ViewModels.Scoutsjaren
         }
 
         public int Begin => _scoutsjaar.Begin;
+        public int PannenkoekenPerPak => _scoutsjaar.PannenkoekenPerPak;
     }
 }
