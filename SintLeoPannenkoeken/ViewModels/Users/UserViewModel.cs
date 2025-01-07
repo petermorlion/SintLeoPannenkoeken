@@ -20,6 +20,6 @@ namespace SintLeoPannenkoeken.ViewModels.Users
 
         public string Id => _user.Id;
         public string Email => _user.Email;
-        public IList<string> Role => _roles;
+        public IList<string> Roles => _roles;
     }
 }

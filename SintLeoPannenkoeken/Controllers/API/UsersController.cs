@@ -18,6 +18,12 @@ namespace SintLeoPannenkoeken.Controllers.API
         private readonly ApplicationDbContext _dbContext;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly Dictionary<string, string> RoleIds = new Dictionary<string, string>
+        {
+            { "admin", "Admin" },
+            { "financieploeg", "FinanciePloeg" },
+            { "bestuurder", "Bestuurder" }
+        };
 
         public UsersController(
             ILogger<UsersController> logger, 
@@ -64,30 +70,16 @@ namespace SintLeoPannenkoeken.Controllers.API
                 return BadRequest(userResult.Errors);
             }
 
-            if (createUserViewModel.Role == "admin")
+            foreach (var role in createUserViewModel.Roles)
             {
-                var adminRoleExists = await _roleManager.RoleExistsAsync("Admin");
-                if (!adminRoleExists)
+                var roleId = RoleIds[role];
+                var roleExists = await _roleManager.RoleExistsAsync(roleId);
+                if (!roleExists)
                 {
-                    await _roleManager.CreateAsync(new IdentityRole("Admin"));
+                    await _roleManager.CreateAsync(new IdentityRole(roleId));
                 }
 
-                var roleResult = await _userManager.AddToRoleAsync(user, "Admin");
-                if (!roleResult.Succeeded)
-                {
-                    // TODO: handle error
-                    return BadRequest(roleResult.Errors);
-                }
-            } 
-            else if (createUserViewModel.Role == "financieploeg")
-            {
-                var financiePloegRoleExists = await _roleManager.RoleExistsAsync("FinanciePloeg");
-                if (!financiePloegRoleExists)
-                {
-                    await _roleManager.CreateAsync(new IdentityRole("FinanciePloeg"));
-                }
-
-                var roleResult = await _userManager.AddToRoleAsync(user, "FinanciePloeg");
+                var roleResult = await _userManager.AddToRoleAsync(user, roleId);
                 if (!roleResult.Succeeded)
                 {
                     // TODO: handle error
