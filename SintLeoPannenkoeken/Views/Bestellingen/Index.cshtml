@@ -403,6 +403,9 @@
                     disableAdres(formId);
                     $(formId + ' #nummer').val('');
                     $(formId + ' #straat').val(basisId);
+
+                    var selectedOptionCode = $(formId + ' #straat option:selected').data('code');
+                    $(formId + ' #code').val(selectedOptionCode);
                 } else {
                     enableAdres(formId);
                 }
