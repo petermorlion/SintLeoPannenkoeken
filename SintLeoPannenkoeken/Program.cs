@@ -17,7 +17,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
-   options.TokenLifespan = TimeSpan.FromDays(2));
+   options.TokenLifespan = TimeSpan.FromDays(7));
 
 builder.Services.AddControllersWithViews();
 
