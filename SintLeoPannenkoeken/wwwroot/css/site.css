@@ -17,6 +17,10 @@ body {
   margin-bottom: 60px;
 }
 
+.body-main {
+    margin-bottom: 60px;
+}
+
 .bestellingen-summary {
   font-size: 5em;
 }
