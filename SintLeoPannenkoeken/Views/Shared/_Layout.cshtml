@@ -41,12 +41,9 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Straten" asp-action="Index">Straten</a>
                             </li>
-                        }
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Streefcijfers" asp-action="Index">Streefcijfers</a>
-                        </li>
-                        @if (User.IsInRole("Admin") || User.IsInRole("FinanciePloeg"))
-                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Streefcijfers" asp-action="Index">Streefcijfers</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Bestuurders" asp-action="Index">Bestuurders</a>
                             </li>

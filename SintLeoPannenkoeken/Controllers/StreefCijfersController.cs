@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SintLeoPannenkoeken.Data;
 using SintLeoPannenkoeken.Filters;
 using SintLeoPannenkoeken.Models;
@@ -6,6 +7,7 @@ using SintLeoPannenkoeken.ViewModels.StreefCijfers;
 
 namespace SintLeoPannenkoeken.Controllers
 {
+    [Authorize(Roles = "Admin,FinanciePloeg")]
     public class StreefCijfersController : Controller
     {
         private ILogger<StreefCijfersController> _logger;
