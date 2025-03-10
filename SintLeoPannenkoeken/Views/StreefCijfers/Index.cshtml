@@ -67,7 +67,7 @@
                     { data: 'aantal' },
                     {
                         data: function (row, type, val, meta) {
-                            return `<a href='#' onclick="deleteStreefCijfer(${row.id})" title='Verwijderen'><i class="text-danger bi-x-circle-fill"></i></a>`;
+                            return `<a href='javascript:void(0);' onclick="deleteStreefCijfer(${row.id})" title='Verwijderen'><i class="text-danger bi-x-circle-fill"></i></a>`;
                         }
                     }
                 ]

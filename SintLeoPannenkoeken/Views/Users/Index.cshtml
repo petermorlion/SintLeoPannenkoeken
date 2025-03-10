@@ -80,7 +80,7 @@
                     {
                         data: function (row, type, val, meta) {
                             return `
-                                <a href='#' onclick="deleteUser('${row.email}', '${row.id}')" title='Verwijderen'><i class="text-danger bi bi-x-circle-fill"></i></a>
+                                <a href='javascript:void(0);' onclick="deleteUser('${row.email}', '${row.id}')" title='Verwijderen'><i class="text-danger bi bi-x-circle-fill"></i></a>
                             `;
                         }
                     }

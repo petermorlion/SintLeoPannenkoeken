@@ -70,7 +70,7 @@
                     {
                         data: function(row, type, val, meta) {
                             return `
-                                    <a href='#' onclick="deleteRonde(${row.id})" title='Verwijderen'><i class="text-danger bi bi-x-circle-fill"></i></a>
+                                    <a href='javascript:void(0);' onclick="deleteRonde(${row.id})" title='Verwijderen'><i class="text-danger bi bi-x-circle-fill"></i></a>
                                 `;
                         }
                     }

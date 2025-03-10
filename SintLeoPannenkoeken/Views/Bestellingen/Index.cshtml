@@ -180,8 +180,8 @@
                         data: function(row, type, val, meta) {
                             return `
                             <div class='d-flex align-items-center'>
-                                <a href='#' onclick="editBestelling(${row.id})" title='Bewerken'><i class="bi bi-pencil-fill me-1"></i></a>
-                                <a href='#' onclick="deleteBestelling(${row.id})" title='Verwijderen'><i class="text-danger bi bi-x-circle-fill"></i></a>
+                                <a href='javascript:void(0);' onclick="editBestelling(${row.id})" title='Bewerken'><i class="bi bi-pencil-fill me-1"></i></a>
+                                <a href='javascript:void(0);' onclick="deleteBestelling(${row.id})" title='Verwijderen'><i class="text-danger bi bi-x-circle-fill"></i></a>
                             </div>
                                 `;
                         }

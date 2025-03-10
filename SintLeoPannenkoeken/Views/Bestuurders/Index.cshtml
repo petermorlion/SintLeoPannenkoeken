@@ -67,7 +67,7 @@
                             return `
                                 <a href='/Bestuurders/Rondes?bestuurderId=${row.id}&scoutsjaar=${scoutsjaar}' class='bestellingen-delete' title='Rondes' data-id='${row.id}'><i class="bi bi-car-front-fill"></i></a>
                                 <a href='/Rapporten/BestuurderDetails?bestuurderId=${row.id}' title='Details'><i class="bi bi-printer-fill"></i></a>
-                                <a href='#' onclick="deleteBestuurder(${row.id})" title='Verwijderen'><i class="text-danger bi bi-x-circle-fill"></i></a>
+                                <a href='javascript:void(0);' onclick="deleteBestuurder(${row.id})" title='Verwijderen'><i class="text-danger bi bi-x-circle-fill"></i></a>
                             `;
                         }
                     }
