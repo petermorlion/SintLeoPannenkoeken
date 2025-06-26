@@ -10,6 +10,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.github\workflows\SintLeoPannenkoeken.yml = .github\workflows\SintLeoPannenkoeken.yml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SintLeoPannenkoeken.Blazor", "SintLeoPannenkoeken.Blazor\SintLeoPannenkoeken.Blazor\SintLeoPannenkoeken.Blazor.csproj", "{4C66CEAC-554F-A5E0-2D50-E4A0848D7910}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SintLeoPannenkoeken.Blazor.Client", "SintLeoPannenkoeken.Blazor\SintLeoPannenkoeken.Blazor.Client\SintLeoPannenkoeken.Blazor.Client.csproj", "{393AC023-79E9-C2B6-F8B8-5CCD39C27272}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SintLeoPannenkoeken.AppHost", "SintLeoPannenkoeken.AppHost\SintLeoPannenkoeken.AppHost.csproj", "{B07A054F-963A-4788-B7E5-0FA17539286C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SintLeoPannenkoeken.ServiceDefaults", "SintLeoPannenkoeken.ServiceDefaults\SintLeoPannenkoeken.ServiceDefaults.csproj", "{ABE57985-75DA-7676-3630-9E02DA15EE70}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +28,22 @@ Global
 		{76F64643-1C0F-41B6-8C59-3CB3778F90C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76F64643-1C0F-41B6-8C59-3CB3778F90C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76F64643-1C0F-41B6-8C59-3CB3778F90C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C66CEAC-554F-A5E0-2D50-E4A0848D7910}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C66CEAC-554F-A5E0-2D50-E4A0848D7910}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C66CEAC-554F-A5E0-2D50-E4A0848D7910}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C66CEAC-554F-A5E0-2D50-E4A0848D7910}.Release|Any CPU.Build.0 = Release|Any CPU
+		{393AC023-79E9-C2B6-F8B8-5CCD39C27272}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{393AC023-79E9-C2B6-F8B8-5CCD39C27272}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{393AC023-79E9-C2B6-F8B8-5CCD39C27272}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{393AC023-79E9-C2B6-F8B8-5CCD39C27272}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B07A054F-963A-4788-B7E5-0FA17539286C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B07A054F-963A-4788-B7E5-0FA17539286C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B07A054F-963A-4788-B7E5-0FA17539286C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B07A054F-963A-4788-B7E5-0FA17539286C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABE57985-75DA-7676-3630-9E02DA15EE70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABE57985-75DA-7676-3630-9E02DA15EE70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABE57985-75DA-7676-3630-9E02DA15EE70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABE57985-75DA-7676-3630-9E02DA15EE70}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
