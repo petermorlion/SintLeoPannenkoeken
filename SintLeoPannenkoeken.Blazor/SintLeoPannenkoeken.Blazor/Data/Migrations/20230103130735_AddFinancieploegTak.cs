@@ -1,0 +1,20 @@
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace SintLeoPannenkoeken.Blazor.Data.Migrations
+{
+    public partial class AddFinancieploegTak : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.InsertTak("Financieploeg");
+            migrationBuilder.SetTakAfkorting("Financieploeg", "FP");
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.Sql($"DELETE FROM Takken WHERE [Naam] = 'Financieploeg';");
+        }
+    }
+}
