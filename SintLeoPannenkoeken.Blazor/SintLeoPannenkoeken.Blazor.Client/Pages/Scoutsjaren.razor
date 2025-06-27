@@ -1,56 +1,49 @@
 ﻿@page "/scoutsjaren"
+@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+
+@inject IServerHttpClient httpClient
 
 <PageTitle>Scoutsjaren</PageTitle>
 
-<h1>Weather</h1>
+<h1>Scoutsjaren</h1>
 
-<p>This component demonstrates showing data.</p>
+<MudDataGrid Items="@_scoutsjaren">
+    <Columns>
+        <PropertyColumn Property="x => x.Begin" Title="Jaar" />
+        <PropertyColumn Property="x => x.PannenkoekenPerPak" Title="Pannenkoeken per pak" />
+    </Columns>
+</MudDataGrid>
 
-@if (forecasts == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+@* <MudDataGrid T="ScoutsjaarDto" MultiSelection="true" Items="@_scoutsjaren" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter"
+             Hideable="true" RowClick="@RowClicked" RowContextMenuClick="RowRightClicked" SelectedItemsChanged="@SelectedItemsChanged">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <Columns>
+        <SelectColumn T="Element" />
+        <PropertyColumn Property="x => x.Number" Title="Nr" Sortable="false" Filterable="false" />
+        <PropertyColumn Property="x => x.Sign" />
+        <PropertyColumn Property="x => x.Name" SortBy="@_sortBy" />
+        <PropertyColumn Property="x => x.Position" />
+        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+        <PropertyColumn Property="x => x.Group" Title="Category" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Element" />
+    </PagerContent>
+</MudDataGrid> *@
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private IEnumerable<ScoutsjaarDto> _scoutsjaren = new List<ScoutsjaarDto>();
+    private string _searchString;
 
     protected override async Task OnInitializedAsync()
     {
-        // Simulate asynchronous loading to demonstrate a loading indicator
-        await Task.Delay(500);
-
-        var startDate = DateOnly.FromDateTime(DateTime.Now);
-        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-        forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = startDate.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = summaries[Random.Shared.Next(summaries.Length)]
-        }).ToArray();
+        _scoutsjaren = await httpClient.GetScoutsjaren();
     }
 
     private class WeatherForecast
