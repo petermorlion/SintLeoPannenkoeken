@@ -10,8 +10,9 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
 
-builder.Services.AddMudServices();
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+builder.Services.AddTransient<ServerHttpClient>();
 
-builder.Services.AddHttpClient<IServerHttpClient, ServerHttpClient>();
+builder.Services.AddMudServices();
 
 await builder.Build().RunAsync();
