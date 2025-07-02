@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
-using SintLeoPannenkoeken.Blazor.Client.Pages;
 using SintLeoPannenkoeken.Blazor.Components;
 using SintLeoPannenkoeken.Blazor.Components.Account;
 using SintLeoPannenkoeken.Blazor.Data;
@@ -47,7 +46,10 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 
 builder.Services.AddMudServices();
 
-builder.Services.AddControllers();
+builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddOpenApiDocument();
 
 builder.Services.AddCors(options =>
 {
@@ -74,10 +76,16 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseCors("Development");
+    app.UseOpenApi();
+    app.UseSwaggerUi();
+    app.UseWebAssemblyDebugging();
 }
 else
 {
     app.UseCors("AllowBlazorWasm"); // More restrictive for production
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
 }
 
 #if DEBUG
@@ -92,22 +100,15 @@ using (var scope = app.Services.CreateScope())
 
 app.MapDefaultEndpoints();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseWebAssemblyDebugging();
-    app.UseMigrationsEndPoint();
-}
-else
-{
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-
 app.UseHttpsRedirection();
 
+app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
+app.UseRouting();
+app.MapRazorPages();
+app.MapControllers();
+app.MapFallbackToFile("index.html");
+app.UseAuthorization();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
@@ -116,7 +117,5 @@ app.MapRazorComponents<App>()
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
-
-app.MapControllers();
 
 app.Run();
