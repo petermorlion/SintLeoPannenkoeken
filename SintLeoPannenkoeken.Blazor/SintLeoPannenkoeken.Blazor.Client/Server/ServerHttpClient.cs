@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 
 namespace SintLeoPannenkoeken.Blazor.Client.Server
 {
-    public class  ServerHttpClient : IServerHttpClient
+    public class ServerHttpClient : IServerHttpClient
     {
         private readonly HttpClient _httpClient;
 
@@ -16,6 +16,12 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         {
             var result = await _httpClient.GetFromJsonAsync<IList<ScoutsjaarDto>>("/api/scoutsjaren");
             return result ?? new List<ScoutsjaarDto>();
+        }
+
+        public async Task<IList<LidDto>> GetLeden()
+        {
+            var result = await _httpClient.GetFromJsonAsync<IList<LidDto>>("/api/leden");
+            return result ?? new List<LidDto>();
         }
     }
 }
