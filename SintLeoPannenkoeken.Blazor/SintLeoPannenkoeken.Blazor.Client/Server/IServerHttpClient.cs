@@ -5,5 +5,6 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
     public interface IServerHttpClient
     {
         Task<IList<ScoutsjaarDto>> GetScoutsjaren();
+        Task<IList<LidDto>> GetLeden();
     }
 }

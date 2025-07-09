@@ -23,13 +23,16 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
         [Route("")]
         public IActionResult Get()
         {
-            var scoutsjaren = _dbContext.Scoutsjaren.ToList();
+            var scoutsjaren = _dbContext
+                .Scoutsjaren
+                .OrderBy(scoutsjaar => scoutsjaar.Begin)
+                .ToList();
 
-            var scoutsjaarViewModels = scoutsjaren == null 
+            var scoutsjaarDtos = scoutsjaren == null 
                 ? new List<ScoutsjaarDto>() 
                 : scoutsjaren.Select(scoutsjaar => new ScoutsjaarDto(scoutsjaar.Begin, scoutsjaar.PannenkoekenPerPak)).ToList();
 
-            return Ok(scoutsjaarViewModels);
+            return Ok(scoutsjaarDtos);
         }
     }
 }
