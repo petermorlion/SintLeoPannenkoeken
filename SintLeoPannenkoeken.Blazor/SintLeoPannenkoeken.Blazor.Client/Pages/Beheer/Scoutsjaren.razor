@@ -1,0 +1,33 @@
+﻿@page "/beheer/scoutsjaren"
+@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+
+@inject ServerHttpClient httpClient
+
+<PageTitle>Scoutsjaren</PageTitle>
+
+<h1>Scoutsjaren</h1>
+
+<MudDataGrid T="ScoutsjaarDto" 
+             Items="@_scoutsjaren" 
+             SortMode="SortMode.Multiple" 
+             Filterable="true" 
+             MultiSelection="false"
+             RowsPerPage="500">
+    <Columns>
+        <PropertyColumn Property="x => x.Begin" Title="Jaar" InitialDirection="SortDirection.Descending" />
+        <PropertyColumn Property="x => x.PannenkoekenPerPak" Title="Pannenkoeken per pak" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="ScoutsjaarDto" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<ScoutsjaarDto> _scoutsjaren = new List<ScoutsjaarDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _scoutsjaren = await httpClient.GetScoutsjaren();
+    }
+}
