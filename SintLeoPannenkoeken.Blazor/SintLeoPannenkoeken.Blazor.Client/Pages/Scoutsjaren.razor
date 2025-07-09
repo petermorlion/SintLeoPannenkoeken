@@ -8,17 +8,11 @@
 
 <h1>Scoutsjaren</h1>
 
-<MudDataGrid Items="@_scoutsjaren">
-    <Columns>
-        <PropertyColumn Property="x => x.Begin" Title="Jaar" />
-        <PropertyColumn Property="x => x.PannenkoekenPerPak" Title="Pannenkoeken per pak" />
-    </Columns>
-</MudDataGrid>
-
 <MudDataGrid T="ScoutsjaarDto" 
              Items="@_scoutsjaren" 
              SortMode="SortMode.Multiple" 
-             Filterable="true">
+             Filterable="true"
+             MultiSelection"false">
     <Columns>
         <SelectColumn T="ScoutsjaarDto" />
         <PropertyColumn Property="x => x.Begin" Title="Jaar" />
