@@ -6,7 +6,7 @@ using SintLeoPannenkoeken.Blazor.Data;
 namespace SintLeoPannenkoeken.Blazor.Controllers
 {
     [Route("api/[controller]")]
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     [ApiController]
     public class ScoutsjarenController : ControllerBase
     {

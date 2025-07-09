@@ -11,9 +11,13 @@
             <MudNavLink Href="/rapporten/verkoopperlid">Verkoop per lid</MudNavLink>
             <MudNavLink Href="/rapporten/ingavetotalen">Totaal ingegeven</MudNavLink>
         </MudNavGroup>
-        <MudNavGroup Title="Beheer">
-            <MudNavLink Href="/beheer/scoutsjaren">Scoutsjaren</MudNavLink>
-            <MudNavLink Href="/beheer/leden">Leden</MudNavLink>
-        </MudNavGroup>
+        <AuthorizeView Roles="Admin,FinanciePloeg">
+            <MudNavGroup Title="Beheer">
+                <MudNavLink Href="/beheer/leden">Leden</MudNavLink>
+                <AuthorizeView Roles="Admin" Context="NestedContext">
+                    <MudNavLink Href="/beheer/scoutsjaren">Scoutsjaren</MudNavLink>
+                </AuthorizeView>
+            </MudNavGroup>
+        </AuthorizeView>
     </MudNavMenu>
 </MudPaper>
