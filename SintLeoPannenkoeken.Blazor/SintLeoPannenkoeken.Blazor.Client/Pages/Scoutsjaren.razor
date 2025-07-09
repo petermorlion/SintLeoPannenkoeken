@@ -15,27 +15,19 @@
     </Columns>
 </MudDataGrid>
 
-@* <MudDataGrid T="ScoutsjaarDto" MultiSelection="true" Items="@_scoutsjaren" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter"
-             Hideable="true" RowClick="@RowClicked" RowContextMenuClick="RowRightClicked" SelectedItemsChanged="@SelectedItemsChanged">
-    <ToolBarContent>
-        <MudText Typo="Typo.h6">Periodic Elements</MudText>
-        <MudSpacer />
-        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
-                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-    </ToolBarContent>
+<MudDataGrid T="ScoutsjaarDto" 
+             Items="@_scoutsjaren" 
+             SortMode="SortMode.Multiple" 
+             Filterable="true">
     <Columns>
-        <SelectColumn T="Element" />
-        <PropertyColumn Property="x => x.Number" Title="Nr" Sortable="false" Filterable="false" />
-        <PropertyColumn Property="x => x.Sign" />
-        <PropertyColumn Property="x => x.Name" SortBy="@_sortBy" />
-        <PropertyColumn Property="x => x.Position" />
-        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
-        <PropertyColumn Property="x => x.Group" Title="Category" />
+        <SelectColumn T="ScoutsjaarDto" />
+        <PropertyColumn Property="x => x.Begin" Title="Jaar" />
+        <PropertyColumn Property="x => x.PannenkoekenPerPak" Title="Pannenkoeken per pak" />
     </Columns>
     <PagerContent>
-        <MudDataGridPager T="Element" />
+        <MudDataGridPager T="ScoutsjaarDto" />
     </PagerContent>
-</MudDataGrid> *@
+</MudDataGrid>
 
 @code {
     private IEnumerable<ScoutsjaarDto> _scoutsjaren = new List<ScoutsjaarDto>();
