@@ -3,8 +3,13 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 using MudBlazor.Translations;
 using SintLeoPannenkoeken.Blazor.Client;
+using System.Globalization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+var culture = new CultureInfo("nl-BE");
+CultureInfo.DefaultThreadCurrentCulture = culture;
+CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 builder.Services.AddAuthorizationCore();
 builder.Services.AddCascadingAuthenticationState();

@@ -11,8 +11,8 @@
 <MudDataGrid T="ScoutsjaarDto" 
              Items="@_scoutsjaren" 
              SortMode="SortMode.Multiple" 
-             Filterable="true"
-             MultiSelection"false">
+             Filterable="true" 
+             MultiSelection="false">
     <Columns>
         <SelectColumn T="ScoutsjaarDto" />
         <PropertyColumn Property="x => x.Begin" Title="Jaar" />
