@@ -25,6 +25,9 @@
                     <AuthorizeView Roles="@($"{Roles.RolesForScoutsjaren}")" Context="childContext">
                         <MudNavLink Href="/beheer/scoutsjaren">Scoutsjaren</MudNavLink>
                     </AuthorizeView>
+                    <AuthorizeView Roles="@($"{Roles.RolesForStraten}")" Context="childContext">
+                        <MudNavLink Href="/beheer/straten">Straten</MudNavLink>
+                    </AuthorizeView>
                 </MudNavGroup>
             </Authorized>
         </AuthorizeView>

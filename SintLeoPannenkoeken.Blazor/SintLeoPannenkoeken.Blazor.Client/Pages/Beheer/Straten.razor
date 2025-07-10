@@ -1,0 +1,22 @@
+﻿@page "/beheer/straten"
+@using SintLeoPannenkoeken.Blazor.Client.Auth
+@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+
+<MasterDetailPage TDto="StraatDto"
+                  AuthorizedRoles="@($"{Roles.RolesForStraten}")"
+                  Title="Straten"
+                  DataProvider="@_dataProvider">
+    <Columns>
+        <PropertyColumn T="StraatDto" TProperty="int" Property="x => x.Nummer" Title="Nummer" />
+        <PropertyColumn T="StraatDto" TProperty="string" Property="x => x.ZoneNaam" Title="Zone" />
+        <PropertyColumn T="StraatDto" TProperty="string" Property="x => x.Naam" Title="Naam" InitialDirection="SortDirection.Ascending" />
+        <PropertyColumn T="StraatDto" TProperty="int" Property="x => x.PostNummer" Title="Postnummer" />
+        <PropertyColumn T="StraatDto" TProperty="string" Property="x => x.Gemeente" Title="Gemeente" />
+        <PropertyColumn T="StraatDto" TProperty="string" Property="x => x.Omschrijving" Title="Omschrijving" />
+    </Columns>
+</MasterDetailPage>
+
+@code {
+    private Func<IServerData, Task<IEnumerable<StraatDto>>> _dataProvider => async (serverData) => await serverData.GetStraten();
+}
