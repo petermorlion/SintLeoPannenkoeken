@@ -1,0 +1,47 @@
+﻿@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Auth
+@typeparam TDto
+
+<PageTitle>@Title</PageTitle>
+
+<h1>@Title</h1>
+
+<RoleAuthorizedView Roles="@AuthorizedRoles">
+    <MudDataGrid T="@TDto" 
+                 Items="@_data" 
+                 SortMode="SortMode.Multiple" 
+                 Filterable="true" 
+                 MultiSelection="false"
+                 RowsPerPage="500">
+        <Columns>
+            @Columns
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="TDto" />
+        </PagerContent>
+    </MudDataGrid>
+</RoleAuthorizedView>
+
+@code {
+    private IEnumerable<TDto> _data = new List<TDto>();
+
+    [Parameter]
+    public string Title { get; set; } = "";
+
+    [Parameter]
+    public string AuthorizedRoles { get; set; } = "";
+
+    [Parameter]
+    public RenderFragment Columns { get; set; } = builder => { };
+
+    [Parameter]
+    public Func<IServerData, Task<IEnumerable<TDto>>> DataProvider { get; set; } = default!;
+
+    [Inject]
+    public IServerData ServerData { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _data = await DataProvider(ServerData);
+    }
+}
