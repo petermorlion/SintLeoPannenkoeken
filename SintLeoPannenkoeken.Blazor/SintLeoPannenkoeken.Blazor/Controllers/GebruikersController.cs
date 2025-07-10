@@ -6,14 +6,14 @@ using SintLeoPannenkoeken.Blazor.Client.Server;
 namespace SintLeoPannenkoeken.Blazor.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(Roles = Roles.RolesForScoutsjaren)]
+    [Authorize(Roles = $"{Roles.RolesForGebruikers}")]
     [ApiController]
-    public class ScoutsjarenController : ControllerBase
+    public class GebruikersController : ControllerBase
     {
-        private readonly ILogger<ScoutsjarenController> _logger;
+        private readonly ILogger<GebruikersController> _logger;
         private readonly IServerData _serverData;
 
-        public ScoutsjarenController(ILogger<ScoutsjarenController> logger, IServerData serverData)
+        public GebruikersController(ILogger<GebruikersController> logger, IServerData serverData)
         {
             _logger = logger;
             _serverData = serverData;
@@ -23,8 +23,8 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
         [Route("")]
         public async Task<IActionResult> Get()
         {
-            var scoutsjaarDtos = await _serverData.GetScoutsjaren();
-            return Ok(scoutsjaarDtos);
+            var gebruikerDtos = await _serverData.GetGebruikers();
+            return Ok(gebruikerDtos);
         }
     }
 }

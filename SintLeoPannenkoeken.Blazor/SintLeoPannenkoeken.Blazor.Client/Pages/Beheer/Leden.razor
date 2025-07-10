@@ -9,7 +9,7 @@
 
 <h1>Leden</h1>
 
-<RoleAuthorizedView Roles="@($"{Roles.Admin}")">
+<RoleAuthorizedView Roles="@($"{Roles.RolesForLeden}")">
     <MudDataGrid T="LidDto" 
                  Items="@_leden" 
                  SortMode="SortMode.Multiple" 

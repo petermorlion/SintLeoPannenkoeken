@@ -2,7 +2,12 @@
 {
     public static class Roles
     {
-        public const string Admin = "admin";
-        public const string FinanciePloeg = "financieploeg";
+        private const string Admin = "admin";
+        private const string FinanciePloeg = "financieploeg";
+
+        public const string RolesForBeheer = $"{Admin},{FinanciePloeg}";
+        public const string RolesForLeden = $"{Admin}";
+        public const string RolesForScoutsjaren = $"{Admin},{FinanciePloeg}";
+        public const string RolesForGebruikers = $"{Admin},{FinanciePloeg}";
     }
 }

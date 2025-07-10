@@ -9,7 +9,7 @@
 
 <h1>Scoutsjaren</h1>
 
-<RoleAuthorizedView Roles="@($"{Roles.Admin},{Roles.FinanciePloeg}")">
+<RoleAuthorizedView Roles="@($"{Roles.RolesForScoutsjaren}")">
     <MudDataGrid T="ScoutsjaarDto" 
                  Items="@_scoutsjaren" 
                  SortMode="SortMode.Multiple" 
