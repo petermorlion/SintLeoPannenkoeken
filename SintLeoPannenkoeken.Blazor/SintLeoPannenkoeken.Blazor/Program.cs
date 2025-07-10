@@ -5,6 +5,7 @@ using SintLeoPannenkoeken.Blazor.Client;
 using SintLeoPannenkoeken.Blazor.Components;
 using SintLeoPannenkoeken.Blazor.Components.Account;
 using SintLeoPannenkoeken.Blazor.Data;
+using SintLeoPannenkoeken.Blazor.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,8 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
+
+builder.Services.AddHostedService<AddAdminUser>();
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>
@@ -38,6 +41,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();

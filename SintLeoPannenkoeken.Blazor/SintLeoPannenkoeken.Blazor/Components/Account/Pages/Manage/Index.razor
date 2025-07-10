@@ -14,6 +14,10 @@
 <h3>Profile</h3>
 <StatusMessage />
 
+<p>
+    Your roles: @roles
+</p>
+
 <div class="row">
     <div class="col-md-6">
         <EditForm Model="Input" FormName="profile" OnValidSubmit="OnValidSubmitAsync" method="post">
@@ -37,6 +41,7 @@
     private ApplicationUser user = default!;
     private string? username;
     private string? phoneNumber;
+    private string? roles = "";
 
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
@@ -49,6 +54,7 @@
         user = await UserAccessor.GetRequiredUserAsync(HttpContext);
         username = await UserManager.GetUserNameAsync(user);
         phoneNumber = await UserManager.GetPhoneNumberAsync(user);
+        roles = await UserManager.GetRolesAsync(user).ContinueWith(task => string.Join(", ", task.Result));
 
         Input.PhoneNumber ??= phoneNumber;
     }
