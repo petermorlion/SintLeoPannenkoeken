@@ -10,19 +10,19 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
     public class LedenController : ControllerBase
     {
         private readonly ILogger<LedenController> _logger;
-        private readonly IServerData _server;
+        private readonly IServerData _serverData;
 
-        public LedenController(ILogger<LedenController> logger, IServerData server)
+        public LedenController(ILogger<LedenController> logger, IServerData serverData)
         {
             _logger = logger;
-            _server = server;
+            _serverData = serverData;
         }
 
         [HttpGet]
         [Route("")]
         public async Task<IActionResult> Get()
         {
-            var lidDtos = await _server.GetLeden();
+            var lidDtos = await _serverData.GetLeden();
             return Ok(lidDtos);
         }
     }

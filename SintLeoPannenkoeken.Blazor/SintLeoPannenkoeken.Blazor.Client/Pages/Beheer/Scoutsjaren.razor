@@ -2,7 +2,7 @@
 @using SintLeoPannenkoeken.Blazor.Client.Server
 @using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
 
-@inject ServerHttpClient httpClient
+@inject IServerData ServerData
 
 <PageTitle>Scoutsjaren</PageTitle>
 
@@ -28,6 +28,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _scoutsjaren = await httpClient.GetScoutsjaren();
+        _scoutsjaren = await ServerData.GetScoutsjaren();
     }
 }

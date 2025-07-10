@@ -37,9 +37,18 @@ namespace SintLeoPannenkoeken.Blazor.Data
             return lidDtos;
         }
 
-        public Task<IList<ScoutsjaarDto>> GetScoutsjaren()
+        public async Task<IList<ScoutsjaarDto>> GetScoutsjaren()
         {
-            throw new NotImplementedException();
+            var scoutsjaren = await _dbContext
+                .Scoutsjaren
+                .OrderBy(scoutsjaar => scoutsjaar.Begin)
+                .ToListAsync();
+
+            var scoutsjaarDtos = scoutsjaren == null
+                ? new List<ScoutsjaarDto>()
+                : scoutsjaren.Select(scoutsjaar => new ScoutsjaarDto(scoutsjaar.Begin, scoutsjaar.PannenkoekenPerPak)).ToList();
+
+            return scoutsjaarDtos;
         }
     }
 }
