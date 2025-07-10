@@ -1,4 +1,6 @@
-﻿<MudPaper Width="250px" Class="py-3" Elevation="0">
+﻿@using SintLeoPannenkoeken.Blazor.Client.Auth
+
+<MudPaper Width="250px" Class="py-3" Elevation="0">
     <MudNavMenu>
         <MudText Typo="Typo.h6" Class="px-4">
             <img src="zeescouts.svg" alt="Zeescouts Logo" style="height: 32px; width: auto; vertical-align: middle; margin-right: 8px;" />
@@ -11,7 +13,7 @@
             <MudNavLink Href="/rapporten/verkoopperlid">Verkoop per lid</MudNavLink>
             <MudNavLink Href="/rapporten/ingavetotalen">Totaal ingegeven</MudNavLink>
         </MudNavGroup>
-        <AuthorizeView Roles="admin,financieploeg">
+        <AuthorizeView Roles="@($"{Roles.Admin},{Roles.FinanciePloeg}")">
             <Authorized>
                 <MudNavGroup Title="Beheer">
                     <MudNavLink Href="/beheer/leden">Leden</MudNavLink>
