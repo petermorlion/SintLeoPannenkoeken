@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Blazor.Client;
+using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Components;
 using SintLeoPannenkoeken.Blazor.Components.Account;
 using SintLeoPannenkoeken.Blazor.Data;
@@ -48,7 +49,8 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
-builder.Services.AddSharedServices(new Uri("https://localhost:7070"));
+builder.Services.AddScoped<IServerData, ServerDirectClient>();
+builder.Services.AddSharedServices();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
