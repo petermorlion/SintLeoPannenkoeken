@@ -1,4 +1,5 @@
 ﻿@page "/beheer/scoutsjaren"
+@using SintLeoPannenkoeken.Blazor.Client.Auth
 @using SintLeoPannenkoeken.Blazor.Client.Server
 @using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
 
@@ -8,20 +9,22 @@
 
 <h1>Scoutsjaren</h1>
 
-<MudDataGrid T="ScoutsjaarDto" 
-             Items="@_scoutsjaren" 
-             SortMode="SortMode.Multiple" 
-             Filterable="true" 
-             MultiSelection="false"
-             RowsPerPage="500">
-    <Columns>
-        <PropertyColumn Property="x => x.Begin" Title="Jaar" InitialDirection="SortDirection.Descending" />
-        <PropertyColumn Property="x => x.PannenkoekenPerPak" Title="Pannenkoeken per pak" />
-    </Columns>
-    <PagerContent>
-        <MudDataGridPager T="ScoutsjaarDto" />
-    </PagerContent>
-</MudDataGrid>
+<RoleAuthorizedView Roles="@($"{Roles.Admin},{Roles.FinanciePloeg}")">
+    <MudDataGrid T="ScoutsjaarDto" 
+                 Items="@_scoutsjaren" 
+                 SortMode="SortMode.Multiple" 
+                 Filterable="true" 
+                 MultiSelection="false"
+                 RowsPerPage="500">
+        <Columns>
+            <PropertyColumn Property="x => x.Begin" Title="Jaar" InitialDirection="SortDirection.Descending" />
+            <PropertyColumn Property="x => x.PannenkoekenPerPak" Title="Pannenkoeken per pak" />
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="ScoutsjaarDto" />
+        </PagerContent>
+    </MudDataGrid>
+</RoleAuthorizedView>
 
 @code {
     private IEnumerable<ScoutsjaarDto> _scoutsjaren = new List<ScoutsjaarDto>();

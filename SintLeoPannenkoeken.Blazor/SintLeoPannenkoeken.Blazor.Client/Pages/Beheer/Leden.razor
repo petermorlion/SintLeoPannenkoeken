@@ -1,4 +1,5 @@
 ﻿@page "/beheer/leden"
+@using SintLeoPannenkoeken.Blazor.Client.Auth
 @using SintLeoPannenkoeken.Blazor.Client.Server
 @using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
 
@@ -8,22 +9,24 @@
 
 <h1>Leden</h1>
 
-<MudDataGrid T="LidDto" 
-             Items="@_leden" 
-             SortMode="SortMode.Multiple" 
-             Filterable="true" 
-             MultiSelection="false"
-             RowsPerPage="500">
-    <Columns>
-        <PropertyColumn Property="x => x.Achternaam" Title="Achternaam" InitialDirection="SortDirection.Ascending" />
-        <PropertyColumn Property="x => x.Voornaam" Title="Voornaam" />
-        <PropertyColumn Property="x => x.TakNaam" Title="Tak" />
-        <PropertyColumn Property="x => x.Functie" Title="Functie" />
-    </Columns>
-    <PagerContent>
-        <MudDataGridPager T="ScoutsjaarDto" />
-    </PagerContent>
-</MudDataGrid>
+<RoleAuthorizedView Roles="@($"{Roles.Admin}")">
+    <MudDataGrid T="LidDto" 
+                 Items="@_leden" 
+                 SortMode="SortMode.Multiple" 
+                 Filterable="true" 
+                 MultiSelection="false"
+                 RowsPerPage="500">
+        <Columns>
+            <PropertyColumn Property="x => x.Achternaam" Title="Achternaam" InitialDirection="SortDirection.Ascending" />
+            <PropertyColumn Property="x => x.Voornaam" Title="Voornaam" />
+            <PropertyColumn Property="x => x.TakNaam" Title="Tak" />
+            <PropertyColumn Property="x => x.Functie" Title="Functie" />
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="ScoutsjaarDto" />
+        </PagerContent>
+    </MudDataGrid>
+</RoleAuthorizedView>
 
 @code {
     private IEnumerable<LidDto> _leden = new List<LidDto>();
