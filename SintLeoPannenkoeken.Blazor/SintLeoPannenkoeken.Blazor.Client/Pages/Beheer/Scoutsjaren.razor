@@ -3,34 +3,16 @@
 @using SintLeoPannenkoeken.Blazor.Client.Server
 @using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
 
-@inject IServerData ServerData
-
-<PageTitle>Scoutsjaren</PageTitle>
-
-<h1>Scoutsjaren</h1>
-
-<RoleAuthorizedView Roles="@($"{Roles.RolesForScoutsjaren}")">
-    <MudDataGrid T="ScoutsjaarDto" 
-                 Items="@_scoutsjaren" 
-                 SortMode="SortMode.Multiple" 
-                 Filterable="true" 
-                 MultiSelection="false"
-                 RowsPerPage="500">
-        <Columns>
-            <PropertyColumn Property="x => x.Begin" Title="Jaar" InitialDirection="SortDirection.Descending" />
-            <PropertyColumn Property="x => x.PannenkoekenPerPak" Title="Pannenkoeken per pak" />
-        </Columns>
-        <PagerContent>
-            <MudDataGridPager T="ScoutsjaarDto" />
-        </PagerContent>
-    </MudDataGrid>
-</RoleAuthorizedView>
+<MasterDetailPage TDto="ScoutsjaarDto"
+                  AuthorizedRoles="@($"{Roles.RolesForScoutsjaren}")"
+                  Title="Scoutsjaren"
+                  DataProvider="@_dataProvider">
+    <Columns>
+        <PropertyColumn T="ScoutsjaarDto" TProperty="int" Property="x => x.Begin" Title="Jaar" InitialDirection="SortDirection.Descending" />
+        <PropertyColumn T="ScoutsjaarDto" TProperty="int" Property="x => x.PannenkoekenPerPak" Title="Pannenkoeken per pak" />
+    </Columns>
+</MasterDetailPage>
 
 @code {
-    private IEnumerable<ScoutsjaarDto> _scoutsjaren = new List<ScoutsjaarDto>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        _scoutsjaren = await ServerData.GetScoutsjaren();
-    }
+    private Func<IServerData, Task<IEnumerable<ScoutsjaarDto>>> _dataProvider => async (serverData) => await serverData.GetScoutsjaren();
 }

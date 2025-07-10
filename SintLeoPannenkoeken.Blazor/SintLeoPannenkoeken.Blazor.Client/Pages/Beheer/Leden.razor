@@ -3,36 +3,18 @@
 @using SintLeoPannenkoeken.Blazor.Client.Server
 @using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
 
-@inject IServerData ServerData
-
-<PageTitle>Leden</PageTitle>
-
-<h1>Leden</h1>
-
-<RoleAuthorizedView Roles="@($"{Roles.RolesForLeden}")">
-    <MudDataGrid T="LidDto" 
-                 Items="@_leden" 
-                 SortMode="SortMode.Multiple" 
-                 Filterable="true" 
-                 MultiSelection="false"
-                 RowsPerPage="500">
-        <Columns>
-            <PropertyColumn Property="x => x.Achternaam" Title="Achternaam" InitialDirection="SortDirection.Ascending" />
-            <PropertyColumn Property="x => x.Voornaam" Title="Voornaam" />
-            <PropertyColumn Property="x => x.TakNaam" Title="Tak" />
-            <PropertyColumn Property="x => x.Functie" Title="Functie" />
-        </Columns>
-        <PagerContent>
-            <MudDataGridPager T="ScoutsjaarDto" />
-        </PagerContent>
-    </MudDataGrid>
-</RoleAuthorizedView>
+<MasterDetailPage TDto="LidDto"
+                  AuthorizedRoles="@($"{Roles.RolesForLeden}")"
+                  Title="Leden"
+                  DataProvider="@_dataProvider">
+    <Columns>
+        <PropertyColumn T="LidDto" TProperty="string" Property="x => x.Achternaam" Title="Achternaam" InitialDirection="SortDirection.Ascending" />
+        <PropertyColumn T="LidDto" TProperty="string" Property="x => x.Voornaam" Title="Voornaam" />
+        <PropertyColumn T="LidDto" TProperty="string" Property="x => x.TakNaam" Title="Tak" />
+        <PropertyColumn T="LidDto" TProperty="string" Property="x => x.Functie" Title="Functie" />
+    </Columns>
+</MasterDetailPage>
 
 @code {
-    private IEnumerable<LidDto> _leden = new List<LidDto>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        _leden = await ServerData.GetLeden();
-    }
+    private Func<IServerData, Task<IEnumerable<LidDto>>> _dataProvider => async (serverData) => await serverData.GetLeden();
 }
