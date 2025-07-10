@@ -53,6 +53,17 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
             return result ?? new List<GebruikerDto>();
         }
 
+        public async Task<IList<StraatDto>> GetStraten()
+        {
+            if (!await IsUserAuthorized(Roles.RolesForStraten))
+            {
+                return new List<StraatDto>();
+            }
+
+            var result = await _httpClient.GetFromJsonAsync<IList<StraatDto>>("/api/straten");
+            return result ?? new List<StraatDto>();
+        }
+
         private async Task<bool> IsUserAuthorized(string roleString)
         {
             var roles = roleString.Split(',');

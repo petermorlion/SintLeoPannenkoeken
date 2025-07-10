@@ -67,5 +67,28 @@ namespace SintLeoPannenkoeken.Blazor.Data
 
             return scoutsjaarDtos;
         }
+
+        public async Task<IList<StraatDto>> GetStraten()
+        {
+            var straten = await _dbContext
+                .Straten
+                .Include(straat => straat.Zone)
+                .OrderBy(straat => straat.Naam)
+                .ToListAsync();
+
+            var straatDtos = straten == null
+                ? new List<StraatDto>()
+                : straten.Select(straat => new StraatDto(
+                    straat.Id,
+                    straat.Naam,
+                    straat.PostNummer,
+                    straat.Gemeente,
+                    straat.Omschrijving,
+                    straat.ZoneId,
+                    straat.Zone?.Naam ?? "",
+                    straat.Nummer)).ToList();
+
+            return straatDtos;
+        }
     }
 }
