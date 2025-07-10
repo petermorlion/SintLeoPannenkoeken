@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
-using SintLeoPannenkoeken.Blazor.Data;
+using SintLeoPannenkoeken.Blazor.Client.Server;
 
 namespace SintLeoPannenkoeken.Blazor.Controllers
 {
@@ -11,27 +10,19 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
     public class ScoutsjarenController : ControllerBase
     {
         private readonly ILogger<ScoutsjarenController> _logger;
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IServerData _serverData;
 
-        public ScoutsjarenController(ILogger<ScoutsjarenController> logger, ApplicationDbContext dbContext)
+        public ScoutsjarenController(ILogger<ScoutsjarenController> logger, IServerData serverData)
         {
             _logger = logger;
-            _dbContext = dbContext;
+            _serverData = serverData;
         }
 
         [HttpGet]
         [Route("")]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            var scoutsjaren = _dbContext
-                .Scoutsjaren
-                .OrderBy(scoutsjaar => scoutsjaar.Begin)
-                .ToList();
-
-            var scoutsjaarDtos = scoutsjaren == null 
-                ? new List<ScoutsjaarDto>() 
-                : scoutsjaren.Select(scoutsjaar => new ScoutsjaarDto(scoutsjaar.Begin, scoutsjaar.PannenkoekenPerPak)).ToList();
-
+            var scoutsjaarDtos = await _serverData.GetScoutsjaren();
             return Ok(scoutsjaarDtos);
         }
     }
