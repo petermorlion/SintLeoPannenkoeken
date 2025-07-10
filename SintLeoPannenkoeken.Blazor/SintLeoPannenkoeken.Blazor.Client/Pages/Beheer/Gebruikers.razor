@@ -1,0 +1,41 @@
+﻿@page "/beheer/gebruikers"
+@using SintLeoPannenkoeken.Blazor.Client.Auth
+@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+
+@inject IServerData ServerData
+
+<PageTitle>Gebruikers</PageTitle>
+
+<h1>Gebruikers</h1>
+
+<RoleAuthorizedView Roles="@($"{Roles.RolesForGebruikers}")">
+    <MudDataGrid T="GebruikerDto" 
+                 Items="@_gebruikers" 
+                 SortMode="SortMode.Multiple" 
+                 Filterable="true" 
+                 MultiSelection="false"
+                 RowsPerPage="500">
+        <Columns>
+            <PropertyColumn Property="x => x.Email" Title="Email" InitialDirection="SortDirection.Ascending" />
+            <PropertyColumn Property="x => FormatRoles(x.Rollen)" lentle="Rollen" />
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="ScoutsjaarDto" />
+        </PagerContent>
+    </MudDataGrid>
+</RoleAuthorizedView>
+
+@code {
+    private IEnumerable<GebruikerDto> _gebruikers = new List<GebruikerDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _gebruikers = await ServerData.GetGebruikers();
+    }
+
+    private string FormatRoles(IEnumerable<string> roles)
+    {
+        return string.Join(", ", roles);
+    }
+}

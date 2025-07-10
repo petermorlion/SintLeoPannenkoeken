@@ -22,7 +22,7 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
 
         public async Task<IList<ScoutsjaarDto>> GetScoutsjaren()
         {
-            if (!await IsUserAuthorized(Roles.Admin, Roles.FinanciePloeg))
+            if (!await IsUserAuthorized(Roles.RolesForScoutsjaren))
             {
                 return new List<ScoutsjaarDto>();
             }
@@ -33,7 +33,7 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
 
         public async Task<IList<LidDto>> GetLeden()
         {
-            if (!await IsUserAuthorized(Roles.Admin))
+            if (!await IsUserAuthorized(Roles.RolesForLeden))
             {
                 return new List<LidDto>();
             }
@@ -42,8 +42,21 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
             return result ?? new List<LidDto>();
         }
 
-        private async Task<bool> IsUserAuthorized(params string[] roles)
+        public async Task<IList<GebruikerDto>> GetGebruikers()
         {
+            if (!await IsUserAuthorized(Roles.RolesForGebruikers))
+            {
+                return new List<GebruikerDto>();
+            }
+
+            var result = await _httpClient.GetFromJsonAsync<IList<GebruikerDto>>("/api/gebruikers");
+            return result ?? new List<GebruikerDto>();
+        }
+
+        private async Task<bool> IsUserAuthorized(string roleString)
+        {
+            var roles = roleString.Split(',');
+
             var authenticationState = await _authenticationStateProvider.GetAuthenticationStateAsync();
             if (authenticationState == null
                 || authenticationState.User == null
