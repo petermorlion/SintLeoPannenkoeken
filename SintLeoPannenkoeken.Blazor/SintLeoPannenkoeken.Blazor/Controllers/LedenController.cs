@@ -7,7 +7,7 @@ using SintLeoPannenkoeken.Blazor.Data;
 namespace SintLeoPannenkoeken.Blazor.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "admin")]
     [ApiController]
     public class LedenController : ControllerBase
     {

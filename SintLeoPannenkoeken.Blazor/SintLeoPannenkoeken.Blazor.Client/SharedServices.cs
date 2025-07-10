@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+﻿using Microsoft.AspNetCore.Http;
 using MudBlazor.Services;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 
@@ -8,8 +8,8 @@ namespace SintLeoPannenkoeken.Blazor.Client
     {
         public static IServiceCollection AddSharedServices(this IServiceCollection services, Uri baseAddress)
         {
-            services.AddScoped(sp => new HttpClient { BaseAddress = baseAddress });
-            services.AddTransient<ServerHttpClient>();
+            services
+                .AddHttpClient<ServerHttpClient>(client => { client.BaseAddress = baseAddress; });
 
             services.AddMudServices();
 
