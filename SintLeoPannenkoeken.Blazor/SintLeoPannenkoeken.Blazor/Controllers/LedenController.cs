@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
-using SintLeoPannenkoeken.Blazor.Data;
+using SintLeoPannenkoeken.Blazor.Client.Server;
 
 namespace SintLeoPannenkoeken.Blazor.Controllers
 {
@@ -12,34 +10,19 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
     public class LedenController : ControllerBase
     {
         private readonly ILogger<LedenController> _logger;
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IServerData _server;
 
-        public LedenController(ILogger<LedenController> logger, ApplicationDbContext dbContext)
+        public LedenController(ILogger<LedenController> logger, IServerData server)
         {
             _logger = logger;
-            _dbContext = dbContext;
+            _server = server;
         }
 
         [HttpGet]
         [Route("")]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            var leden = _dbContext
-                .Leden
-                .Include(lid => lid.Tak)
-                .OrderBy(lid => lid.Achternaam)
-                .ToList();
-
-            var lidDtos = leden == null 
-                ? new List<LidDto>() 
-                : leden.Select(lid => new LidDto(
-                    lid.Id,
-                    lid.Voornaam,
-                    lid.Achternaam,
-                    lid.Functie,
-                    lid.Tak?.Naam ?? "Onbekend"
-                )).ToList();
-
+            var lidDtos = await _server.GetLeden();
             return Ok(lidDtos);
         }
     }

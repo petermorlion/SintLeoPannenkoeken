@@ -3,7 +3,11 @@ using System.Net.Http.Json;
 
 namespace SintLeoPannenkoeken.Blazor.Client.Server
 {
-    public class ServerHttpClient : IServerHttpClient
+    /// <summary>
+    /// HTTP client implementation of the server interface. To be used in the 
+    /// Blazor client application to communicate with the server API.
+    /// </summary>
+    public class ServerHttpClient : IServerData
     {
         private readonly HttpClient _httpClient;
 

@@ -2,7 +2,10 @@
 
 namespace SintLeoPannenkoeken.Blazor.Client.Server
 {
-    public interface IServerHttpClient
+    /// <summary>
+    /// Interface to access server-side data.
+    /// </summary>
+    public interface IServerData
     {
         Task<IList<ScoutsjaarDto>> GetScoutsjaren();
         Task<IList<LidDto>> GetLeden();
