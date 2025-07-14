@@ -19,6 +19,14 @@
                  CommittedItemChanges="@OnUpdate">
         <Columns>
             @Columns
+            @if (CanEdit)
+            {
+                <TemplateColumn T="TDto" CellClass="d-flex justify-end">
+                    <CellTemplate>
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+                    </CellTemplate>
+                </TemplateColumn>
+            }
         </Columns>
         <PagerContent>
             <MudDataGridPager T="TDto" />
@@ -43,6 +51,9 @@
 
     [Parameter]
     public EventCallback<TDto> OnUpdate { get; set; }
+
+    [Parameter]
+    public bool CanEdit { get; set; }
 
     [Inject]
     public IServerData ServerData { get; set; } = default!;
