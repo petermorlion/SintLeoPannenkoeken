@@ -6,6 +6,7 @@
         private const string FinanciePloeg = "financieploeg";
 
         public const string RolesForBeheer = $"{Admin},{FinanciePloeg}";
+        public const string RolesForChauffeurs = $"{Admin},{FinanciePloeg}";
         public const string RolesForGebruikers = $"{Admin},{FinanciePloeg}";
         public const string RolesForLeden = $"{Admin}";
         public const string RolesForScoutsjaren = $"{Admin},{FinanciePloeg}";

@@ -64,6 +64,17 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
             return result ?? new List<StraatDto>();
         }
 
+        public async Task<IList<ChauffeurDto>> GetChauffeurs()
+        {
+            if (!await IsUserAuthorized(Roles.RolesForChauffeurs))
+            {
+                return new List<ChauffeurDto>();
+            }
+
+            var result = await _httpClient.GetFromJsonAsync<IList<ChauffeurDto>>("/api/chauffeurs");
+            return result ?? new List<ChauffeurDto>();
+        }
+
         private async Task<bool> IsUserAuthorized(string roleString)
         {
             var roles = roleString.Split(',');
