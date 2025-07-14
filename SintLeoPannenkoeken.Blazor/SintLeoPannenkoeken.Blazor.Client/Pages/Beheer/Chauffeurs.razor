@@ -1,0 +1,18 @@
+﻿@page "/beheer/chauffeurs"
+@using SintLeoPannenkoeken.Blazor.Client.Auth
+@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+
+<MasterDetailPage TDto="ChauffeurDto"
+                  AuthorizedRoles="@($"{Roles.RolesForChauffeurs}")"
+                  Title="Chauffeurs"
+                  DataProvider="@_dataProvider">
+    <Columns>
+        <PropertyColumn T="ChauffeurDto" TProperty="string" Property="x => x.Achternaam" Title="Achternaam" InitialDirection="SortDirection.Ascending" />
+        <PropertyColumn T="ChauffeurDto" TProperty="string" Property="x => x.Voornaam" Title="Voornaam" />
+    </Columns>
+</MasterDetailPage>
+
+@code {
+    private Func<IServerData, Task<IEnumerable<ChauffeurDto>>> _dataProvider => async (serverData) => await serverData.GetChauffeurs();
+}

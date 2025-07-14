@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
+using System.Linq;
 
 namespace SintLeoPannenkoeken.Blazor.Data
 {
@@ -89,6 +90,23 @@ namespace SintLeoPannenkoeken.Blazor.Data
                     straat.Nummer)).ToList();
 
             return straatDtos;
+        }
+
+        public async Task<IList<ChauffeurDto>> GetChauffeurs()
+        {
+            var chauffeurs = await _dbContext
+                .Bestuurders
+                .OrderBy(straat => straat.Achternaam)
+                .ToListAsync();
+
+            var chauffeurDtos = chauffeurs == null
+                ? new List<ChauffeurDto>()
+                : chauffeurs.Select(chauffeur => new ChauffeurDto(
+                    chauffeur.Id,
+                    chauffeur.Achternaam,
+                    chauffeur.Voornaam)).ToList();
+
+            return chauffeurDtos;
         }
     }
 }

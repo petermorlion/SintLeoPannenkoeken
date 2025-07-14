@@ -16,6 +16,9 @@
         <AuthorizeView Roles="@($"{Roles.RolesForBeheer}")">
             <Authorized>
                 <MudNavGroup Title="Beheer">
+                    <AuthorizeView Roles="@($"{Roles.RolesForChauffeurs}")" Context="childContext">
+                        <MudNavLink Href="/beheer/chauffeurs">Chauffeurs</MudNavLink>
+                    </AuthorizeView>
                     <AuthorizeView Roles="@($"{Roles.RolesForGebruikers}")" Context="childContext">
                         <MudNavLink Href="/beheer/gebruikers">Gebruikers</MudNavLink>
                     </AuthorizeView>
