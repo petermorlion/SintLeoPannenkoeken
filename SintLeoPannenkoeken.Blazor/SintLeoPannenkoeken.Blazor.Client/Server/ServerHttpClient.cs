@@ -75,6 +75,11 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
             return result ?? new List<ChauffeurDto>();
         }
 
+        public async Task UpdateScoutsjaar(ScoutsjaarDto scoutsjaar)
+        {
+            await _httpClient.PutAsJsonAsync($"/api/scoutsjaren/{scoutsjaar.Begin}", scoutsjaar);
+        }
+
         private async Task<bool> IsUserAuthorized(string roleString)
         {
             var roles = roleString.Split(',');

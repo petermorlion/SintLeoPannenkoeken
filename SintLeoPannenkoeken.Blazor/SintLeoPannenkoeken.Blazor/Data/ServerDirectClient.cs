@@ -108,5 +108,21 @@ namespace SintLeoPannenkoeken.Blazor.Data
 
             return chauffeurDtos;
         }
+
+        public async Task UpdateScoutsjaar(ScoutsjaarDto scoutsjaarDto)
+        {
+            var scoutsjaar = await _dbContext
+                .Scoutsjaren
+                .FirstOrDefaultAsync(s => s.Begin == scoutsjaarDto.Begin);
+
+            if (scoutsjaar == null)
+            {
+                return;
+            }
+
+            scoutsjaar.PannenkoekenPerPak = scoutsjaarDto.PannenkoekenPerPak;
+            _dbContext.Scoutsjaren.Update(scoutsjaar);
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

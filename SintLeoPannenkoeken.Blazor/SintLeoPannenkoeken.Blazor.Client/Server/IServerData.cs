@@ -12,5 +12,7 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         Task<IList<GebruikerDto>> GetGebruikers();
         Task<IList<StraatDto>> GetStraten();
         Task<IList<ChauffeurDto>> GetChauffeurs();
+
+        Task UpdateScoutsjaar(ScoutsjaarDto scoutsjaar);
     }
 }

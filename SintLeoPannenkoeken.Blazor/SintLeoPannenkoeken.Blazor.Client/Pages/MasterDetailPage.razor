@@ -12,7 +12,11 @@
                  SortMode="SortMode.Multiple" 
                  Filterable="true" 
                  MultiSelection="false"
-                 RowsPerPage="500">
+                 RowsPerPage="500"
+                 ReadOnly="false"
+                 EditMode="DataGridEditMode.Form"
+                 EditTrigger="DataGridEditTrigger.Manual"
+                 CommittedItemChanges="@OnUpdate">
         <Columns>
             @Columns
         </Columns>
@@ -36,6 +40,9 @@
 
     [Parameter]
     public Func<IServerData, Task<IEnumerable<TDto>>> DataProvider { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<TDto> OnUpdate { get; set; }
 
     [Inject]
     public IServerData ServerData { get; set; } = default!;

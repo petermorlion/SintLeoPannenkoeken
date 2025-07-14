@@ -5,8 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Data;
 using SintLeoPannenkoeken.Models;
 using SintLeoPannenkoeken.ViewModels.Scoutsjaren;
-using SintLeoPannenkoeken.ViewModels.Users;
-using System.IO;
 
 namespace SintLeoPannenkoeken.Controllers.API
 {
