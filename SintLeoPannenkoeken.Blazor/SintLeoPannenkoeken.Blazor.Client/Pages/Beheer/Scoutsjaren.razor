@@ -6,13 +6,27 @@
 <MasterDetailPage TDto="ScoutsjaarDto"
                   AuthorizedRoles="@($"{Roles.RolesForScoutsjaren}")"
                   Title="Scoutsjaren"
-                  DataProvider="@_dataProvider">
+                  DataProvider="@_dataProvider"
+                  OnUpdate="@OnUpdate">
     <Columns>
-        <PropertyColumn T="ScoutsjaarDto" TProperty="int" Property="x => x.Begin" Title="Jaar" InitialDirection="SortDirection.Descending" />
+        <PropertyColumn T="ScoutsjaarDto" TProperty="int" Property="x => x.Begin" Title="Jaar" InitialDirection="SortDirection.Descending" Editable="false" />
         <PropertyColumn T="ScoutsjaarDto" TProperty="int" Property="x => x.PannenkoekenPerPak" Title="Pannenkoeken per pak" />
+        <TemplateColumn T="ScoutsjaarDto" CellClass="d-flex justify-end">
+            <CellTemplate>
+                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+            </CellTemplate>
+        </TemplateColumn>
     </Columns>
 </MasterDetailPage>
 
 @code {
     private Func<IServerData, Task<IEnumerable<ScoutsjaarDto>>> _dataProvider => async (serverData) => await serverData.GetScoutsjaren();
+
+    [Inject]
+    private IServerData _serverData { get; set; } = default!;
+
+    async Task OnUpdate(ScoutsjaarDto item)
+    {
+        await _serverData.UpdateScoutsjaar(item);
+    }
 }

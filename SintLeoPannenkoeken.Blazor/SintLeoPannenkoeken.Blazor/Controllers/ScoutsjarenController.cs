@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SintLeoPannenkoeken.Blazor.Client.Auth;
 using SintLeoPannenkoeken.Blazor.Client.Server;
+using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
 
 namespace SintLeoPannenkoeken.Blazor.Controllers
 {
@@ -25,6 +26,19 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
         {
             var scoutsjaarDtos = await _serverData.GetScoutsjaren();
             return Ok(scoutsjaarDtos);
+        }
+
+        [HttpPut]
+        [Route("{begin:int}")]
+        public async Task<IActionResult> UpdateScoutsjaar(int begin, [FromBody] ScoutsjaarDto scoutsjaarDto)
+        {
+            if (scoutsjaarDto == null || scoutsjaarDto.Begin != begin)
+            {
+                return BadRequest("Invalid Scoutsjaar data.");
+            }
+
+            await _serverData.UpdateScoutsjaar(scoutsjaarDto);
+            return NoContent();
         }
     }
 }
