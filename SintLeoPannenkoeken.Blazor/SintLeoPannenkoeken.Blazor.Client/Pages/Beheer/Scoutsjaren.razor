@@ -7,7 +7,8 @@
                   AuthorizedRoles="@($"{Roles.RolesForScoutsjaren}")"
                   Title="Scoutsjaren"
                   DataProvider="@_dataProvider"
-                  OnUpdate="@OnUpdate">
+                  OnUpdate="@OnUpdate"
+                  CanEdit="true">
     <Columns>
         <PropertyColumn T="ScoutsjaarDto" TProperty="int" Property="x => x.Begin" Title="Jaar" InitialDirection="SortDirection.Descending" Editable="false" />
         <PropertyColumn T="ScoutsjaarDto" TProperty="int" Property="x => x.PannenkoekenPerPak" Title="Pannenkoeken per pak" />
@@ -25,11 +26,6 @@
                 </MudSelect>
             </EditTemplate>
         </PropertyColumn>
-        <TemplateColumn T="ScoutsjaarDto" CellClass="d-flex justify-end">
-            <CellTemplate>
-                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
-            </CellTemplate>
-        </TemplateColumn>
     </Columns>
 </MasterDetailPage>
 
