@@ -2,12 +2,14 @@
 {
     public class ScoutsjaarDto
     {
-        public int Begin { get; init; }
-        public int PannenkoekenPerPak { get; init; }
-        public ScoutsjaarDto(int begin, int pannenkoekenPerPak)
+        public int Begin { get; set; }
+        public int PannenkoekenPerPak { get; set; }
+        public ScoutsjaarStatusDto Status { get; set; }
+        public ScoutsjaarDto(int begin, int pannenkoekenPerPak, ScoutsjaarStatusDto status)
         {
             Begin = begin;
             PannenkoekenPerPak = pannenkoekenPerPak;
+            Status = status; 
         }
     }
 }

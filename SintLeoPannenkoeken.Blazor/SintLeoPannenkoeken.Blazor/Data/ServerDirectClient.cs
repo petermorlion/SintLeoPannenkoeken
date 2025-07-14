@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Trace;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
+using SintLeoPannenkoeken.Blazor.Models;
 using System.Linq;
 
 namespace SintLeoPannenkoeken.Blazor.Data
@@ -64,7 +66,7 @@ namespace SintLeoPannenkoeken.Blazor.Data
 
             var scoutsjaarDtos = scoutsjaren == null
                 ? new List<ScoutsjaarDto>()
-                : scoutsjaren.Select(scoutsjaar => new ScoutsjaarDto(scoutsjaar.Begin, scoutsjaar.PannenkoekenPerPak)).ToList();
+                : scoutsjaren.Select(scoutsjaar => new ScoutsjaarDto(scoutsjaar.Begin, scoutsjaar.PannenkoekenPerPak, (ScoutsjaarStatusDto)scoutsjaar.Status)).ToList();
 
             return scoutsjaarDtos;
         }
@@ -121,6 +123,8 @@ namespace SintLeoPannenkoeken.Blazor.Data
             }
 
             scoutsjaar.PannenkoekenPerPak = scoutsjaarDto.PannenkoekenPerPak;
+            scoutsjaar.Status = (ScoutsjaarStatus)scoutsjaarDto.Status;
+
             _dbContext.Scoutsjaren.Update(scoutsjaar);
             await _dbContext.SaveChangesAsync();
         }

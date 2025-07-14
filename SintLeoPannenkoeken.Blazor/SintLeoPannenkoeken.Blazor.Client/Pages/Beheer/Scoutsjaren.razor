@@ -11,6 +11,20 @@
     <Columns>
         <PropertyColumn T="ScoutsjaarDto" TProperty="int" Property="x => x.Begin" Title="Jaar" InitialDirection="SortDirection.Descending" Editable="false" />
         <PropertyColumn T="ScoutsjaarDto" TProperty="int" Property="x => x.PannenkoekenPerPak" Title="Pannenkoeken per pak" />
+        <PropertyColumn T="ScoutsjaarDto" TProperty="ScoutsjaarStatusDto" Property="x => x.Status" Title="Status">
+            <EditTemplate>
+                <MudSelect @bind-Value="context.Item.Status" 
+                           Required 
+                           RequiredError="De status is verplicht."
+                           HelperText="Bij een gearchiveerd scoutsjaar zijn er geen wijzigingen meer mogelijk aan bestellingen."
+                           Label="Status"
+                           Variant="Variant.Outlined"
+                           Margin="Margin.Dense">
+                    <MudSelectItem Value="ScoutsjaarStatusDto.Actief">Actief</MudSelectItem>
+                    <MudSelectItem Value="ScoutsjaarStatusDto.Gearchiveerd">Gearchiveerd</MudSelectItem>
+                </MudSelect>
+            </EditTemplate>
+        </PropertyColumn>
         <TemplateColumn T="ScoutsjaarDto" CellClass="d-flex justify-end">
             <CellTemplate>
                 <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
