@@ -1,38 +1,51 @@
 ﻿@using SintLeoPannenkoeken.Blazor.Client.Auth
 
-<MudPaper Width="250px" Class="py-3" Elevation="0">
-    <MudNavMenu>
-        <MudText Typo="Typo.h6" Class="px-4">
-            <img src="zeescouts.svg" alt="Zeescouts Logo" style="height: 32px; width: auto; vertical-align: middle; margin-right: 8px;" />
-            Pannenkoeken
-        </MudText>
-        <MudDivider Class="my-2" />
-        <MudNavLink Href="/bestellingen">Bestellingen</MudNavLink>
-        <MudNavGroup Title="Rapporten">
-            <MudNavLink Href="/rapporten/verkooppertak">Verkoop per tak</MudNavLink>
-            <MudNavLink Href="/rapporten/verkoopperlid">Verkoop per lid</MudNavLink>
-            <MudNavLink Href="/rapporten/ingavetotalen">Totaal ingegeven</MudNavLink>
-        </MudNavGroup>
-        <AuthorizeView Roles="@($"{Roles.RolesForBeheer}")">
-            <Authorized>
-                <MudNavGroup Title="Beheer">
-                    <AuthorizeView Roles="@($"{Roles.RolesForChauffeurs}")" Context="childContext">
-                        <MudNavLink Href="/beheer/chauffeurs">Chauffeurs</MudNavLink>
-                    </AuthorizeView>
-                    <AuthorizeView Roles="@($"{Roles.RolesForGebruikers}")" Context="childContext">
-                        <MudNavLink Href="/beheer/gebruikers">Gebruikers</MudNavLink>
-                    </AuthorizeView>
-                    <AuthorizeView Roles="@($"{Roles.RolesForLeden}")" Context="childContext">
-                        <MudNavLink Href="/beheer/leden">Leden</MudNavLink>
-                    </AuthorizeView>
-                    <AuthorizeView Roles="@($"{Roles.RolesForScoutsjaren}")" Context="childContext">
-                        <MudNavLink Href="/beheer/scoutsjaren">Scoutsjaren</MudNavLink>
-                    </AuthorizeView>
-                    <AuthorizeView Roles="@($"{Roles.RolesForStraten}")" Context="childContext">
-                        <MudNavLink Href="/beheer/straten">Straten</MudNavLink>
-                    </AuthorizeView>
-                </MudNavGroup>
-            </Authorized>
-        </AuthorizeView>
-    </MudNavMenu>
-</MudPaper>
+<MudAppBar Elevation="10" Color="Color.Tertiary">
+    <MudNavLink Href="/bestellingen">Bestellingen</MudNavLink>
+    <MudNavLink Href="/streefcijfers">Streefcijfers</MudNavLink>
+    <MudNavLink Href="/streefcijfers">Rondes</MudNavLink>
+    <MudNavGroup Title="Rapporten">
+        <MudNavLink Href="/rapporten/verkooppertak">Verkoop per tak</MudNavLink>
+        <MudNavLink Href="/rapporten/verkoopperlid">Verkoop per lid</MudNavLink>
+        <MudNavLink Href="/rapporten/ingavetotalen">Totaal ingegeven</MudNavLink>
+    </MudNavGroup>
+
+    <AuthorizeView Roles="@($"{Roles.RolesForBeheer}")">
+        <Authorized>
+            <MudMenu Label="Beheer" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.KeyboardArrowDown">
+                <AuthorizeView Roles="@($"{Roles.RolesForChauffeurs}")" Context="childContext">
+                    <MudMenuItem Href="/beheer/chauffeurs">Chauffeurs</MudMenuItem>
+                </AuthorizeView>
+                <AuthorizeView Roles="@($"{Roles.RolesForGebruikers}")" Context="childContext">
+                    <MudMenuItem Href="/beheer/gebruikers">Gebruikers</MudMenuItem>
+                </AuthorizeView>
+                <AuthorizeView Roles="@($"{Roles.RolesForLeden}")" Context="childContext">
+                    <MudMenuItem Href="/beheer/leden">Leden</MudMenuItem>
+                </AuthorizeView>
+                <AuthorizeView Roles="@($"{Roles.RolesForScoutsjaren}")" Context="childContext">
+                    <MudMenuItem Href="/beheer/scoutsjaren">Scoutsjaren</MudMenuItem>
+                </AuthorizeView>
+                <AuthorizeView Roles="@($"{Roles.RolesForStraten}")" Context="childContext">
+                    <MudMenuItem Href="/beheer/straten">Straten</MudMenuItem>
+                </AuthorizeView>
+            </MudMenu>
+        </Authorized>
+    </AuthorizeView>
+
+    <MudSpacer />
+
+    <AuthorizeView>
+        <Authorized>
+            <MudIconButton Href="/account/manage" 
+                           Icon="@Icons.Material.Filled.AccountCircle"  />
+        </Authorized>
+        <NotAuthorized>
+            <MudButton Href="/account/login" 
+                       Variant="Variant.Filled" 
+                       Color="Color.Primary">
+                Login
+            </MudButton>
+        </NotAuthorized>
+    </AuthorizeView>
+    
+</MudAppBar>

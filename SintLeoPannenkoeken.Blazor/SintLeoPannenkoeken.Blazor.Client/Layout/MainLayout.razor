@@ -1,20 +1,9 @@
 ﻿@inherits LayoutComponentBase
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
     <main>
         <div class="top-row px-4">
-            <AuthorizeView>
-                <Authorized>
-                    <a href="/account/manage">@context.User.Identity?.Name</a>
-                </Authorized>
-                <NotAuthorized>
-                    <a href="/account/login">Login</a>
-                </NotAuthorized>
-            </AuthorizeView>
+            <NavMenu />
         </div>
 
         <article class="content px-4">

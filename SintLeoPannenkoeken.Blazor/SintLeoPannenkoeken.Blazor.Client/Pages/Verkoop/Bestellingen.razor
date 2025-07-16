@@ -1,0 +1,67 @@
+﻿@page "/bestellingen"
+@using SintLeoPannenkoeken.Blazor.Client.Auth
+@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+
+<MasterDetailPage TDto="BestellingDto"
+                  AuthorizedRoles="@($"{Roles.RolesForBestellingen}")"
+                  Title="Bestellingen"
+                  DataProvider="@_dataProvider"
+                  OnUpdate="@OnUpdate"
+                  CanEdit="false">
+    <ContentBeforeData>
+        <MudExpansionPanels>
+            <MudExpansionPanel Text="Nieuwe bestelling" Expanded="true">
+                <MudForm>
+                    <MudTextField T="string" Label="Naam koper" Required="true" RequiredError="Naam koper is verplicht." />
+                    <MudTextField T="string" Label="Telefoon" />
+                    <MudTextField T="string" Label="Nummer" />
+                    <MudTextField T="string" Label="Bus" />
+                    <MudNumericField T="int" Label="Aantal pakken" Min="0" />
+                    <MudNumericField T="string" Label="Opmerkingen" />
+                </MudForm>
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    </ContentBeforeData>
+    <Columns>
+        <PropertyColumn T="BestellingDto" TProperty="int" Property="x => x.BestellingNummer" Title="Nr" />
+        <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.Naam" Title="Koper" />
+        <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.Telefoon" Title="Telefoon" />
+        @* <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x." Title="Code" />
+        <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x." Title="Adres" /> *@
+        <PropertyColumn T="BestellingDto" TProperty="int" Property="x => x.AantalPakken" Title="Aantal pakken" />
+        <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.Opmerkingen" Title="Opmerkingen" />
+        <PropertyColumn T="BestellingDto" TProperty="bool" Property="x => x.Betaald" Title="Betaald" />
+        <PropertyColumn T="BestellingDto" TProperty="bool" Property="x => x.Geleverd" Title="Geleverd" />
+        <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.LidNaam" Title="Lid" />
+        <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.TakNaam" Title="Tak" />
+    </Columns>
+</MasterDetailPage>
+
+@code {
+    private Func<IServerData, Task<IEnumerable<BestellingDto>>> _dataProvider => async (serverData) => await serverData.GetBestellingen(2025);
+
+    [Inject]
+    private IServerData _serverData { get; set; } = default!;
+
+    async Task OnUpdate(BestellingDto item)
+    {
+        var updateBestellingDto = new UpdateBestellingDto
+        {
+            Id = item.Id,
+            Naam = item.Naam,
+            Telefoon = item.Telefoon,
+            AantalPakken = item.AantalPakken,
+            Opmerkingen = item.Opmerkingen,
+            Betaald = item.Betaald,
+            Geleverd = item.Geleverd,
+            LidId = item.Lid?.Id ?? 0,
+            StraatId = item.StraatId,
+            Nummer = item.Nummer,
+            Bus = item.Bus
+        };
+
+        await _serverData.UpdateBestelling(updateBestellingDto);
+    }
+}
+

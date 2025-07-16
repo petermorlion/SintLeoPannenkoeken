@@ -7,6 +7,7 @@
 <h1>@Title</h1>
 
 <RoleAuthorizedView Roles="@AuthorizedRoles">
+    @ContentBeforeData
     <MudDataGrid T="@TDto" 
                  Items="@_data" 
                  SortMode="SortMode.Multiple" 
@@ -32,6 +33,7 @@
             <MudDataGridPager T="TDto" />
         </PagerContent>
     </MudDataGrid>
+    @ContentAfterData
 </RoleAuthorizedView>
 
 @code {
@@ -44,7 +46,13 @@
     public string AuthorizedRoles { get; set; } = "";
 
     [Parameter]
+    public RenderFragment ContentBeforeData { get; set; } = builder => { };
+
+    [Parameter]
     public RenderFragment Columns { get; set; } = builder => { };
+
+    [Parameter]
+    public RenderFragment ContentAfterData { get; set; } = builder => { };
 
     [Parameter]
     public Func<IServerData, Task<IEnumerable<TDto>>> DataProvider { get; set; } = default!;
