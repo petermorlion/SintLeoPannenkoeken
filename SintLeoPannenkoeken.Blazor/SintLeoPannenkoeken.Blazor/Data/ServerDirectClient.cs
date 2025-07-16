@@ -128,5 +128,62 @@ namespace SintLeoPannenkoeken.Blazor.Data
             _dbContext.Scoutsjaren.Update(scoutsjaar);
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<IList<BestellingDto>> GetBestellingen(int begin)
+        {
+            var bestellingen = (await _dbContext.Scoutsjaren
+                 .Include(scoutsjaar => scoutsjaar.Bestellingen)
+                 .ThenInclude(bestelling => bestelling.Straat)
+                 .ThenInclude(straat => straat.Zone)
+                 .Include(scoutsjaar => scoutsjaar.Bestellingen)
+                 .ThenInclude(bestelling => bestelling.Lid)
+                 .ThenInclude(lid => lid.Tak)
+                 .SingleOrDefaultAsync(scoutsjaar => scoutsjaar.Begin == begin))
+                 ?.Bestellingen
+                 ?.ToList();
+
+            var bestellingenDtos = bestellingen == null
+                ? new List<BestellingDto>()
+                : bestellingen.Select(bestelling => new BestellingDto
+                {
+                    //bestelling.Id,
+                    //bestelling.Naam,
+                    AantalPakken = bestelling.AantalPakken,
+                    //bestelling.Telefoon,
+                    //bestelling.Opmerkingen,
+                    //bestelling.Betaald,
+                    //bestelling.Geleverd,
+                    //bestelling.LidId,
+                    //bestelling.Tak?.Id ?? 0,
+                    //bestelling.StraatId,
+                    //bestelling.Nummer,
+                    //bestelling.Bus
+                }).ToList();
+
+            return bestellingenDtos;
+        }
+
+        public async Task UpdateBestelling(UpdateBestellingDto bestellingDto)
+        {
+            var bestelling = await _dbContext.Bestellingen.SingleOrDefaultAsync(bestelling => bestelling.Id == bestellingDto.Id);
+            if (bestelling == null)
+            {
+                return;
+            }
+
+            var takId = _dbContext.Leden.Single(lid => lid.Id == bestellingDto.LidId).TakId;
+
+            bestelling.Naam = bestellingDto.Naam;
+            bestelling.AantalPakken = bestellingDto.AantalPakken;
+            bestelling.Telefoon = bestellingDto.Telefoon != null ? bestellingDto.Telefoon : "";
+            bestelling.Opmerkingen = bestellingDto.Opmerkingen != null ? bestellingDto.Opmerkingen : "";
+            bestelling.Betaald = bestellingDto.Betaald;
+            bestelling.Geleverd = bestellingDto.Geleverd;
+            bestelling.LidId = bestellingDto.LidId;
+            bestelling.TakId = takId;
+            bestelling.StraatId = bestellingDto.StraatId;
+            bestelling.Nummer = bestellingDto.Nummer;
+            bestelling.Bus = bestellingDto.Bus;
+        }
     }
 }

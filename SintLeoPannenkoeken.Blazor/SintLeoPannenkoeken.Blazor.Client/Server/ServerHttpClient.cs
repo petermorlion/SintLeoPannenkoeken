@@ -80,6 +80,27 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
             await _httpClient.PutAsJsonAsync($"/api/scoutsjaren/{scoutsjaar.Begin}", scoutsjaar);
         }
 
+        public async Task<IList<BestellingDto>> GetBestellingen(int scoutsjaar)
+        {
+            if (!await IsUserAuthorized(Roles.RolesForBestellingen))
+            {
+                return new List<BestellingDto>();
+            }
+
+            var result = await _httpClient.GetFromJsonAsync<IList<BestellingDto>>($"/api/bestellingen/{scoutsjaar}");
+            return result ?? new List<BestellingDto>();
+        }
+
+        public async Task UpdateBestelling(UpdateBestellingDto bestelling)
+        {
+            if (!await IsUserAuthorized(Roles.RolesForBestellingen))
+            {
+                return;
+            }
+
+            var result = await _httpClient.PutAsJsonAsync("/api/bestellingen", bestelling);
+        }
+
         private async Task<bool> IsUserAuthorized(string roleString)
         {
             var roles = roleString.Split(',');
