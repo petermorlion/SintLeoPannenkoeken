@@ -2,6 +2,7 @@
 @using SintLeoPannenkoeken.Blazor.Client.Auth
 @using SintLeoPannenkoeken.Blazor.Client.Server
 @using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+@using System.Linq;
 
 <MasterDetailPage TDto="BestellingDto"
                   AuthorizedRoles="@($"{Roles.RolesForBestellingen}")"
@@ -25,7 +26,16 @@
                             <MudCheckBox T="bool" Label="Zelf afhalen" />
                         </MudItem>
                         <MudItem xs="12" sm="5">
-                            <MudSelect T="int" Label="Straat" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                            <MudAutocomplete SearchFunc="SearchStreets"
+                                             ToStringFunc="_straatConverter"
+                                             Variant="Variant.Outlined"
+                                             Label="Straat"
+                                             Margin="Margin.Dense"
+                                             MaxItems=100
+                                             Clearable="true"
+                                             CoerceText="true"
+                                             ResetValueOnEmptyText="true"
+                                             SelectValueOnTab="true"/>
                         </MudItem>
                         <MudItem xs="12" sm="2">
                             <MudTextField T="string" Label="Code" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
@@ -41,7 +51,7 @@
                             <MudNumericField T="int" Label="Aantal pakken" Min="0" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
                         </MudItem>
                         <MudItem xs="12" sm="2">
-                            <MudCheckBox T="bool" Label="Betaald" />
+                            <MudCheckBox T="bool" Label="Betaald" Value="true" />
                         </MudItem>
                         <MudItem xs="12" sm="2">
                             <MudCheckBox T="bool" Label="Geleverd" />
@@ -51,7 +61,16 @@
                         </MudItem>
 
                         <MudItem xs="12">
-                            <MudSelect T="int" Label="Lid" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                            <MudAutocomplete SearchFunc="SearchLeden"
+                                             ToStringFunc="_lidConverter"
+                                             Variant="Variant.Outlined"
+                                             Label="Lid"
+                                             Margin="Margin.Dense"
+                                             MaxItems=100
+                                             Clearable="true"
+                                             CoerceText="true"
+                                             ResetValueOnEmptyText="true"
+                                             SelectValueOnTab="true"/>
                         </MudItem>
                         <MudItem xs="12">
                             <MudButton Variant="Variant.Filled" Color="Color.Primary">Opslaan</MudButton>
@@ -83,6 +102,51 @@
     [Inject]
     private IServerData _serverData { get; set; } = default!;
 
+    private IList<LidDto> _leden = [];
+    private IList<StraatDto> _straten = [];
+
+    private Func<LidDto, string> _lidConverter = lid =>
+    {
+        if (lid == null)
+        {
+            return "";
+        }
+
+        return $"{lid.Achternaam} {lid.Voornaam} ({lid.TakNaam})";
+    };
+
+    private Func<StraatDto, string> _straatConverter = straat => 
+    {
+        if (straat == null)
+        {
+            return "";
+        }
+
+        return $"{straat.Naam} ({straat.Gemeente})";
+    };
+
+    private async Task<IEnumerable<StraatDto>> SearchStreets(string value, CancellationToken token)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return _straten;
+        }
+
+        return _straten.Where(x => x.Naam.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task<IEnumerable<LidDto>> SearchLeden(string value, CancellationToken token)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return _leden;
+        }
+
+        return _leden.Where(x => 
+            x.Achternaam.Contains(value, StringComparison.InvariantCultureIgnoreCase)
+            || x.Voornaam.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
     async Task OnUpdate(BestellingDto item)
     {
         var updateBestellingDto = new UpdateBestellingDto
@@ -101,6 +165,14 @@
         };
 
         await _serverData.UpdateBestelling(updateBestellingDto);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _leden = (await _serverData.GetLeden()).OrderBy(lid => lid.Achternaam).ThenBy(lid => lid.Voornaam).ToList();
+        _straten = (await _serverData.GetStraten()).OrderBy(straat => straat.Naam).ToList();
+
+        await base.OnInitializedAsync();
     }
 }
 
