@@ -13,12 +13,51 @@
         <MudExpansionPanels>
             <MudExpansionPanel Text="Nieuwe bestelling" Expanded="true">
                 <MudForm>
-                    <MudTextField T="string" Label="Naam koper" Required="true" RequiredError="Naam koper is verplicht." />
-                    <MudTextField T="string" Label="Telefoon" />
-                    <MudTextField T="string" Label="Nummer" />
-                    <MudTextField T="string" Label="Bus" />
-                    <MudNumericField T="int" Label="Aantal pakken" Min="0" />
-                    <MudNumericField T="string" Label="Opmerkingen" />
+                    <MudGrid>
+                        <MudItem xs="12" sm="8">
+                            <MudTextField T="string" Label="Naam koper" Required="true" RequiredError="Naam koper is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                        </MudItem>
+                        <MudItem xs="12" sm="4">
+                            <MudTextField T="string" Label="Telefoon" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                        </MudItem>
+
+                        <MudItem xs="12" sm="2">
+                            <MudCheckBox T="bool" Label="Zelf afhalen" />
+                        </MudItem>
+                        <MudItem xs="12" sm="5">
+                            <MudSelect T="int" Label="Straat" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                        </MudItem>
+                        <MudItem xs="12" sm="2">
+                            <MudTextField T="string" Label="Code" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                        </MudItem>
+                        <MudItem xs="12" sm="2">
+                            <MudTextField T="string" Label="Nummer" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                        </MudItem>
+                        <MudItem xs="12" sm="1">
+                            <MudTextField T="string" Label="Bus" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                        </MudItem>
+
+                        <MudItem xs="12" sm="2">
+                            <MudNumericField T="int" Label="Aantal pakken" Min="0" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                        </MudItem>
+                        <MudItem xs="12" sm="2">
+                            <MudCheckBox T="bool" Label="Betaald" />
+                        </MudItem>
+                        <MudItem xs="12" sm="2">
+                            <MudCheckBox T="bool" Label="Geleverd" />
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudTextField T="string" Label="Opmerkingen" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                        </MudItem>
+
+                        <MudItem xs="12">
+                            <MudSelect T="int" Label="Lid" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary">Opslaan</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Secondary">Annuleren</MudButton>
+                        </MudItem>
+                    </MudGrid>
                 </MudForm>
             </MudExpansionPanel>
         </MudExpansionPanels>
@@ -31,10 +70,10 @@
         <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x." Title="Adres" /> *@
         <PropertyColumn T="BestellingDto" TProperty="int" Property="x => x.AantalPakken" Title="Aantal pakken" />
         <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.Opmerkingen" Title="Opmerkingen" />
-        <PropertyColumn T="BestellingDto" TProperty="bool" Property="x => x.Betaald" Title="Betaald" />
+        @* <PropertyColumn T="BestellingDto" TProperty="bool" Property="x => x.Betaald" Title="Betaald" />
         <PropertyColumn T="BestellingDto" TProperty="bool" Property="x => x.Geleverd" Title="Geleverd" />
         <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.LidNaam" Title="Lid" />
-        <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.TakNaam" Title="Tak" />
+        <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.TakNaam" Title="Tak" /> *@
     </Columns>
 </MasterDetailPage>
 

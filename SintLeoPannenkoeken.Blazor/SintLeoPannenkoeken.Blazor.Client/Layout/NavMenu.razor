@@ -1,7 +1,9 @@
 ﻿@using SintLeoPannenkoeken.Blazor.Client.Auth
 
 <MudAppBar Elevation="10" Color="Color.Tertiary">
-    <MudNavLink Href="/bestellingen">Bestellingen</MudNavLink>
+    <AuthorizeView Roles="@($"{Roles.RolesForBestellingen}")" Context="childContext">
+        <MudNavLink Href="/bestellingen">Bestellingen</MudNavLink>
+    </AuthorizeView>
     <MudNavLink Href="/streefcijfers">Streefcijfers</MudNavLink>
     <MudNavLink Href="/streefcijfers">Rondes</MudNavLink>
     <MudNavGroup Title="Rapporten">
