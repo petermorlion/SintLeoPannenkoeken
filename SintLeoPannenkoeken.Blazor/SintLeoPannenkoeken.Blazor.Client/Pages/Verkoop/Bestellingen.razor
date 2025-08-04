@@ -13,7 +13,7 @@
     <ContentBeforeData>
         <MudExpansionPanels>
             <MudExpansionPanel Text="Nieuwe bestelling" Expanded="true">
-                <MudForm>
+                <MudForm @bind-IsValid="@_isFormValid">
                     <MudGrid>
                         <MudItem xs="12" sm="8">
                             <MudTextField T="string" Label="Naam koper" Required="true" RequiredError="Naam koper is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
@@ -81,7 +81,7 @@
                                              />
                         </MudItem>
                         <MudItem xs="12">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary">Opslaan</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_isFormValid)">Opslaan</MudButton>
                             <MudButton Variant="Variant.Filled" Color="Color.Secondary">Annuleren</MudButton>
                         </MudItem>
                     </MudGrid>
@@ -113,6 +113,7 @@
     private IList<LidDto> _leden = [];
     private IList<StraatDto> _straten = [];
 
+    private bool _isFormValid;
     private StraatDto? _selectedStraat = null;
 
     private Func<LidDto, string> _lidConverter = lid =>
