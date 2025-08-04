@@ -26,7 +26,8 @@
                             <MudCheckBox T="bool" Label="Zelf afhalen" />
                         </MudItem>
                         <MudItem xs="12" sm="5">
-                            <MudAutocomplete SearchFunc="SearchStreets"
+                            <MudAutocomplete @bind-Value="_selectedStraat"
+                                             SearchFunc="SearchStreets"
                                              ToStringFunc="_straatConverter"
                                              Variant="Variant.Outlined"
                                              Label="Straat"
@@ -38,7 +39,13 @@
                                              SelectValueOnTab="true"/>
                         </MudItem>
                         <MudItem xs="12" sm="2">
-                            <MudTextField T="string" Label="Code" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                            <MudTextField T="string" 
+                                          Label="Code" 
+                                          Value="@($"{_selectedStraat?.ZoneNaam} {_selectedStraat?.Nummer}")"
+                                          Variant="Variant.Outlined" 
+                                          Margin="Margin.Dense" 
+                                          ShrinkLabel 
+                                          Disabled />
                         </MudItem>
                         <MudItem xs="12" sm="2">
                             <MudTextField T="string" Label="Nummer" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
@@ -70,7 +77,8 @@
                                              Clearable="true"
                                              CoerceText="true"
                                              ResetValueOnEmptyText="true"
-                                             SelectValueOnTab="true"/>
+                                             SelectValueOnTab="true"
+                                             />
                         </MudItem>
                         <MudItem xs="12">
                             <MudButton Variant="Variant.Filled" Color="Color.Primary">Opslaan</MudButton>
@@ -104,6 +112,8 @@
 
     private IList<LidDto> _leden = [];
     private IList<StraatDto> _straten = [];
+
+    private StraatDto? _selectedStraat = null;
 
     private Func<LidDto, string> _lidConverter = lid =>
     {
