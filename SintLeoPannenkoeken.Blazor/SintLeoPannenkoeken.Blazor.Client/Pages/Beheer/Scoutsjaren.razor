@@ -9,6 +9,34 @@
                   DataProvider="@_dataProvider"
                   OnUpdate="@OnUpdate"
                   CanEdit="true">
+    <NewItemForm>
+        <MudForm @bind-IsValid="_isFormValid" @ref="_form">
+            <MudGrid>
+                <MudItem xs="12" sm="4">
+                    <MudNumericField @bind-Value="_newScoutsjaarBegin" Min="@(DateTime.Now.Year)" T="int?" Label="Jaar" Required="true" RequiredError="Het jaar is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                </MudItem>
+                <MudItem xs="12" sm="4">
+                    <MudNumericField @bind-Value="_newScoutsjaarPannenkoekenPerPak" T="int?" Label="Pannenkoeken per pak" Min="1" Required="true" RequiredError="Pannenkoeken per pak is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                </MudItem>
+                <MudItem xs="12" sm="4">
+                    <MudSelect @bind-Value="_newScoutsjaarStatus"
+                               Required
+                               RequiredError="De status is verplicht."
+                               HelperText="Bij een gearchiveerd scoutsjaar zijn er geen wijzigingen meer mogelijk aan bestellingen."
+                               Label="Status"
+                               Variant="Variant.Outlined"
+                               Margin="Margin.Dense">
+                        <MudSelectItem Value="ScoutsjaarStatusDto.Actief">Actief</MudSelectItem>
+                        <MudSelectItem Value="ScoutsjaarStatusDto.Gearchiveerd">Gearchiveerd</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_isFormValid)" OnClick="@OnCreate">Opslaan</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@OnCancel">Annuleren</MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </NewItemForm>
     <Columns>
         <PropertyColumn T="ScoutsjaarDto" TProperty="int" Property="x => x.Begin" Title="Jaar" InitialDirection="SortDirection.Descending" Editable="false" />
         <PropertyColumn T="ScoutsjaarDto" TProperty="int" Property="x => x.PannenkoekenPerPak" Title="Pannenkoeken per pak" />
@@ -31,6 +59,12 @@
 
 @code {
     private Func<IServerData, Task<IEnumerable<ScoutsjaarDto>>> _dataProvider => async (serverData) => await serverData.GetScoutsjaren();
+    private bool _isFormValid;
+    private MudForm _form = default!;
+
+    private ScoutsjaarStatusDto _newScoutsjaarStatus = ScoutsjaarStatusDto.Actief;
+    private int? _newScoutsjaarBegin = null;
+    private int? _newScoutsjaarPannenkoekenPerPak = null;
 
     [Inject]
     private IServerData _serverData { get; set; } = default!;
@@ -38,5 +72,21 @@
     async Task OnUpdate(ScoutsjaarDto item)
     {
         await _serverData.UpdateScoutsjaar(item);
+    }
+
+    async Task OnCreate()
+    {
+        await _form.Validate();
+        if (_form.IsValid)
+        {
+            await _serverData.UpdateScoutsjaar(new ScoutsjaarDto(_newScoutsjaarBegin!.Value, _newScoutsjaarPannenkoekenPerPak!.Value, _newScoutsjaarStatus));
+        }
+    }
+
+    void OnCancel()
+    {
+        _newScoutsjaarBegin = null;
+        _newScoutsjaarPannenkoekenPerPak = null;
+        _newScoutsjaarStatus = ScoutsjaarStatusDto.Actief;
     }
 }

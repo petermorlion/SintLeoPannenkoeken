@@ -10,86 +10,84 @@
                   DataProvider="@_dataProvider"
                   OnUpdate="@OnUpdate"
                   CanEdit="false"
-                  IsForScoutsjaar="true">
-    <ContentBeforeData>
-        <MudExpansionPanels>
-            <MudExpansionPanel Text="Nieuwe bestelling" Expanded="true">
-                <MudForm @bind-IsValid="@_isFormValid">
-                    <MudGrid>
-                        <MudItem xs="12" sm="8">
-                            <MudTextField T="string" Label="Naam koper" Required="true" RequiredError="Naam koper is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
-                        </MudItem>
-                        <MudItem xs="12" sm="4">
-                            <MudTextField T="string" Label="Telefoon" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
-                        </MudItem>
+                  IsForScoutsjaar="true"
+                  NewItemTitle="Nieuwe bestelling"
+                  NewItemExpanded="true">
+    <NewItemForm>
+        <MudForm @bind-IsValid="@_isFormValid">
+            <MudGrid>
+                <MudItem xs="12" sm="8">
+                    <MudTextField T="string" Label="Naam koper" Required="true" RequiredError="Naam koper is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                </MudItem>
+                <MudItem xs="12" sm="4">
+                    <MudTextField T="string" Label="Telefoon" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                </MudItem>
 
-                        <MudItem xs="12" sm="2">
-                            <MudCheckBox T="bool" Label="Zelf afhalen" />
-                        </MudItem>
-                        <MudItem xs="12" sm="5">
-                            <MudAutocomplete @bind-Value="_selectedStraat"
-                                             SearchFunc="SearchStreets"
-                                             ToStringFunc="_straatConverter"
-                                             Variant="Variant.Outlined"
-                                             Label="Straat"
-                                             Margin="Margin.Dense"
-                                             MaxItems=100
-                                             Clearable="true"
-                                             CoerceText="true"
-                                             ResetValueOnEmptyText="true"
-                                             SelectValueOnTab="true"/>
-                        </MudItem>
-                        <MudItem xs="12" sm="2">
-                            <MudTextField T="string" 
-                                          Label="Code" 
-                                          Value="@($"{_selectedStraat?.ZoneNaam} {_selectedStraat?.Nummer}")"
-                                          Variant="Variant.Outlined" 
-                                          Margin="Margin.Dense" 
-                                          ShrinkLabel 
-                                          Disabled />
-                        </MudItem>
-                        <MudItem xs="12" sm="2">
-                            <MudTextField T="string" Label="Nummer" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
-                        </MudItem>
-                        <MudItem xs="12" sm="1">
-                            <MudTextField T="string" Label="Bus" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
-                        </MudItem>
+                <MudItem xs="12" sm="2">
+                    <MudCheckBox T="bool" Label="Zelf afhalen" />
+                </MudItem>
+                <MudItem xs="12" sm="5">
+                    <MudAutocomplete @bind-Value="_selectedStraat"
+                                     SearchFunc="SearchStreets"
+                                     ToStringFunc="_straatConverter"
+                                     Variant="Variant.Outlined"
+                                     Label="Straat"
+                                     Margin="Margin.Dense"
+                                     MaxItems=100
+                                     Clearable="true"
+                                     CoerceText="true"
+                                     ResetValueOnEmptyText="true"
+                                     SelectValueOnTab="true" />
+                </MudItem>
+                <MudItem xs="12" sm="2">
+                    <MudTextField T="string"
+                                  Label="Code"
+                                  Value="@($"{_selectedStraat?.ZoneNaam} {_selectedStraat?.Nummer}")"
+                                  Variant="Variant.Outlined"
+                                  Margin="Margin.Dense"
+                                  ShrinkLabel
+                                  Disabled />
+                </MudItem>
+                <MudItem xs="12" sm="2">
+                    <MudTextField T="string" Label="Nummer" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                </MudItem>
+                <MudItem xs="12" sm="1">
+                    <MudTextField T="string" Label="Bus" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                </MudItem>
 
-                        <MudItem xs="12" sm="2">
-                            <MudNumericField T="int" Label="Aantal pakken" Min="0" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
-                        </MudItem>
-                        <MudItem xs="12" sm="2">
-                            <MudCheckBox T="bool" Label="Betaald" Value="true" />
-                        </MudItem>
-                        <MudItem xs="12" sm="2">
-                            <MudCheckBox T="bool" Label="Geleverd" />
-                        </MudItem>
-                        <MudItem xs="12" sm="6">
-                            <MudTextField T="string" Label="Opmerkingen" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
-                        </MudItem>
+                <MudItem xs="12" sm="2">
+                    <MudNumericField T="int" Label="Aantal pakken" Min="0" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                </MudItem>
+                <MudItem xs="12" sm="2">
+                    <MudCheckBox T="bool" Label="Betaald" Value="true" />
+                </MudItem>
+                <MudItem xs="12" sm="2">
+                    <MudCheckBox T="bool" Label="Geleverd" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField T="string" Label="Opmerkingen" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                </MudItem>
 
-                        <MudItem xs="12">
-                            <MudAutocomplete SearchFunc="SearchLeden"
-                                             ToStringFunc="_lidConverter"
-                                             Variant="Variant.Outlined"
-                                             Label="Lid"
-                                             Margin="Margin.Dense"
-                                             MaxItems=100
-                                             Clearable="true"
-                                             CoerceText="true"
-                                             ResetValueOnEmptyText="true"
-                                             SelectValueOnTab="true"
-                                             />
-                        </MudItem>
-                        <MudItem xs="12">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_isFormValid)">Opslaan</MudButton>
-                            <MudButton Variant="Variant.Filled" Color="Color.Secondary">Annuleren</MudButton>
-                        </MudItem>
-                    </MudGrid>
-                </MudForm>
-            </MudExpansionPanel>
-        </MudExpansionPanels>
-    </ContentBeforeData>
+                <MudItem xs="12">
+                    <MudAutocomplete SearchFunc="SearchLeden"
+                                     ToStringFunc="_lidConverter"
+                                     Variant="Variant.Outlined"
+                                     Label="Lid"
+                                     Margin="Margin.Dense"
+                                     MaxItems=100
+                                     Clearable="true"
+                                     CoerceText="true"
+                                     ResetValueOnEmptyText="true"
+                                     SelectValueOnTab="true" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_isFormValid)">Opslaan</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Secondary">Annuleren</MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </NewItemForm>
+    
     <Columns>
         <PropertyColumn T="BestellingDto" TProperty="int" Property="x => x.BestellingNummer" Title="Nr" />
         <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.Naam" Title="Koper" />
