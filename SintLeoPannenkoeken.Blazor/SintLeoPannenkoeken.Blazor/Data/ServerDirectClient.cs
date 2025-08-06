@@ -137,13 +137,15 @@ namespace SintLeoPannenkoeken.Blazor.Data
 
                 if (scoutsjaar == null)
                 {
-                    return;
+                    scoutsjaar = new Scoutsjaar(scoutsjaarDto.Begin, scoutsjaarDto.PannenkoekenPerPak);
+                    dbContext.Scoutsjaren.Add(scoutsjaar);
                 }
-
-                scoutsjaar.PannenkoekenPerPak = scoutsjaarDto.PannenkoekenPerPak;
-                scoutsjaar.Status = (ScoutsjaarStatus)scoutsjaarDto.Status;
-
-                dbContext.Scoutsjaren.Update(scoutsjaar);
+                else
+                {
+                    scoutsjaar.PannenkoekenPerPak = scoutsjaarDto.PannenkoekenPerPak;
+                    scoutsjaar.Status = (ScoutsjaarStatus)scoutsjaarDto.Status;
+                }
+                
                 await dbContext.SaveChangesAsync();
             }
         }

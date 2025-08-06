@@ -18,11 +18,13 @@
     }
 </MudStack>
 
-
-
-
 <RoleAuthorizedView Roles="@AuthorizedRoles">
     @ContentBeforeData
+    <MudExpansionPanels>
+        <MudExpansionPanel Text="@NewItemTitle" Expanded="@NewItemExpanded">
+            @NewItemForm
+        </MudExpansionPanel>
+    </MudExpansionPanels>
     <MudDataGrid T="@TDto" 
                  Items="@_data" 
                  SortMode="SortMode.Multiple" 
@@ -49,6 +51,7 @@
         </PagerContent>
     </MudDataGrid>
     @ContentAfterData
+    
 </RoleAuthorizedView>
 
 @code {
@@ -67,6 +70,15 @@
 
     [Parameter]
     public RenderFragment ContentBeforeData { get; set; } = builder => { };
+
+    [Parameter]
+    public RenderFragment NewItemForm { get; set; } = builder => { };
+
+    [Parameter]
+    public string NewItemTitle { get; set; } = "Nieuw";
+
+    [Parameter]
+    public bool NewItemExpanded { get; set; } = false;
 
     [Parameter]
     public RenderFragment Columns { get; set; } = builder => { };
