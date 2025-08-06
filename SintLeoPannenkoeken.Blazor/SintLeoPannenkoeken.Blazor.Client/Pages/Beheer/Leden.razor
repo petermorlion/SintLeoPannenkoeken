@@ -6,7 +6,29 @@
 <MasterDetailPage TDto="LidDto"
                   AuthorizedRoles="@($"{Roles.RolesForLeden}")"
                   Title="Leden"
-                  DataProvider="@_dataProvider">
+                  DataProvider="@_dataProvider" 
+                  OnUpdate="@OnUpdate"
+                  CanEdit="true"
+                  @ref="_page">
+    <NewItemForm>
+        <MudForm @bind-IsValid="_isFormValid" @ref="_form">
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="_newLidAchternaam" T="string" Label="Achternaam" Required="true" RequiredError="De achternaam is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="_newLidVoornaam" T="string" Label="Voornaam" Required="true" RequiredError="De voornaam is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="_newLidFunctie" T="string" Label="Functie" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_isFormValid)" OnClick="@OnCreate">Opslaan</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@OnCancel">Annuleren</MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </NewItemForm>
     <Columns>
         <PropertyColumn T="LidDto" TProperty="string" Property="x => x.Achternaam" Title="Achternaam" InitialDirection="SortDirection.Ascending" />
         <PropertyColumn T="LidDto" TProperty="string" Property="x => x.Voornaam" Title="Voornaam" />
@@ -17,4 +39,37 @@
 
 @code {
     private Func<IServerData, Task<IEnumerable<LidDto>>> _dataProvider => async (serverData) => await serverData.GetLeden();
+    private bool _isFormValid;
+    private MasterDetailPage<LidDto> _page = default!;
+    private MudForm _form = default!;
+
+    private string _newLidAchternaam = "";
+    private string _newLidVoornaam = "";
+    private string _newLidFunctie = "";
+
+    [Inject]
+    private IServerData _serverData { get; set; } = default!;
+
+    async Task OnUpdate(LidDto item)
+    {
+        await _serverData.UpdateLid(item);
+    }
+
+    async Task OnCreate()
+    {
+        await _form.Validate();
+        if (_form.IsValid)
+        {
+            var newItem = new LidDto(_newLidAchternaam, _newLidVoornaam, "functie", "Zeewolfjes");
+            var result = await _serverData.UpdateLid(newItem);
+            _page.AddItem(result);
+        }
+    }
+
+    void OnCancel()
+    {
+        _newLidAchternaam = "";
+        _newLidVoornaam = "";
+        _newLidFunctie = "";
+    }
 }

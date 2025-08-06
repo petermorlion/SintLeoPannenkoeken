@@ -53,11 +53,11 @@ namespace SintLeoPannenkoeken.Blazor.Data
                 var lidDtos = leden == null
                     ? new List<LidDto>()
                     : leden.Select(lid => new LidDto(
-                        lid.Id,
-                        lid.Voornaam,
                         lid.Achternaam,
+                        lid.Voornaam,
                         lid.Functie,
-                        lid.Tak?.Naam ?? "Onbekend"
+                        lid.Tak?.Naam ?? "Onbekend",
+                        lid.Id
                     )).ToList();
 
                 return lidDtos;
@@ -210,6 +210,38 @@ namespace SintLeoPannenkoeken.Blazor.Data
                 bestelling.StraatId = bestellingDto.StraatId;
                 bestelling.Nummer = bestellingDto.Nummer;
                 bestelling.Bus = bestellingDto.Bus;
+            }
+        }
+
+        public async Task<LidDto> UpdateLid(LidDto lidDto)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var lid = new Lid(lidDto.Voornaam, lidDto.Achternaam);
+                if (lidDto.Id.HasValue)
+                {
+                    lid = await dbContext
+                        .Leden
+                        .Include(l => l.Tak)
+                        .FirstOrDefaultAsync(s => s.Id == lidDto.Id.Value);
+                    
+                    if (lid == null)
+                    {
+                        lid = new Lid(lidDto.Voornaam, lidDto.Achternaam);
+                    }
+                }
+                else
+                {
+                    dbContext.Leden.Add(lid);
+                }
+
+                lid.Voornaam = lidDto.Voornaam;
+                lid.Achternaam = lidDto.Achternaam;
+                lid.Functie = lidDto.Functie;
+
+                await dbContext.SaveChangesAsync();
+
+                return new LidDto(lid.Achternaam, lid.Voornaam, lid.Functie, lid.Tak.Naam, lid.Id);
             }
         }
     }
