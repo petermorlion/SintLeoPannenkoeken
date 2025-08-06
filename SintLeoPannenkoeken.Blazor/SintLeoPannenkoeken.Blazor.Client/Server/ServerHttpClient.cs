@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
+using MudBlazor.Extensions;
 using SintLeoPannenkoeken.Blazor.Client.Auth;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
 using System.Net.Http.Json;
@@ -127,6 +128,17 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
             }
 
             return false;
+        }
+
+        public async Task<LidDto> UpdateLid(LidDto lid)
+        {
+            if (!await IsUserAuthorized(Roles.RolesForLeden))
+            {
+                throw new UnauthorizedException();
+            }
+
+            var result = await _httpClient.PutAsJsonAsync("/api/leden", lid);
+            return result.Content.As<LidDto>();
         }
     }
 }

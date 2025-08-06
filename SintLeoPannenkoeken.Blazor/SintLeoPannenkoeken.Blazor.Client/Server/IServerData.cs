@@ -17,5 +17,6 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
 
         Task UpdateScoutsjaar(ScoutsjaarDto scoutsjaar);
         Task UpdateBestelling(UpdateBestellingDto bestelling);
+        Task<LidDto> UpdateLid(LidDto lid);
     }
 }

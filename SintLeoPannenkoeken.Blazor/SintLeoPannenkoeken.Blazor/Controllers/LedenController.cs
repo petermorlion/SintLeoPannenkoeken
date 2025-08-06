@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SintLeoPannenkoeken.Blazor.Client.Auth;
 using SintLeoPannenkoeken.Blazor.Client.Server;
+using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
 
 namespace SintLeoPannenkoeken.Blazor.Controllers
 {
@@ -20,11 +21,17 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
         }
 
         [HttpGet]
-        [Route("")]
         public async Task<IActionResult> Get()
         {
             var lidDtos = await _serverData.GetLeden();
             return Ok(lidDtos);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateLid([FromBody] LidDto lidDto)
+        {
+            var result = await _serverData.UpdateLid(lidDto);
+            return Ok(result);
         }
     }
 }
