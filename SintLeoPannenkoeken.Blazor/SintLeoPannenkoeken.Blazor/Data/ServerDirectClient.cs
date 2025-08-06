@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using OpenTelemetry.Trace;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
@@ -13,125 +14,145 @@ namespace SintLeoPannenkoeken.Blazor.Data
     /// </summary>
     public class ServerDirectClient : IServerData
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public ServerDirectClient(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager)
+        public ServerDirectClient(IDbContextFactory<ApplicationDbContext> dbContextFactory, UserManager<ApplicationUser> userManager)
         {
-            _dbContext = dbContext;
+            _dbContextFactory = dbContextFactory;
             _userManager = userManager;
         }
 
         public async Task<IList<GebruikerDto>> GetGebruikers()
         {
-            var users = await _dbContext.Users.ToListAsync();
-
-            var userDtos = new List<GebruikerDto>();
-            foreach (var user in users)
+            using (var dbContext = _dbContextFactory.CreateDbContext())
             {
-                var roles = await _userManager.GetRolesAsync(user);
-                userDtos.Add(new GebruikerDto(user.Id, user.Email, roles.ToList()));
-            }
+                var users = await dbContext.Users.ToListAsync();
 
-            return userDtos;
+                var userDtos = new List<GebruikerDto>();
+                foreach (var user in users)
+                {
+                    var roles = await _userManager.GetRolesAsync(user);
+                    userDtos.Add(new GebruikerDto(user.Id, user.Email, roles.ToList()));
+                }
+
+                return userDtos;
+            }
         }
 
         public async Task<IList<LidDto>> GetLeden()
         {
-            var leden = await _dbContext
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var leden = await dbContext
                 .Leden
                 .Include(lid => lid.Tak)
                 .OrderBy(lid => lid.Achternaam)
                 .ToListAsync();
 
-            var lidDtos = leden == null
-                ? new List<LidDto>()
-                : leden.Select(lid => new LidDto(
-                    lid.Id,
-                    lid.Voornaam,
-                    lid.Achternaam,
-                    lid.Functie,
-                    lid.Tak?.Naam ?? "Onbekend"
-                )).ToList();
+                var lidDtos = leden == null
+                    ? new List<LidDto>()
+                    : leden.Select(lid => new LidDto(
+                        lid.Id,
+                        lid.Voornaam,
+                        lid.Achternaam,
+                        lid.Functie,
+                        lid.Tak?.Naam ?? "Onbekend"
+                    )).ToList();
 
-            return lidDtos;
+                return lidDtos;
+            }
         }
 
         public async Task<IList<ScoutsjaarDto>> GetScoutsjaren()
         {
-            var scoutsjaren = await _dbContext
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var scoutsjaren = await dbContext
                 .Scoutsjaren
                 .OrderBy(scoutsjaar => scoutsjaar.Begin)
                 .ToListAsync();
 
-            var scoutsjaarDtos = scoutsjaren == null
-                ? new List<ScoutsjaarDto>()
-                : scoutsjaren.Select(scoutsjaar => new ScoutsjaarDto(scoutsjaar.Begin, scoutsjaar.PannenkoekenPerPak, (ScoutsjaarStatusDto)scoutsjaar.Status)).ToList();
+                var scoutsjaarDtos = scoutsjaren == null
+                    ? new List<ScoutsjaarDto>()
+                    : scoutsjaren.Select(scoutsjaar => new ScoutsjaarDto(scoutsjaar.Begin, scoutsjaar.PannenkoekenPerPak, (ScoutsjaarStatusDto)scoutsjaar.Status)).ToList();
 
-            return scoutsjaarDtos;
+                return scoutsjaarDtos;
+            }
         }
 
         public async Task<IList<StraatDto>> GetStraten()
         {
-            var straten = await _dbContext
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var straten = await dbContext
                 .Straten
                 .Include(straat => straat.Zone)
                 .OrderBy(straat => straat.Naam)
                 .ToListAsync();
 
-            var straatDtos = straten == null
-                ? new List<StraatDto>()
-                : straten.Select(straat => new StraatDto(
-                    straat.Id,
-                    straat.Naam,
-                    straat.PostNummer,
-                    straat.Gemeente,
-                    straat.Omschrijving,
-                    straat.ZoneId,
-                    straat.Zone?.Naam ?? "",
-                    straat.Nummer)).ToList();
+                var straatDtos = straten == null
+                    ? new List<StraatDto>()
+                    : straten.Select(straat => new StraatDto(
+                        straat.Id,
+                        straat.Naam,
+                        straat.PostNummer,
+                        straat.Gemeente,
+                        straat.Omschrijving,
+                        straat.ZoneId,
+                        straat.Zone?.Naam ?? "",
+                        straat.Nummer)).ToList();
 
-            return straatDtos;
+                return straatDtos;
+            }
         }
 
         public async Task<IList<ChauffeurDto>> GetChauffeurs()
         {
-            var chauffeurs = await _dbContext
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var chauffeurs = await dbContext
                 .Bestuurders
                 .OrderBy(straat => straat.Achternaam)
                 .ToListAsync();
 
-            var chauffeurDtos = chauffeurs == null
-                ? new List<ChauffeurDto>()
-                : chauffeurs.Select(chauffeur => new ChauffeurDto(
-                    chauffeur.Id,
-                    chauffeur.Achternaam,
-                    chauffeur.Voornaam)).ToList();
+                var chauffeurDtos = chauffeurs == null
+                    ? new List<ChauffeurDto>()
+                    : chauffeurs.Select(chauffeur => new ChauffeurDto(
+                        chauffeur.Id,
+                        chauffeur.Achternaam,
+                        chauffeur.Voornaam)).ToList();
 
-            return chauffeurDtos;
+                return chauffeurDtos;
+            }
         }
 
         public async Task UpdateScoutsjaar(ScoutsjaarDto scoutsjaarDto)
         {
-            var scoutsjaar = await _dbContext
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var scoutsjaar = await dbContext
                 .Scoutsjaren
                 .FirstOrDefaultAsync(s => s.Begin == scoutsjaarDto.Begin);
 
-            if (scoutsjaar == null)
-            {
-                return;
+                if (scoutsjaar == null)
+                {
+                    return;
+                }
+
+                scoutsjaar.PannenkoekenPerPak = scoutsjaarDto.PannenkoekenPerPak;
+                scoutsjaar.Status = (ScoutsjaarStatus)scoutsjaarDto.Status;
+
+                dbContext.Scoutsjaren.Update(scoutsjaar);
+                await dbContext.SaveChangesAsync();
             }
-
-            scoutsjaar.PannenkoekenPerPak = scoutsjaarDto.PannenkoekenPerPak;
-            scoutsjaar.Status = (ScoutsjaarStatus)scoutsjaarDto.Status;
-
-            _dbContext.Scoutsjaren.Update(scoutsjaar);
-            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<IList<BestellingDto>> GetBestellingen(int begin)
         {
-            var bestellingen = (await _dbContext.Scoutsjaren
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var bestellingen = (await dbContext.Scoutsjaren
                  .Include(scoutsjaar => scoutsjaar.Bestellingen)
                  .ThenInclude(bestelling => bestelling.Straat)
                  .ThenInclude(straat => straat.Zone)
@@ -142,48 +163,52 @@ namespace SintLeoPannenkoeken.Blazor.Data
                  ?.Bestellingen
                  ?.ToList();
 
-            var bestellingenDtos = bestellingen == null
-                ? new List<BestellingDto>()
-                : bestellingen.Select(bestelling => new BestellingDto
-                {
-                    //bestelling.Id,
-                    //bestelling.Naam,
-                    AantalPakken = bestelling.AantalPakken,
-                    //bestelling.Telefoon,
-                    //bestelling.Opmerkingen,
-                    //bestelling.Betaald,
-                    //bestelling.Geleverd,
-                    //bestelling.LidId,
-                    //bestelling.Tak?.Id ?? 0,
-                    //bestelling.StraatId,
-                    //bestelling.Nummer,
-                    //bestelling.Bus
-                }).ToList();
+                var bestellingenDtos = bestellingen == null
+                    ? new List<BestellingDto>()
+                    : bestellingen.Select(bestelling => new BestellingDto
+                    {
+                        //bestelling.Id,
+                        //bestelling.Naam,
+                        AantalPakken = bestelling.AantalPakken,
+                        //bestelling.Telefoon,
+                        //bestelling.Opmerkingen,
+                        //bestelling.Betaald,
+                        //bestelling.Geleverd,
+                        //bestelling.LidId,
+                        //bestelling.Tak?.Id ?? 0,
+                        //bestelling.StraatId,
+                        //bestelling.Nummer,
+                        //bestelling.Bus
+                    }).ToList();
 
-            return bestellingenDtos;
+                return bestellingenDtos;
+            }
         }
 
         public async Task UpdateBestelling(UpdateBestellingDto bestellingDto)
         {
-            var bestelling = await _dbContext.Bestellingen.SingleOrDefaultAsync(bestelling => bestelling.Id == bestellingDto.Id);
-            if (bestelling == null)
+            using (var dbContext = _dbContextFactory.CreateDbContext())
             {
-                return;
+                var bestelling = await dbContext.Bestellingen.SingleOrDefaultAsync(bestelling => bestelling.Id == bestellingDto.Id);
+                if (bestelling == null)
+                {
+                    return;
+                }
+
+                var takId = (await dbContext.Leden.SingleAsync(lid => lid.Id == bestellingDto.LidId)).TakId;
+
+                bestelling.Naam = bestellingDto.Naam;
+                bestelling.AantalPakken = bestellingDto.AantalPakken;
+                bestelling.Telefoon = bestellingDto.Telefoon != null ? bestellingDto.Telefoon : "";
+                bestelling.Opmerkingen = bestellingDto.Opmerkingen != null ? bestellingDto.Opmerkingen : "";
+                bestelling.Betaald = bestellingDto.Betaald;
+                bestelling.Geleverd = bestellingDto.Geleverd;
+                bestelling.LidId = bestellingDto.LidId;
+                bestelling.TakId = takId;
+                bestelling.StraatId = bestellingDto.StraatId;
+                bestelling.Nummer = bestellingDto.Nummer;
+                bestelling.Bus = bestellingDto.Bus;
             }
-
-            var takId = _dbContext.Leden.Single(lid => lid.Id == bestellingDto.LidId).TakId;
-
-            bestelling.Naam = bestellingDto.Naam;
-            bestelling.AantalPakken = bestellingDto.AantalPakken;
-            bestelling.Telefoon = bestellingDto.Telefoon != null ? bestellingDto.Telefoon : "";
-            bestelling.Opmerkingen = bestellingDto.Opmerkingen != null ? bestellingDto.Opmerkingen : "";
-            bestelling.Betaald = bestellingDto.Betaald;
-            bestelling.Geleverd = bestellingDto.Geleverd;
-            bestelling.LidId = bestellingDto.LidId;
-            bestelling.TakId = takId;
-            bestelling.StraatId = bestellingDto.StraatId;
-            bestelling.Nummer = bestellingDto.Nummer;
-            bestelling.Bus = bestellingDto.Bus;
         }
     }
 }
