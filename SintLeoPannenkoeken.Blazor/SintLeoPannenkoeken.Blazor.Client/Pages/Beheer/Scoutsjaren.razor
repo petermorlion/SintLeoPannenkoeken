@@ -8,7 +8,8 @@
                   Title="Scoutsjaren"
                   DataProvider="@_dataProvider"
                   OnUpdate="@OnUpdate"
-                  CanEdit="true">
+                  CanEdit="true"
+                  @ref="_page">
     <NewItemForm>
         <MudForm @bind-IsValid="_isFormValid" @ref="_form">
             <MudGrid>
@@ -60,6 +61,7 @@
 @code {
     private Func<IServerData, Task<IEnumerable<ScoutsjaarDto>>> _dataProvider => async (serverData) => await serverData.GetScoutsjaren();
     private bool _isFormValid;
+    private MasterDetailPage<ScoutsjaarDto> _page = default!;
     private MudForm _form = default!;
 
     private ScoutsjaarStatusDto _newScoutsjaarStatus = ScoutsjaarStatusDto.Actief;
@@ -79,8 +81,10 @@
         await _form.Validate();
         if (_form.IsValid)
         {
-            await _serverData.UpdateScoutsjaar(new ScoutsjaarDto(_newScoutsjaarBegin!.Value, _newScoutsjaarPannenkoekenPerPak!.Value, _newScoutsjaarStatus));
-        }
+            var newItem = new ScoutsjaarDto(_newScoutsjaarBegin!.Value, _newScoutsjaarPannenkoekenPerPak!.Value, _newScoutsjaarStatus);
+            await _serverData.UpdateScoutsjaar(newItem);
+            _page.AddItem(newItem);
+    }
     }
 
     void OnCancel()

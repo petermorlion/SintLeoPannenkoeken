@@ -113,4 +113,11 @@
             }
         }
     }
+
+    public void AddItem(TDto item)
+    {
+        var dataList = _data.ToList();
+        dataList.Add(item);
+        _data = dataList;
+    }
 }
