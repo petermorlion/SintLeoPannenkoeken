@@ -1,10 +1,25 @@
 ﻿@using SintLeoPannenkoeken.Blazor.Client.Server
 @using SintLeoPannenkoeken.Blazor.Client.Auth
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
 @typeparam TDto
 
 <PageTitle>@Title</PageTitle>
 
-<h1>@Title</h1>
+<MudStack Row="true" Breakpoint="Breakpoint.Xs">
+    <h1>@Title</h1>
+    @if (IsForScoutsjaar)
+    {
+            <MudSelect @bind-Value="_selectedScoutsjaar" FitContent="true">
+                @foreach (var scoutsjaar in _scoutsjaren)
+                {
+                    <MudSelectItem Value="scoutsjaar">@scoutsjaar.Begin</MudSelectItem>
+                }
+            </MudSelect>
+    }
+</MudStack>
+
+
+
 
 <RoleAuthorizedView Roles="@AuthorizedRoles">
     @ContentBeforeData
@@ -38,6 +53,11 @@
 
 @code {
     private IEnumerable<TDto> _data = new List<TDto>();
+    private IEnumerable<ScoutsjaarDto> _scoutsjaren = new List<ScoutsjaarDto>();
+    private ScoutsjaarDto _selectedScoutsjaar;
+
+    [Inject]
+    private IServerData _serverData { get; set; } = default!;
 
     [Parameter]
     public string Title { get; set; } = "";
@@ -63,11 +83,22 @@
     [Parameter]
     public bool CanEdit { get; set; }
 
+    [Parameter]
+    public bool IsForScoutsjaar { get; set; } = false;
+
     [Inject]
     public IServerData ServerData { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
         _data = await DataProvider(ServerData);
+        if (IsForScoutsjaar)
+        {
+            _scoutsjaren = await _serverData.GetScoutsjaren();
+            if (_scoutsjaren.Any())
+            {
+                _selectedScoutsjaar = _scoutsjaren.First();
+            }
+        }
     }
 }
