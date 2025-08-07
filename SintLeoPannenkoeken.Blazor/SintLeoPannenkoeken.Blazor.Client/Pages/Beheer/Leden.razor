@@ -7,36 +7,29 @@
                   AuthorizedRoles="@($"{Roles.RolesForLeden}")"
                   Title="Leden"
                   DataProvider="@_dataProvider" 
-                  OnUpdate="@OnUpdate"
                   CanEdit="true"
-                  @ref="_page">
-    <NewItemForm>
-        <MudForm @bind-IsValid="_isFormValid" @ref="_form">
-            <MudGrid>
-                <MudItem xs="12" sm="6">
-                    <MudTextField @bind-Value="_newLidAchternaam" T="string" Label="Achternaam" Required="true" RequiredError="De achternaam is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <MudTextField @bind-Value="_newLidVoornaam" T="string" Label="Voornaam" Required="true" RequiredError="De voornaam is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <MudSelect @bind-Value="_newLidTak" Required="true" RequiredError="De tak is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel>
-                        @foreach (var tak in _takken)
-                        {
-                            <MudSelectItem Value="tak">@tak.Naam</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <MudTextField @bind-Value="_newLidFunctie" T="string" Label="Functie" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
-                </MudItem>
-                <MudItem xs="12">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_isFormValid)" OnClick="@OnCreate">Opslaan</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@OnCancel">Annuleren</MudButton>
-                </MudItem>
-            </MudGrid>
-        </MudForm>
-    </NewItemForm>
+                  OnCreate="@OnCreate"
+                  OnUpdate="@OnUpdate"
+                  OnCancel="@OnCancel">
+    <NewItemFormElements>
+        <MudItem xs="12" sm="6">
+            <MudTextField @bind-Value="_newLidAchternaam" T="string" Label="Achternaam" Required="true" RequiredError="De achternaam is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudTextField @bind-Value="_newLidVoornaam" T="string" Label="Voornaam" Required="true" RequiredError="De voornaam is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudSelect @bind-Value="_newLidTak" Required="true" RequiredError="De tak is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel>
+                @foreach (var tak in _takken)
+                {
+                    <MudSelectItem Value="tak">@tak.Naam</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudTextField @bind-Value="_newLidFunctie" T="string" Label="Functie" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+        </MudItem>
+    </NewItemFormElements>
     <Columns>
         <PropertyColumn T="LidDto" TProperty="string" Property="x => x.Achternaam" Title="Achternaam" InitialDirection="SortDirection.Ascending" />
         <PropertyColumn T="LidDto" TProperty="string" Property="x => x.Voornaam" Title="Voornaam" />
@@ -47,9 +40,6 @@
 
 @code {
     private Func<IServerData, Task<IEnumerable<LidDto>>> _dataProvider => async (serverData) => await serverData.GetLeden();
-    private bool _isFormValid;
-    private MasterDetailPage<LidDto> _page = default!;
-    private MudForm _form = default!;
     private IList<TakDto> _takken = new List<TakDto>();
 
     private string _newLidAchternaam = "";
@@ -65,15 +55,11 @@
         await _serverData.UpdateLid(item);
     }
 
-    async Task OnCreate()
+    async Task<LidDto> OnCreate()
     {
-        await _form.Validate();
-        if (_form.IsValid)
-        {
-            var newItem = new NewLidDto(_newLidAchternaam, _newLidVoornaam, _newLidFunctie, _newLidTak!.Id);
-            var result = await _serverData.CreateLid(newItem);
-            _page.AddItem(result);
-        }
+        var newItem = new NewLidDto(_newLidAchternaam, _newLidVoornaam, _newLidFunctie, _newLidTak!.Id);
+        var result = await _serverData.CreateLid(newItem);
+        return result;
     }
 
     void OnCancel()
