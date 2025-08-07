@@ -22,7 +22,15 @@
     @ContentBeforeData
     <MudExpansionPanels>
         <MudExpansionPanel Text="@NewItemTitle" Expanded="@NewItemExpanded">
-            @NewItemForm
+            <MudForm @bind-IsValid="_isFormValid" @ref="_form">
+                <MudGrid>
+                    @NewItemFormElements
+                    <MudItem xs="12">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_isFormValid)" OnClick="@Create">Opslaan</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@OnCancel">Annuleren</MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudForm>
         </MudExpansionPanel>
     </MudExpansionPanels>
     <MudDataGrid T="@TDto" 
@@ -59,6 +67,9 @@
     private IEnumerable<ScoutsjaarDto> _scoutsjaren = new List<ScoutsjaarDto>();
     private ScoutsjaarDto _selectedScoutsjaar;
 
+    private bool _isFormValid;
+    private MudForm _form = default!;
+
     [Inject]
     private IServerData _serverData { get; set; } = default!;
 
@@ -71,8 +82,12 @@
     [Parameter]
     public RenderFragment ContentBeforeData { get; set; } = builder => { };
 
+    /// <summary>
+    /// Elements for the new item form, to be placed in a MudGrid. The
+    /// save and cancel buttons will be added automatically.
+    /// </summary>
     [Parameter]
-    public RenderFragment NewItemForm { get; set; } = builder => { };
+    public RenderFragment NewItemFormElements { get; set; } = builder => { };
 
     [Parameter]
     public string NewItemTitle { get; set; } = "Nieuw";
@@ -87,10 +102,19 @@
     public RenderFragment ContentAfterData { get; set; } = builder => { };
 
     [Parameter]
+    [EditorRequired]
     public Func<IServerData, Task<IEnumerable<TDto>>> DataProvider { get; set; } = default!;
 
     [Parameter]
+    [EditorRequired]
+    public Func<Task<TDto>> OnCreate { get; set; } = default!;
+
+    [Parameter]
     public EventCallback<TDto> OnUpdate { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public EventCallback OnCancel { get; set; }
 
     [Parameter]
     public bool CanEdit { get; set; }
@@ -111,6 +135,16 @@
             {
                 _selectedScoutsjaar = _scoutsjaren.First();
             }
+        }
+    }
+
+    async Task Create()
+    {
+        await _form.Validate();
+        if (_form.IsValid)
+        {
+            var result = await OnCreate();
+            AddItem(result);
         }
     }
 

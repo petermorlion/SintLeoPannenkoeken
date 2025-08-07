@@ -9,14 +9,14 @@
                   Title="Bestellingen"
                   DataProvider="@_dataProvider"
                   OnUpdate="@OnUpdate"
+                  OnCancel="@OnCancel"
+                  OnCreate="@OnCreate"
                   CanEdit="false"
                   IsForScoutsjaar="true"
                   NewItemTitle="Nieuwe bestelling"
                   NewItemExpanded="true">
-    <NewItemForm>
-        <MudForm @bind-IsValid="@_isFormValid">
-            <MudGrid>
-                <MudItem xs="12" sm="8">
+    <NewItemFormElements>
+        <MudItem xs="12" sm="8">
                     <MudTextField T="string" Label="Naam koper" Required="true" RequiredError="Naam koper is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
                 </MudItem>
                 <MudItem xs="12" sm="4">
@@ -80,13 +80,7 @@
                                      ResetValueOnEmptyText="true"
                                      SelectValueOnTab="true" />
                 </MudItem>
-                <MudItem xs="12">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_isFormValid)">Opslaan</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Secondary">Annuleren</MudButton>
-                </MudItem>
-            </MudGrid>
-        </MudForm>
-    </NewItemForm>
+    </NewItemFormElements>
     
     <Columns>
         <PropertyColumn T="BestellingDto" TProperty="int" Property="x => x.BestellingNummer" Title="Nr" />
@@ -155,6 +149,16 @@
         return _leden.Where(x => 
             x.Achternaam.Contains(value, StringComparison.InvariantCultureIgnoreCase)
             || x.Voornaam.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    async Task<BestellingDto> OnCreate()
+    {
+        throw new NotImplementedException();
+    }
+
+    void OnCancel()
+    {
+        throw new NotImplementedException();
     }
 
     async Task OnUpdate(BestellingDto item)
