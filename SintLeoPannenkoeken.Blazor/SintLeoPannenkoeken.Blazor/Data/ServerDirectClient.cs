@@ -213,26 +213,23 @@ namespace SintLeoPannenkoeken.Blazor.Data
             }
         }
 
-        public async Task<LidDto> UpdateLid(LidDto lidDto)
+        public async Task UpdateLid(LidDto lidDto)
         {
+            if (!lidDto.Id.HasValue)
+            {
+                throw new ArgumentException("Lid ID must be provided for update.");
+            }
+
             using (var dbContext = _dbContextFactory.CreateDbContext())
             {
-                var lid = new Lid(lidDto.Voornaam, lidDto.Achternaam);
-                if (lidDto.Id.HasValue)
-                {
-                    lid = await dbContext
+                var lid = await dbContext
                         .Leden
                         .Include(l => l.Tak)
                         .FirstOrDefaultAsync(s => s.Id == lidDto.Id.Value);
-                    
-                    if (lid == null)
-                    {
-                        lid = new Lid(lidDto.Voornaam, lidDto.Achternaam);
-                    }
-                }
-                else
+
+                if (lid == null)
                 {
-                    dbContext.Leden.Add(lid);
+                    throw new ArgumentException($"Lid with ID {lidDto.Id.Value} not found.");
                 }
 
                 lid.Voornaam = lidDto.Voornaam;
@@ -240,6 +237,43 @@ namespace SintLeoPannenkoeken.Blazor.Data
                 lid.Functie = lidDto.Functie;
 
                 await dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task<IList<TakDto>> GetTakken()
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var takken = await dbContext
+                .Takken
+                .OrderBy(tak => tak.Id)
+                .ToListAsync();
+
+                var takDtos = takken == null
+                    ? new List<TakDto>()
+                    : takken.Select(tak => new TakDto(
+                        tak.Id,
+                        tak.Naam)).ToList();
+
+                return takDtos;
+            }
+        }
+
+        public async Task<LidDto> CreateLid(NewLidDto lidDto)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var lid = new Lid(lidDto.Voornaam, lidDto.Achternaam);
+                lid.Functie = lidDto.Functie;
+                lid.TakId = lidDto.TakId;
+                dbContext.Leden.Add(lid);
+
+                await dbContext.SaveChangesAsync();
+
+                lid = await dbContext
+                    .Leden
+                    .Include(l => l.Tak)
+                    .FirstAsync(l => l.Id == lid.Id);
 
                 return new LidDto(lid.Achternaam, lid.Voornaam, lid.Functie, lid.Tak.Naam, lid.Id);
             }

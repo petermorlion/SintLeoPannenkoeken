@@ -20,6 +20,14 @@
                     <MudTextField @bind-Value="_newLidVoornaam" T="string" Label="Voornaam" Required="true" RequiredError="De voornaam is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
                 </MudItem>
                 <MudItem xs="12" sm="6">
+                    <MudSelect @bind-Value="_newLidTak" Required="true" RequiredError="De tak is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel>
+                        @foreach (var tak in _takken)
+                        {
+                            <MudSelectItem Value="tak">@tak.Naam</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
                     <MudTextField @bind-Value="_newLidFunctie" T="string" Label="Functie" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
                 </MudItem>
                 <MudItem xs="12">
@@ -33,7 +41,7 @@
         <PropertyColumn T="LidDto" TProperty="string" Property="x => x.Achternaam" Title="Achternaam" InitialDirection="SortDirection.Ascending" />
         <PropertyColumn T="LidDto" TProperty="string" Property="x => x.Voornaam" Title="Voornaam" />
         <PropertyColumn T="LidDto" TProperty="string" Property="x => x.TakNaam" Title="Tak" />
-        <PropertyColumn T="LidDto" TProperty="string" Property="x => x.Functie" Title="Functie" />
+        <PropertyColumn T="LidDto" TProperty="string" Property="x => x.Functie" Title="Functie" Required="false" />
     </Columns>
 </MasterDetailPage>
 
@@ -42,10 +50,12 @@
     private bool _isFormValid;
     private MasterDetailPage<LidDto> _page = default!;
     private MudForm _form = default!;
+    private IList<TakDto> _takken = new List<TakDto>();
 
     private string _newLidAchternaam = "";
     private string _newLidVoornaam = "";
     private string _newLidFunctie = "";
+    private TakDto? _newLidTak = null;
 
     [Inject]
     private IServerData _serverData { get; set; } = default!;
@@ -60,8 +70,8 @@
         await _form.Validate();
         if (_form.IsValid)
         {
-            var newItem = new LidDto(_newLidAchternaam, _newLidVoornaam, "functie", "Zeewolfjes");
-            var result = await _serverData.UpdateLid(newItem);
+            var newItem = new NewLidDto(_newLidAchternaam, _newLidVoornaam, _newLidFunctie, _newLidTak!.Id);
+            var result = await _serverData.CreateLid(newItem);
             _page.AddItem(result);
         }
     }
@@ -71,5 +81,10 @@
         _newLidAchternaam = "";
         _newLidVoornaam = "";
         _newLidFunctie = "";
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _takken = await _serverData.GetTakken();
     }
 }
