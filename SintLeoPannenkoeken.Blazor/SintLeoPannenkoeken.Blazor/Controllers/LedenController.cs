@@ -27,11 +27,18 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
             return Ok(lidDtos);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateLid([FromBody] NewLidDto lidDto)
+        {
+            var result = await _serverData.CreateLid(lidDto);
+            return Ok(result);
+        }
+
         [HttpPut]
         public async Task<IActionResult> UpdateLid([FromBody] LidDto lidDto)
         {
-            var result = await _serverData.UpdateLid(lidDto);
-            return Ok(result);
+            await _serverData.UpdateLid(lidDto);
+            return Ok();
         }
     }
 }

@@ -130,15 +130,31 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
             return false;
         }
 
-        public async Task<LidDto> UpdateLid(LidDto lid)
+        public async Task UpdateLid(LidDto lid)
         {
             if (!await IsUserAuthorized(Roles.RolesForLeden))
             {
                 throw new UnauthorizedException();
             }
 
-            var result = await _httpClient.PutAsJsonAsync("/api/leden", lid);
-            return result.Content.As<LidDto>();
+            await _httpClient.PutAsJsonAsync("/api/leden", lid);
+        }
+
+        public async Task<IList<TakDto>> GetTakken()
+        {
+            var result = await _httpClient.GetFromJsonAsync<IList<TakDto>>("/api/takken");
+            return result ?? new List<TakDto>();
+        }
+
+        public async Task<LidDto> CreateLid(NewLidDto lid)
+        {
+            if (!await IsUserAuthorized(Roles.RolesForLeden))
+            {
+                throw new UnauthorizedException();
+            }
+
+            var result = await _httpClient.PostAsJsonAsync("/api/leden", lid);
+            return await result.Content.ReadAsAsync<LidDto>();
         }
     }
 }
