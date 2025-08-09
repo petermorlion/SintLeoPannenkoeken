@@ -19,7 +19,13 @@
             <MudTextField @bind-Value="_newLidVoornaam" T="string" Label="Voornaam" Required="true" RequiredError="De voornaam is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
         </MudItem>
         <MudItem xs="12" sm="6">
-            <MudSelect @bind-Value="_newLidTak" Required="true" RequiredError="De tak is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel>
+            <MudSelect @bind-Value="_newLidTak" 
+                       Required="true" 
+                       RequiredError="De tak is verplicht." 
+                       Variant="Variant.Outlined" 
+                       Margin="Margin.Dense" 
+                       ShrinkLabel
+                       QuickSearchInterval="TimeSpan.FromSeconds(1)">
                 @foreach (var tak in _takken)
                 {
                     <MudSelectItem Value="tak">@tak.Naam</MudSelectItem>
@@ -69,8 +75,14 @@
         _newLidFunctie = "";
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (!firstRender)
+
+        {
+            return;
+        }
+
         _takken = await _serverData.GetTakken();
     }
 }

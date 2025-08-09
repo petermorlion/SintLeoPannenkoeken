@@ -156,5 +156,16 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
             var result = await _httpClient.PostAsJsonAsync("/api/leden", lid);
             return await result.Content.ReadAsAsync<LidDto>();
         }
+
+        public async Task<BestellingDto> CreateBestelling(NewBestellingDto bestelling)
+        {
+            if (!await IsUserAuthorized(Roles.RolesForBestellingen))
+            {
+                throw new UnauthorizedException();
+            }
+
+            var result = await _httpClient.PostAsJsonAsync("/api/bestellingen", bestelling);
+            return await result.Content.ReadAsAsync<BestellingDto>();
+        }
     }
 }

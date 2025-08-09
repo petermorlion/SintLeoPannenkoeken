@@ -9,12 +9,15 @@
     <h1>@Title</h1>
     @if (IsForScoutsjaar)
     {
-            <MudSelect @bind-Value="_selectedScoutsjaar" FitContent="true">
-                @foreach (var scoutsjaar in _scoutsjaren)
-                {
-                    <MudSelectItem Value="scoutsjaar">@scoutsjaar.Begin</MudSelectItem>
-                }
-            </MudSelect>
+        <MudSelect @bind-Value="_selectedScoutsjaarBegin"
+                   @bind-Value:after="OnSelectedScoutsjaarChanged"
+                   FitContent="true"
+                   QuickSearchInterval="TimeSpan.FromSeconds(1)">
+            @foreach (var scoutsjaar in _scoutsjaren)
+            {
+                <MudSelectItem Value="@scoutsjaar.Begin">@scoutsjaar.Begin</MudSelectItem>
+            }
+        </MudSelect>
     }
 </MudStack>
 
@@ -65,7 +68,7 @@
 @code {
     private IEnumerable<TDto> _data = new List<TDto>();
     private IEnumerable<ScoutsjaarDto> _scoutsjaren = new List<ScoutsjaarDto>();
-    private ScoutsjaarDto _selectedScoutsjaar;
+    private int _selectedScoutsjaarBegin;
 
     private bool _isFormValid;
     private MudForm _form = default!;
@@ -125,17 +128,42 @@
     [Inject]
     public IServerData ServerData { get; set; } = default!;
 
+    [Inject]
+    public NavigationManager NavigationManager { get; set; } = default!;
+
+    [Inject]
+    public CurrentScoutsjaarQuerystringParameterProvider CurrentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
+
     protected override async Task OnInitializedAsync()
     {
-        _data = await DataProvider(ServerData);
-        if (IsForScoutsjaar)
+        var uriBuilder = new UriBuilder(NavigationManager.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
+        var scoutsjaarParameter = query["scoutsjaar"];
+        if (scoutsjaarParameter != null)
         {
-            _scoutsjaren = await _serverData.GetScoutsjaren();
-            if (_scoutsjaren.Any())
+            _selectedScoutsjaarBegin = int.Parse(scoutsjaarParameter); 
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (IsForScoutsjaar && firstRender)
+        {
+            _scoutsjaren = await ServerData.GetScoutsjaren();
+            var selectedScoutsjaar = await CurrentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+            if (selectedScoutsjaar != null)
             {
-                _selectedScoutsjaar = _scoutsjaren.First();
+                _selectedScoutsjaarBegin = selectedScoutsjaar.Begin;
+            }
+            else
+            {
+                selectedScoutsjaar = _scoutsjaren.FirstOrDefault();
+                NavigationManager.NavigateTo($"{NavigationManager.Uri}?scoutsjaar={selectedScoutsjaar.Begin}", forceLoad: true);
+                return;
             }
         }
+
+        _data = await DataProvider(ServerData);
     }
 
     async Task Create()
@@ -153,5 +181,18 @@
         var dataList = _data.ToList();
         dataList.Add(item);
         _data = dataList;
+    }
+
+    private async Task OnSelectedScoutsjaarChanged()
+    {
+        var uriWithoutScoutsjaar = $"{NavigationManager.Uri}?scoutsjaar={_selectedScoutsjaarBegin}";
+        var uriBuilder = new UriBuilder(NavigationManager.Uri)
+        {
+            Query = $"scoutsjaar={_selectedScoutsjaarBegin}"
+        };
+
+        NavigationManager.NavigateTo(uriBuilder.Uri.ToString(), forceLoad: true);
+        // _data = await DataProvider(ServerData);
+        // Refresh load previously selected scoutsjaar
     }
 }

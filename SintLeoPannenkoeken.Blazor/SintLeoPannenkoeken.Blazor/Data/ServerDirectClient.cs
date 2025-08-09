@@ -70,12 +70,16 @@ namespace SintLeoPannenkoeken.Blazor.Data
             {
                 var scoutsjaren = await dbContext
                 .Scoutsjaren
-                .OrderBy(scoutsjaar => scoutsjaar.Begin)
+                .OrderByDescending(scoutsjaar => scoutsjaar.Begin)
                 .ToListAsync();
 
                 var scoutsjaarDtos = scoutsjaren == null
                     ? new List<ScoutsjaarDto>()
-                    : scoutsjaren.Select(scoutsjaar => new ScoutsjaarDto(scoutsjaar.Begin, scoutsjaar.PannenkoekenPerPak, (ScoutsjaarStatusDto)scoutsjaar.Status)).ToList();
+                    : scoutsjaren.Select(scoutsjaar => new ScoutsjaarDto(
+                        scoutsjaar.Begin, 
+                        scoutsjaar.PannenkoekenPerPak, 
+                        (ScoutsjaarStatusDto)scoutsjaar.Status,
+                        scoutsjaar.Id)).ToList();
 
                 return scoutsjaarDtos;
             }
@@ -276,6 +280,62 @@ namespace SintLeoPannenkoeken.Blazor.Data
                     .FirstAsync(l => l.Id == lid.Id);
 
                 return new LidDto(lid.Achternaam, lid.Voornaam, lid.Functie, lid.Tak.Naam, lid.Id);
+            }
+        }
+
+        public async Task<BestellingDto> CreateBestelling(NewBestellingDto bestellingDto)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var takId = (await dbContext.Leden.SingleAsync(lid => lid.Id == bestellingDto.LidId)).TakId;
+
+                var bestelling = new Bestelling(bestellingDto.Naam, bestellingDto.AantalPakken);
+                bestelling.Telefoon = bestellingDto.Telefoon ?? string.Empty;
+                bestelling.Opmerkingen = bestellingDto.Opmerkingen ?? string.Empty;
+                bestelling.Betaald = bestellingDto.Betaald;
+                bestelling.Geleverd = bestellingDto.Geleverd;
+                bestelling.LidId = bestellingDto.LidId;
+                bestelling.TakId = takId;
+                bestelling.StraatId = bestellingDto.StraatId;
+                bestelling.Nummer = bestellingDto.Nummer;
+                bestelling.Bus = bestellingDto.Bus;
+                bestelling.IngaveDatum = DateTime.Now;
+                bestelling.ScoutsjaarId = bestellingDto.ScoutsjaarId;
+
+                var lastBestelling = await dbContext.Bestellingen
+                    .Where(b => b.ScoutsjaarId == bestellingDto.ScoutsjaarId)
+                    .OrderByDescending(b => b.Id)
+                    .FirstOrDefaultAsync();
+
+                // I totally realize this could lead to duplicate bestellingNummers, but the chances are slim
+                // because only about 2 users (maximum) will be active at the same time.
+                var bestellingNummer = lastBestelling != null ? lastBestelling.BestellingNummer + 1 : 1;
+
+                dbContext.Bestellingen.Add(bestelling);
+
+                await dbContext.SaveChangesAsync();
+
+                bestelling = await dbContext.Bestellingen
+                    .Include(b => b.Tak)
+                    .Include(b => b.Lid)
+                    .Include(b => b.Straat)
+                    .SingleAsync(b => b.Id == bestelling.Id);
+
+                return new BestellingDto
+                {
+                    Id = bestelling.Id,
+                    BestellingNummer = bestelling.BestellingNummer,
+                    Naam = bestelling.Naam,
+                    AantalPakken = bestelling.AantalPakken,
+                    Telefoon = bestelling.Telefoon,
+                    Opmerkingen = bestelling.Opmerkingen,
+                    Betaald = bestelling.Betaald,
+                    Geleverd = bestelling.Geleverd,
+                    Lid = new LidDto(bestelling.Lid.Achternaam, bestelling.Lid.Voornaam, bestelling.Lid.Functie, bestelling.Lid.Tak?.Naam ?? "Onbekend", bestelling.Lid.Id),
+                    StraatId = bestelling.StraatId,
+                    Nummer = bestelling.Nummer,
+                    Bus = bestelling.Bus
+                };
             }
         }
     }
