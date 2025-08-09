@@ -25,7 +25,8 @@
                        HelperText="Bij een gearchiveerd scoutsjaar zijn er geen wijzigingen meer mogelijk aan bestellingen."
                        Label="Status"
                        Variant="Variant.Outlined"
-                       Margin="Margin.Dense">
+                       Margin="Margin.Dense"
+                       QuickSearchInterval="TimeSpan.FromSeconds(1)">
                 <MudSelectItem Value="ScoutsjaarStatusDto.Actief">Actief</MudSelectItem>
                 <MudSelectItem Value="ScoutsjaarStatusDto.Gearchiveerd">Gearchiveerd</MudSelectItem>
             </MudSelect>
@@ -42,7 +43,8 @@
                            HelperText="Bij een gearchiveerd scoutsjaar zijn er geen wijzigingen meer mogelijk aan bestellingen."
                            Label="Status"
                            Variant="Variant.Outlined"
-                           Margin="Margin.Dense">
+                           Margin="Margin.Dense" 
+                           QuickSearchInterval="TimeSpan.FromSeconds(1)">
                     <MudSelectItem Value="ScoutsjaarStatusDto.Actief">Actief</MudSelectItem>
                     <MudSelectItem Value="ScoutsjaarStatusDto.Gearchiveerd">Gearchiveerd</MudSelectItem>
                 </MudSelect>

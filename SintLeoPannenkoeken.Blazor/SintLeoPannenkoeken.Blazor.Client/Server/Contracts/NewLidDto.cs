@@ -1,20 +1,17 @@
 ﻿namespace SintLeoPannenkoeken.Blazor.Client.Server.Contracts
 {
-    public class LidDto
+    public class NewLidDto
     {
-        public LidDto(string achternaam, string voornaam, string functie, string takNaam, int? id = null)
+        public NewLidDto(string achternaam, string voornaam, string functie, int takId)
         {
-            Id = id; 
             Achternaam = achternaam;
             Voornaam = voornaam;
             Functie = functie;
-            TakNaam = takNaam;
+            TakId = takId;
         }
-
-        public int? Id { get; init; }
         public string Achternaam { get; init; }
         public string Voornaam { get; init; }
         public string Functie { get; init; }
-        public string TakNaam { get; init; }
+        public int TakId { get; init; }
     }
 }

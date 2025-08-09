@@ -15,6 +15,7 @@ CultureInfo.DefaultThreadCurrentUICulture = culture;
 builder.Services.AddAuthorizationCore();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
+builder.Services.AddScoped<CurrentScoutsjaarQuerystringParameterProvider>();
 
 builder.Services.AddHttpClient<IServerData, ServerHttpClient>(client => { client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress); });
 builder.Services.AddSharedServices();
