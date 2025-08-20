@@ -1,5 +1,6 @@
 ﻿@page "/bestellingen"
 @using SintLeoPannenkoeken.Blazor.Client.Auth
+@using SintLeoPannenkoeken.Blazor.Client.Components
 @using SintLeoPannenkoeken.Blazor.Client.Server
 @using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
 @using System.Linq;
@@ -89,12 +90,21 @@
         <PropertyColumn T="BestellingDto" TProperty="int" Property="x => x.BestellingNummer" Title="Nr" />
         <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.Naam" Title="Koper" />
         <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.Telefoon" Title="Telefoon" />
-        @* <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x." Title="Code" />
-        <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x." Title="Adres" /> *@
+        <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x." Title="Code" />
+        <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x." Title="Adres" />
         <PropertyColumn T="BestellingDto" TProperty="int" Property="x => x.AantalPakken" Title="Aantal pakken" />
         <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.Opmerkingen" Title="Opmerkingen" />
         <PropertyColumn T="BestellingDto" TProperty="bool" Property="x => x.Betaald" Title="Betaald" />
-        <PropertyColumn T="BestellingDto" TProperty="bool" Property="x => x.Geleverd" Title="Geleverd" />
+        <TemplateColumn T="BestellingDto" Title="Betaald">
+            <CellTemplate>
+                <BooleanIcon T="BestellingDto" Value="@context.Item.Betaald" />
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn T="BestellingDto" Title="Geleverd">
+            <CellTemplate>
+                <BooleanIcon T="BestellingDto" Value="@context.Item.Geleverd" />
+            </CellTemplate>
+        </TemplateColumn>
         <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.LidNaam" Title="Lid" />
         <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.TakNaam" Title="Tak" />
     </Columns>
