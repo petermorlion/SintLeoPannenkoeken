@@ -173,18 +173,24 @@ namespace SintLeoPannenkoeken.Blazor.Data
                     ? new List<BestellingDto>()
                     : bestellingen.Select(bestelling => new BestellingDto
                     {
-                        //bestelling.Id,
-                        //bestelling.Naam,
+                        Id = bestelling.Id,
+                        BestellingNummer = bestelling.BestellingNummer,
+                        Naam = bestelling.Naam,
                         AantalPakken = bestelling.AantalPakken,
-                        //bestelling.Telefoon,
-                        //bestelling.Opmerkingen,
-                        //bestelling.Betaald,
-                        //bestelling.Geleverd,
-                        //bestelling.LidId,
-                        //bestelling.Tak?.Id ?? 0,
-                        //bestelling.StraatId,
-                        //bestelling.Nummer,
-                        //bestelling.Bus
+                        Telefoon = bestelling.Telefoon,
+                        Opmerkingen = bestelling.Opmerkingen,
+                        Betaald = bestelling.Betaald,
+                        Geleverd = bestelling.Geleverd,
+                        Lid = new LidDto
+                        (
+                            bestelling.Lid.Achternaam,
+                            bestelling.Lid.Voornaam,
+                            bestelling.Lid.Functie,
+                            bestelling.Lid.Tak.Naam
+                        ),
+                        StraatId = bestelling.StraatId,
+                        Nummer = bestelling.Nummer,
+                        Bus = bestelling.Bus
                     }).ToList();
 
                 return bestellingenDtos;
@@ -290,15 +296,15 @@ namespace SintLeoPannenkoeken.Blazor.Data
                 var takId = (await dbContext.Leden.SingleAsync(lid => lid.Id == bestellingDto.LidId)).TakId;
 
                 var bestelling = new Bestelling(bestellingDto.Naam, bestellingDto.AantalPakken);
-                bestelling.Telefoon = bestellingDto.Telefoon ?? string.Empty;
-                bestelling.Opmerkingen = bestellingDto.Opmerkingen ?? string.Empty;
+                bestelling.Telefoon = bestellingDto.Telefoon ?? "";
+                bestelling.Opmerkingen = bestellingDto.Opmerkingen ?? "";
                 bestelling.Betaald = bestellingDto.Betaald;
                 bestelling.Geleverd = bestellingDto.Geleverd;
                 bestelling.LidId = bestellingDto.LidId;
                 bestelling.TakId = takId;
                 bestelling.StraatId = bestellingDto.StraatId;
-                bestelling.Nummer = bestellingDto.Nummer;
-                bestelling.Bus = bestellingDto.Bus;
+                bestelling.Nummer = bestellingDto.Nummer ?? "";
+                bestelling.Bus = bestellingDto.Bus ?? "";
                 bestelling.IngaveDatum = DateTime.Now;
                 bestelling.ScoutsjaarId = bestellingDto.ScoutsjaarId;
 
@@ -310,6 +316,7 @@ namespace SintLeoPannenkoeken.Blazor.Data
                 // I totally realize this could lead to duplicate bestellingNummers, but the chances are slim
                 // because only about 2 users (maximum) will be active at the same time.
                 var bestellingNummer = lastBestelling != null ? lastBestelling.BestellingNummer + 1 : 1;
+                bestelling.BestellingNummer = bestellingNummer;
 
                 dbContext.Bestellingen.Add(bestelling);
 
