@@ -46,7 +46,9 @@
                             Variant="Variant.Outlined"
                             Margin="Margin.Dense"
                             ShrinkLabel
-                            Disabled />
+                            Disabled
+                            Required="true"
+                            RequiredError="De straat is verplicht"/>
         </MudItem>
         <MudItem xs="12" sm="2">
             <MudTextField @bind-Value="_newBestellingNummer" T="string" Label="Nummer" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
@@ -56,7 +58,7 @@
         </MudItem>
 
         <MudItem xs="12" sm="2">
-            <MudNumericField @bind-Value="_newBestellingAantalPakken" T="int?" Label="Aantal pakken" Min="0" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+            <MudNumericField @bind-Value="_newBestellingAantalPakken" T="int?" Label="Aantal pakken" Min="1" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel Required="true" RequiredError="Het aantal pakken is verplicht" />
         </MudItem>
         <MudItem xs="12" sm="2">
             <MudCheckBox @bind-Value="_newBestellingBetaald" T="bool" Label="Betaald" />
@@ -102,7 +104,8 @@
     private async Task<IEnumerable<BestellingDto>> GetBestellingen(IServerData serverData)
     {
         var scoutsjaar = await CurrentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
-        return await serverData.GetBestellingen(scoutsjaar.Begin);
+        var result = await serverData.GetBestellingen(scoutsjaar.Begin);
+        return result;
     }
 
     [Inject]

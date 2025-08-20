@@ -163,7 +163,10 @@
             }
         }
 
-        _data = await DataProvider(ServerData);
+        if (firstRender)
+        {
+            _data = await DataProvider(ServerData);
+        }
     }
 
     async Task Create()
