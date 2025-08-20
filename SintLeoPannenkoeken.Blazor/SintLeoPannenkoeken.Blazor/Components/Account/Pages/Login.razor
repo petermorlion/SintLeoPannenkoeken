@@ -4,6 +4,7 @@
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
 @using SintLeoPannenkoeken.Blazor.Data
+@using MudBlazor.StaticInput
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject ILogger<Login> Logger
@@ -23,43 +24,33 @@
                 <hr />
                 <ValidationSummary class="text-danger" role="alert" />
                 <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                    <MudStaticTextField @bind-Value="Input.Email" Label="Email" Required="true" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel Placeholder="name@example.com" />
                     <label for="email" class="form-label">Email</label>
                     <ValidationMessage For="() => Input.Email" class="text-danger" />
                 </div>
                 <div class="form-floating mb-3">
-                    <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                    <MudStaticTextField 
+                        @bind-Value="Input.Password" 
+                        Label="Paswoord" 
+                        Required="true" 
+                        Variant="Variant.Outlined" 
+                        Margin="Margin.Dense" 
+                        ShrinkLabel 
+                        Placeholder="paswoord"
+                        
+                        InputType="@_passwordInputType"/>
                     <label for="password" class="form-label">Password</label>
                     <ValidationMessage For="() => Input.Password" class="text-danger" />
                 </div>
                 <div class="checkbox mb-3">
                     <label class="form-label">
-                        <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input" />
-                        Remember me
+                        <MudStaticCheckBox @bind-Value="Input.RememberMe" Label="Aangemeld blijven" />
                     </label>
                 </div>
                 <div>
-                    <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
-                </div>
-                <div>
-                    <p>
-                        <a href="Account/ForgotPassword">Forgot your password?</a>
-                    </p>
-                    <p>
-                        <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Register as a new user</a>
-                    </p>
-                    <p>
-                        <a href="Account/ResendEmailConfirmation">Resend email confirmation</a>
-                    </p>
+                    <MudStaticButton Variant="Variant.Filled" Color="Color.Primary" UserAttributes="@_submitButtonAttributes">Inloggen</MudStaticButton>
                 </div>
             </EditForm>
-        </section>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to log in.</h3>
-            <hr />
-            <ExternalLoginPicker />
         </section>
     </div>
 </div>
@@ -75,6 +66,14 @@
 
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
+
+    private bool _showPassword;
+    private InputType _passwordInputType = InputType.Password;
+    private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+    private Dictionary<string, object> _submitButtonAttributes = new Dictionary<string, object>
+    {
+        { "type", "submit" }
+    };
 
     protected override async Task OnInitializedAsync()
     {
@@ -109,6 +108,22 @@
         else
         {
             errorMessage = "Error: Invalid login attempt.";
+        }
+    }
+
+    private void TogglePasswordVisibility()
+    {
+        @if (_showPassword)
+        {
+            _showPassword = false;
+            _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+            _passwordInputType = InputType.Password;
+        }
+        else
+        {
+            _showPassword = true;
+            _passwordInputIcon = Icons.Material.Filled.Visibility;
+            _passwordInputType = InputType.Text;
         }
     }
 
