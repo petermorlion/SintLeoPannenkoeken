@@ -1,0 +1,88 @@
+﻿@page "/beheer/streefcijfers"
+@using SintLeoPannenkoeken.Blazor.Client.Auth
+@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+
+<MasterDetailPage TDto="StreefcijferDto"
+                  AuthorizedRoles="@($"{Roles.RolesForStreefcijfers}")"
+                  Title="Streefcijfers"
+                  DataProvider="@GetBestellingen"
+                  IsForScoutsjaar="true"
+                  OnCreate="@OnCreate"
+                  OnUpdate="@OnUpdate"
+                  OnCancel="@OnCancel">
+    <NewItemFormElements>
+        <MudItem xs="12" sm="6">
+            <MudSelect @bind-Value="_newStreefcijferTak" 
+                       Required="true" 
+                       RequiredError="De tak is verplicht." 
+                       Variant="Variant.Outlined" 
+                       Margin="Margin.Dense" 
+                       ShrinkLabel
+                       QuickSearchInterval="TimeSpan.FromSeconds(1)">
+                @foreach (var tak in _takken)
+                {
+                    <MudSelectItem Value="tak">@tak.Naam</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudNumericField @bind-Value="_newStreefcijferAantal" T="int" Label="Aantal" Required="true" Min="1" RequiredError="Aantal is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+        </MudItem>
+    </NewItemFormElements>
+    <Columns>
+        <PropertyColumn T="StreefcijferDto" TProperty="string" Property="x => x.TakNaam" Title="Tak" InitialDirection="SortDirection.Ascending" />
+        <PropertyColumn T="StreefcijferDto" TProperty="int" Property="x => x.Aantal" Title="Aantal" />
+    </Columns>
+</MasterDetailPage>
+
+@code {
+    private IList<TakDto> _takken = new List<TakDto>();
+
+    private int _newStreefcijferAantal;
+    private TakDto? _newStreefcijferTak = null;
+
+    [Inject]
+    private IServerData _serverData { get; set; } = default!;
+
+    [Inject]
+    public CurrentScoutsjaarQuerystringParameterProvider CurrentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _takken = await _serverData.GetTakken();
+    }
+
+    private async Task<IEnumerable<StreefcijferDto>> GetBestellingen(IServerData serverData)
+    {
+        var scoutsjaar = await CurrentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        var result = await serverData.GetStreefcijfers(scoutsjaar.Begin);
+        return result;
+    }
+
+    async Task OnUpdate(StreefcijferDto item)
+    {
+        await _serverData.UpdateStreefcijfer(item);
+    }
+
+    async Task<StreefcijferDto> OnCreate()
+    {
+        var scoutsjaar = await CurrentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+
+        var newItem = new StreefcijferDto
+        {
+            TakId = _newStreefcijferTak!.Id,
+            Aantal = _newStreefcijferAantal,
+            ScoutsjaarId = scoutsjaar!.Id!.Value
+        };
+
+        var result = await _serverData.CreateStreefcijfer(newItem);
+        return result;
+    }
+
+    void OnCancel()
+    {
+        _newStreefcijferAantal = 0;
+        _newStreefcijferTak = null;
+    }
+}

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
-using MudBlazor.Extensions;
 using SintLeoPannenkoeken.Blazor.Client.Auth;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
 using System.Net.Http.Json;
@@ -166,6 +165,39 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
 
             var result = await _httpClient.PostAsJsonAsync("/api/bestellingen", bestelling);
             return await result.Content.ReadAsAsync<BestellingDto>();
+        }
+
+        public async Task<IList<StreefcijferDto>> GetStreefcijfers(int jaar)
+        {
+            if (!await IsUserAuthorized(Roles.RolesForStreefcijfers))
+            {
+                throw new UnauthorizedException();
+            }
+
+            var result = await _httpClient.GetFromJsonAsync<IList<StreefcijferDto>>($"/api/streefcijfers/{jaar}");
+            return result ?? new List<StreefcijferDto>();
+        }
+
+        public async Task<StreefcijferDto> CreateStreefcijfer(StreefcijferDto streefcijfer)
+        {
+            if (!await IsUserAuthorized(Roles.RolesForStreefcijfers))
+            {
+                throw new UnauthorizedException();
+            }
+
+            var result = await _httpClient.PostAsJsonAsync("/api/streefcijfers", streefcijfer);
+            return await result.Content.ReadAsAsync<StreefcijferDto>();
+        }
+
+        public async Task UpdateStreefcijfer(StreefcijferDto streefcijfer)
+        {
+            if (!await IsUserAuthorized(Roles.RolesForStreefcijfers))
+            {
+                throw new UnauthorizedException();
+            }
+
+            var result = await _httpClient.PostAsJsonAsync("/api/streefcijfers", streefcijfer);
+            await result.Content.ReadAsAsync<StreefcijferDto>();
         }
     }
 }

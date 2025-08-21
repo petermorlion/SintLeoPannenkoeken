@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
-using OpenTelemetry.Trace;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
 using SintLeoPannenkoeken.Blazor.Models;
-using System.Linq;
 
 namespace SintLeoPannenkoeken.Blazor.Data
 {
@@ -343,6 +340,89 @@ namespace SintLeoPannenkoeken.Blazor.Data
                     Nummer = bestelling.Nummer,
                     Bus = bestelling.Bus
                 };
+            }
+        }
+
+        public async Task<IList<StreefcijferDto>> GetStreefcijfers(int jaar)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var scoutsjaar = await dbContext.Scoutsjaren
+                                        .Include(scoutsjaar => scoutsjaar.StreefCijfers)
+                                        .ThenInclude(streefCijfer => streefCijfer.Tak)
+                                        .SingleOrDefaultAsync(scoutsjaar => scoutsjaar.Begin == jaar);
+                
+                var streefCijfers = scoutsjaar
+                    ?.StreefCijfers
+                    ?.ToList();
+
+                if (streefCijfers == null)
+                {
+                    return new List<StreefcijferDto>();
+                }
+
+                return streefCijfers.Select(x => new StreefcijferDto
+                {
+                    Id = x.Id,
+                    TakId = x.TakId,
+                    TakNaam = x.Tak?.Naam ?? "Onbekend",
+                    Aantal = x.Aantal,
+                    ScoutsjaarId = scoutsjaar.Id
+                }).ToList();
+            }
+        }
+
+        public async Task<StreefcijferDto> CreateStreefcijfer(StreefcijferDto streefcijferDto)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var streefcijfer = new StreefCijfer
+                {
+                    TakId = streefcijferDto.TakId,
+                    Aantal = streefcijferDto.Aantal
+                };
+
+                var scoutsjaar = await dbContext
+                    .Scoutsjaren
+                    .Include(s => s.StreefCijfers)
+                    .FirstOrDefaultAsync(s => s.Id == streefcijferDto.ScoutsjaarId);
+
+                scoutsjaar.StreefCijfers.Add(streefcijfer);
+
+                await dbContext.SaveChangesAsync();
+
+                streefcijfer = await dbContext
+                    .StreefCijfers
+                    .Include(sc => sc.Tak)
+                    .FirstAsync(sc => sc.Id == streefcijfer.Id);
+
+                return new StreefcijferDto
+                {
+                    TakNaam = streefcijfer.Tak?.Naam ?? "Onbekend",
+                    Aantal = streefcijfer.Aantal,
+                    ScoutsjaarId = scoutsjaar.Id
+                };
+            }
+        }
+
+        public async Task UpdateStreefcijfer(StreefcijferDto streefcijferDto)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var streefcijfer = await dbContext
+                        .StreefCijfers
+                        .Include(l => l.Tak)
+                        .FirstOrDefaultAsync(s => s.Id == streefcijferDto.Id);
+
+                if (streefcijfer == null)
+                {
+                    throw new ArgumentException($"Lid with ID {streefcijferDto.Id} not found.");
+                }
+
+                streefcijfer.TakId = streefcijferDto.TakId;
+                streefcijfer.Aantal = streefcijferDto.Aantal;
+
+                await dbContext.SaveChangesAsync();
             }
         }
     }
