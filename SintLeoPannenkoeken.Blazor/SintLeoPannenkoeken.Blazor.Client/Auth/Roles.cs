@@ -12,6 +12,7 @@
         public const string RolesForLeden = $"{Admin}";
         public const string RolesForScoutsjaren = $"{Admin},{FinanciePloeg}";
         public const string RolesForStraten= $"{Admin},{FinanciePloeg}";
+        public const string RolesForStreefcijfers = $"{Admin},{FinanciePloeg}";
         
     }
 }
