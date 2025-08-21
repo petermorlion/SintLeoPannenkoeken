@@ -1,0 +1,19 @@
+﻿@using System.Linq.Expressions
+@using System.Diagnostics.CodeAnalysis
+
+@typeparam T
+
+@if (@Value)
+{
+    <MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" />
+}
+else
+{
+    <MudIcon Icon="@Icons.Material.Filled.Close" Color="Color.Error" />
+}
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public bool Value { get; set; }
+}

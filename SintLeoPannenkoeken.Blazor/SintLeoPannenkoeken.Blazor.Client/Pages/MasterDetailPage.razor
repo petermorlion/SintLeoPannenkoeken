@@ -143,17 +143,15 @@
         {
             _selectedScoutsjaarBegin = int.Parse(scoutsjaarParameter); 
         }
-    }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (IsForScoutsjaar && firstRender)
+        if (IsForScoutsjaar)
         {
             _scoutsjaren = await ServerData.GetScoutsjaren();
             var selectedScoutsjaar = await CurrentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
             if (selectedScoutsjaar != null)
             {
                 _selectedScoutsjaarBegin = selectedScoutsjaar.Begin;
+                _data = await DataProvider(ServerData);
             }
             else
             {
@@ -162,8 +160,7 @@
                 return;
             }
         }
-
-        if (firstRender)
+        else
         {
             _data = await DataProvider(ServerData);
         }
