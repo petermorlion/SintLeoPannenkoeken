@@ -8,7 +8,6 @@ namespace SintLeoPannenkoeken.Blazor.Client
     {
         private readonly NavigationManager _navigationManager;
         private readonly IServerData _serverData;
-        private readonly int? _currentScoutsjaarBegin = null;
 
         public CurrentScoutsjaarQuerystringParameterProvider(NavigationManager navigationManager, IServerData serverData)
         {
@@ -30,26 +29,6 @@ namespace SintLeoPannenkoeken.Blazor.Client
             }
 
             return scoutsjaar;
-        }
-
-        public async Task<int?> GetCurrentScoutsjaarBegin()
-        {
-            if (_currentScoutsjaarBegin == null)
-            {
-                var scoutsjaar = await GetCurrentScoutsjaar();
-                if (scoutsjaar != null)
-                {
-                    return scoutsjaar.Begin;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            else
-            {
-                return _currentScoutsjaarBegin;
-            }
         }
     }
 }
