@@ -45,7 +45,9 @@
                  ReadOnly="false"
                  EditMode="DataGridEditMode.Form"
                  EditTrigger="DataGridEditTrigger.Manual"
-                 CommittedItemChanges="@OnUpdate">
+                 CommittedItemChanges="@OnUpdate"
+                 Dense="true"
+                 Striped="true">
         <Columns>
             @Columns
             @if (CanEdit)
