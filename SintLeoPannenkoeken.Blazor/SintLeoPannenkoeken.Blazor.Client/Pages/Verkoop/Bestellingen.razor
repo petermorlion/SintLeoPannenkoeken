@@ -25,7 +25,7 @@
         </MudItem>
 
         <MudItem xs="12" sm="2">
-            <MudCheckBox T="bool" Label="Zelf afhalen" />
+            <MudCheckBox T="bool" Label="Zelf afhalen" ValueChanged="@OnZelfAfhalenChanged" />
         </MudItem>
         <MudItem xs="12" sm="5">
             <MudAutocomplete @bind-Value="_newBestellingStraat"
@@ -38,24 +38,26 @@
                                      Clearable="true"
                                      CoerceText="true"
                                      ResetValueOnEmptyText="true"
-                                     SelectValueOnTab="true" />
+                                     SelectValueOnTab="true"
+                                     Disabled="@_zelfAfhalen"/>
         </MudItem>
         <MudItem xs="12" sm="2">
             <MudTextField T="string"
                             Label="Code"
-                    Value="@($"{_newBestellingStraat?.ZoneNaam} {_newBestellingStraat?.Nummer}")"
+                            Value="@($"{_newBestellingStraat?.ZoneNaam} {_newBestellingStraat?.Nummer}")"
                             Variant="Variant.Outlined"
                             Margin="Margin.Dense"
                             ShrinkLabel
                             Disabled
-                            Required="true"
-                            RequiredError="De straat is verplicht"/>
+                            Required="true"/>
         </MudItem>
         <MudItem xs="12" sm="2">
-            <MudTextField @bind-Value="_newBestellingNummer" T="string" Label="Nummer" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+            <MudTextField @bind-Value="_newBestellingNummer" T="string" Label="Nummer" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel
+                          Disabled="@_zelfAfhalen" />
         </MudItem>
         <MudItem xs="12" sm="1">
-            <MudTextField @bind-Value="_newBestellingBus" T="string" Label="Bus" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+            <MudTextField @bind-Value="_newBestellingBus" T="string" Label="Bus" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel
+                          Disabled="@_zelfAfhalen" />
         </MudItem>
 
         <MudItem xs="12" sm="2">
@@ -94,7 +96,6 @@
         @* <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x." Title="Adres" />  *@
         <PropertyColumn T="BestellingDto" TProperty="int" Property="x => x.AantalPakken" Title="Aantal pakken" />
         <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.Opmerkingen" Title="Opmerkingen" />
-        <PropertyColumn T="BestellingDto" TProperty="bool" Property="x => x.Betaald" Title="Betaald" />
         <TemplateColumn T="BestellingDto" Title="Betaald">
             <CellTemplate>
                 <BooleanIcon T="BestellingDto" Value="@context.Item.Betaald" />
@@ -138,6 +139,7 @@
     private bool _newBestellingGeleverd = false;
     private string? _newBestellingOpmerkingen = null;
     private LidDto? _newBestellingLid = null;
+    private bool _zelfAfhalen = false;
 
     private Func<LidDto?, string> _lidConverter = lid =>
     {
@@ -247,5 +249,15 @@
         _leden = (await _serverData.GetLeden()).OrderBy(lid => lid.Achternaam).ThenBy(lid => lid.Voornaam).ToList();
         _straten = (await _serverData.GetStraten()).OrderBy(straat => straat.Naam).ToList();
     }
-}
 
+    private void OnZelfAfhalenChanged(bool value)
+    {
+        _zelfAfhalen = value;
+        if (value)
+        {
+            _newBestellingStraat = _straten.Single(x => x.Id == 120);
+            _newBestellingNummer = null;
+            _newBestellingBus = null;
+        }
+    }
+}
