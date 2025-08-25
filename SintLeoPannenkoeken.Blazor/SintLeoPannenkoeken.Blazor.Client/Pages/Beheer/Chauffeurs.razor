@@ -14,5 +14,5 @@
 </MasterDetailPage>
 
 @code {
-    private Func<IServerData, Task<IEnumerable<ChauffeurDto>>> _dataProvider => async (serverData) => await serverData.GetChauffeurs();
+    private Func<IServerData, Task<IList<ChauffeurDto>>> _dataProvider => async (serverData) => await serverData.GetChauffeurs();
 }

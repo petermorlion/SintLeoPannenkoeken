@@ -14,7 +14,7 @@
 </MasterDetailPage>
 
 @code {
-    private Func<IServerData, Task<IEnumerable<GebruikerDto>>> _dataProvider => async (serverData) => await serverData.GetGebruikers();
+    private Func<IServerData, Task<IList<GebruikerDto>>> _dataProvider => async (serverData) => await serverData.GetGebruikers();
 
     private string FormatRoles(IEnumerable<string> roles)
     {

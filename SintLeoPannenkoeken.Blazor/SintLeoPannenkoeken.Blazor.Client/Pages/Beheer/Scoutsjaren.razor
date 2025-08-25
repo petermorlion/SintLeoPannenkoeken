@@ -54,7 +54,7 @@
 </MasterDetailPage>
 
 @code {
-    private Func<IServerData, Task<IEnumerable<ScoutsjaarDto>>> _dataProvider => async (serverData) => await serverData.GetScoutsjaren();
+    private Func<IServerData, Task<IList<ScoutsjaarDto>>> _dataProvider => async (serverData) => await serverData.GetScoutsjaren();
 
     private ScoutsjaarStatusDto _newScoutsjaarStatus = ScoutsjaarStatusDto.Actief;
     private int? _newScoutsjaarBegin = null;

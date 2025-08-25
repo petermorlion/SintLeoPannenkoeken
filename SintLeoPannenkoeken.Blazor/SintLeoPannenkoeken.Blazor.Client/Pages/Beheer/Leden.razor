@@ -45,7 +45,7 @@
 </MasterDetailPage>
 
 @code {
-    private Func<IServerData, Task<IEnumerable<LidDto>>> _dataProvider => async (serverData) => await serverData.GetLeden();
+    private Func<IServerData, Task<IList<LidDto>>> _dataProvider => async (serverData) => await serverData.GetLeden();
     private IList<TakDto> _takken = new List<TakDto>();
 
     private string _newLidAchternaam = "";
