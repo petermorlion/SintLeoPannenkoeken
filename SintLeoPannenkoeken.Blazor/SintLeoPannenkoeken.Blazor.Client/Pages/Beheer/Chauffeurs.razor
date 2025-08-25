@@ -6,7 +6,21 @@
 <MasterDetailPage TDto="ChauffeurDto"
                   AuthorizedRoles="@($"{Roles.RolesForChauffeurs}")"
                   Title="Chauffeurs"
-                  DataProvider="@_dataProvider">
+                  DataProvider="@_dataProvider"
+                  CanEdit="true"
+                  CanDelete="true"
+                  OnCreate="@OnCreate"
+                  OnUpdate="@OnUpdate"
+                  OnCancel="@OnCancel"
+                  OnDelete="@OnDelete">
+    <NewItemFormElements>
+        <MudItem xs="12" sm="6">
+            <MudTextField @bind-Value="_newChauffeurAchternaam" T="string" Label="Achternaam" Required="true" RequiredError="De achternaam is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudTextField @bind-Value="_newChauffeurVoornaam" T="string" Label="Voornaam" Required="true" RequiredError="De voornaam is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+        </MudItem>
+    </NewItemFormElements>
     <Columns>
         <PropertyColumn T="ChauffeurDto" TProperty="string" Property="x => x.Achternaam" Title="Achternaam" InitialDirection="SortDirection.Ascending" />
         <PropertyColumn T="ChauffeurDto" TProperty="string" Property="x => x.Voornaam" Title="Voornaam" />
@@ -15,4 +29,38 @@
 
 @code {
     private Func<IServerData, Task<IList<ChauffeurDto>>> _dataProvider => async (serverData) => await serverData.GetChauffeurs();
+
+    private string _newChauffeurAchternaam = "";
+    private string _newChauffeurVoornaam = "";
+
+    [Inject]
+    private IServerData _serverData { get; set; } = default!;
+
+    async Task OnUpdate(ChauffeurDto item)
+    {
+        await _serverData.UpdateChauffeur(item);
+    }
+
+    async Task OnDelete(ChauffeurDto item)
+    {
+        await _serverData.DeleteChauffeur(item.Id);
+    }
+
+    async Task<ChauffeurDto> OnCreate()
+    {
+        var newItem = new ChauffeurDto
+        {
+            Achternaam = _newChauffeurAchternaam,
+            Voornaam = _newChauffeurVoornaam
+        };
+
+        var result = await _serverData.CreateChauffeur(newItem);
+        return result;
+    }
+
+    void OnCancel()
+    {
+        _newChauffeurAchternaam = "";
+        _newChauffeurVoornaam = "";
+    }
 }

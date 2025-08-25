@@ -119,10 +119,12 @@ namespace SintLeoPannenkoeken.Blazor.Data
 
                 var chauffeurDtos = chauffeurs == null
                     ? new List<ChauffeurDto>()
-                    : chauffeurs.Select(chauffeur => new ChauffeurDto(
-                        chauffeur.Id,
-                        chauffeur.Achternaam,
-                        chauffeur.Voornaam)).ToList();
+                    : chauffeurs.Select(chauffeur => new ChauffeurDto
+                    {
+                        Id = chauffeur.Id,
+                        Voornaam = chauffeur.Voornaam,
+                        Achternaam = chauffeur.Achternaam
+                    }).ToList();
 
                 return chauffeurDtos;
             }
@@ -440,6 +442,58 @@ namespace SintLeoPannenkoeken.Blazor.Data
             using (var dbContext = _dbContextFactory.CreateDbContext())
             {
                 await dbContext.StreefCijfers.Where(s => s.Id == streefcijferId).ExecuteDeleteAsync();
+                await dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task<ChauffeurDto> CreateChauffeur(ChauffeurDto chauffeurDto)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var chauffeur = new Bestuurder
+                {
+                    Achternaam = chauffeurDto.Achternaam,
+                    Voornaam = chauffeurDto.Voornaam
+                };
+
+                dbContext.Bestuurders.Add(chauffeur);
+
+                await dbContext.SaveChangesAsync();
+
+                return new ChauffeurDto
+                {
+                    Id = chauffeur.Id,
+                    Achternaam = chauffeur.Achternaam,
+                    Voornaam = chauffeur.Voornaam
+                };
+            }
+        }
+
+        public async Task UpdateChauffeur(ChauffeurDto chauffeurDto)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var chauffeur = await dbContext
+                        .Bestuurders
+                        .SingleOrDefaultAsync(s => s.Id == chauffeurDto.Id);
+
+                if (chauffeur == null)
+                {
+                    throw new ArgumentException($"Chauffeur with ID {chauffeurDto.Id} not found.");
+                }
+
+                chauffeur.Achternaam = chauffeurDto.Achternaam;
+                chauffeur.Voornaam = chauffeurDto.Voornaam;
+
+                await dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteChauffeur(int chauffeurId)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                await dbContext.Bestuurders.Where(s => s.Id == chauffeurId).ExecuteDeleteAsync();
                 await dbContext.SaveChangesAsync();
             }
         }

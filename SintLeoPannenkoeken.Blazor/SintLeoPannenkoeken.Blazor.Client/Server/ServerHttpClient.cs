@@ -98,7 +98,7 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
                 return;
             }
 
-            var result = await _httpClient.PutAsJsonAsync("/api/bestellingen", bestelling);
+            await _httpClient.PutAsJsonAsync("/api/bestellingen", bestelling);
         }
 
         private async Task<bool> IsUserAuthorized(string roleString)
@@ -196,8 +196,7 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
                 throw new UnauthorizedException();
             }
 
-            var result = await _httpClient.PutAsJsonAsync("/api/streefcijfers", streefcijfer);
-            await result.Content.ReadAsAsync<StreefcijferDto>();
+            await _httpClient.PutAsJsonAsync("/api/streefcijfers", streefcijfer);
         }
 
         public async Task DeleteStreefcijfer(int streefcijferId)
@@ -207,8 +206,38 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
                 throw new UnauthorizedException();
             }
 
-            var result = await _httpClient.DeleteAsync($"/api/streefcijfers/{streefcijferId}");
-            await result.Content.ReadAsAsync<StreefcijferDto>();
+            await _httpClient.DeleteAsync($"/api/streefcijfers/{streefcijferId}");
+        }
+
+        public async Task<ChauffeurDto> CreateChauffeur(ChauffeurDto chauffeur)
+        {
+            if (!await IsUserAuthorized(Roles.RolesForChauffeurs))
+            {
+                throw new UnauthorizedException();
+            }
+
+            var result = await _httpClient.PostAsJsonAsync("/api/chauffeurs", chauffeur);
+            return await result.Content.ReadAsAsync<ChauffeurDto>();
+        }
+
+        public async Task UpdateChauffeur(ChauffeurDto chauffeur)
+        {
+            if (!await IsUserAuthorized(Roles.RolesForChauffeurs))
+            {
+                throw new UnauthorizedException();
+            }
+
+            await _httpClient.PutAsJsonAsync("/api/chauffeurs", chauffeur);
+        }
+
+        public async Task DeleteChauffeur(int chauffeurId)
+        {
+            if (!await IsUserAuthorized(Roles.RolesForChauffeurs))
+            {
+                throw new UnauthorizedException();
+            }
+
+            await _httpClient.DeleteAsync($"/api/chauffeurs/{chauffeurId}");
         }
     }
 }

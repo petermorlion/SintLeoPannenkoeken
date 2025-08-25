@@ -8,23 +8,30 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
     public interface IServerData
     {
         Task<IList<ScoutsjaarDto>> GetScoutsjaren();
+        Task UpdateScoutsjaar(ScoutsjaarDto scoutsjaar);
+
         Task<IList<LidDto>> GetLeden();
+        Task<LidDto> CreateLid(NewLidDto lid);
+        Task UpdateLid(LidDto lid);
+
         Task<IList<GebruikerDto>> GetGebruikers();
         Task<IList<StraatDto>> GetStraten();
-        Task<IList<ChauffeurDto>> GetChauffeurs();
         Task<IList<TakDto>> GetTakken();
 
         Task<IList<BestellingDto>> GetBestellingen(int scoutsjaar);
         Task<BestellingDto> CreateBestelling(NewBestellingDto bestelling);
-
-        Task UpdateScoutsjaar(ScoutsjaarDto scoutsjaar);
         Task UpdateBestelling(UpdateBestellingDto bestelling);
-        Task<LidDto> CreateLid(NewLidDto lid);
-        Task UpdateLid(LidDto lid);
+
+        
 
         Task<IList<StreefcijferDto>> GetStreefcijfers(int jaar);
         Task<StreefcijferDto> CreateStreefcijfer(StreefcijferDto streefcijfer);
         Task UpdateStreefcijfer(StreefcijferDto streefcijfer);
         Task DeleteStreefcijfer(int streefcijferId);
+
+        Task<IList<ChauffeurDto>> GetChauffeurs();
+        Task<ChauffeurDto> CreateChauffeur(ChauffeurDto chauffeur);
+        Task UpdateChauffeur(ChauffeurDto chauffeur);
+        Task DeleteChauffeur(int chauffeurId);
     }
 }
