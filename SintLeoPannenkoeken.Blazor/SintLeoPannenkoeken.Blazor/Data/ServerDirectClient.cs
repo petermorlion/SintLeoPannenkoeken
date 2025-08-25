@@ -376,16 +376,23 @@ namespace SintLeoPannenkoeken.Blazor.Data
         {
             using (var dbContext = _dbContextFactory.CreateDbContext())
             {
+                var scoutsjaar = await dbContext
+                    .Scoutsjaren
+                    .Include(s => s.StreefCijfers)
+                    .FirstOrDefaultAsync(s => s.Id == streefcijferDto.ScoutsjaarId);
+
+                var existingStreefcijfer = scoutsjaar?.StreefCijfers.FirstOrDefault(sc => sc.TakId == streefcijferDto.TakId);
+
+                if (existingStreefcijfer != null)
+                {
+                    throw new ArgumentException($"Er bestaat al een streefcijfer voor deze tak en scoutsjaar.");
+                }
+
                 var streefcijfer = new StreefCijfer
                 {
                     TakId = streefcijferDto.TakId,
                     Aantal = streefcijferDto.Aantal
                 };
-
-                var scoutsjaar = await dbContext
-                    .Scoutsjaren
-                    .Include(s => s.StreefCijfers)
-                    .FirstOrDefaultAsync(s => s.Id == streefcijferDto.ScoutsjaarId);
 
                 scoutsjaar.StreefCijfers.Add(streefcijfer);
 
