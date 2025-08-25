@@ -70,7 +70,7 @@
 
     async Task OnDelete(StreefcijferDto item)
     {
-        await _serverData.DeleteteStreefcijfer(item.Id!.Value);
+        await _serverData.DeleteStreefcijfer(item.Id!.Value);
     }
 
     async Task<StreefcijferDto> OnCreate()

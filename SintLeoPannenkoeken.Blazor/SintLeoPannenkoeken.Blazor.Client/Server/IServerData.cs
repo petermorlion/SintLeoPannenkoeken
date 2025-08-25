@@ -25,6 +25,6 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         Task<IList<StreefcijferDto>> GetStreefcijfers(int jaar);
         Task<StreefcijferDto> CreateStreefcijfer(StreefcijferDto streefcijfer);
         Task UpdateStreefcijfer(StreefcijferDto streefcijfer);
-        Task DeleteteStreefcijfer(int streefcijferId);
+        Task DeleteStreefcijfer(int streefcijferId);
     }
 }
