@@ -196,11 +196,11 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
                 throw new UnauthorizedException();
             }
 
-            var result = await _httpClient.PostAsJsonAsync("/api/streefcijfers", streefcijfer);
+            var result = await _httpClient.PutAsJsonAsync("/api/streefcijfers", streefcijfer);
             await result.Content.ReadAsAsync<StreefcijferDto>();
         }
 
-        public async Task DeleteteStreefcijfer(int streefcijferId)
+        public async Task DeleteStreefcijfer(int streefcijferId)
         {
             if (!await IsUserAuthorized(Roles.RolesForStreefcijfers))
             {

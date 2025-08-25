@@ -46,7 +46,7 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> UpdateStreefcijfer(int id)
         {
-            await _serverData.DeleteteStreefcijfer(id);
+            await _serverData.DeleteStreefcijfer(id);
             return Ok();
         }
     }

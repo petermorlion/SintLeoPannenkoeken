@@ -201,7 +201,6 @@
         };
 
         var result = await _serverData.CreateBestelling(newBestellingDto);
-        OnCancel();
         return result;
     }
 

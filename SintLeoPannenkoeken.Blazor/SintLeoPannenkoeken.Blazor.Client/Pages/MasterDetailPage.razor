@@ -197,6 +197,7 @@
         {
             var result = await OnCreate();
             AddItem(result);
+            await OnCancel.InvokeAsync();
         }
     }
 

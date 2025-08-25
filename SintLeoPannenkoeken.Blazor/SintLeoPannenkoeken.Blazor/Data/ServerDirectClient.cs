@@ -399,6 +399,7 @@ namespace SintLeoPannenkoeken.Blazor.Data
                 return new StreefcijferDto
                 {
                     Id = streefcijfer.Id,
+                    TakId = streefcijfer.TakId,
                     TakNaam = streefcijfer.Tak?.Naam ?? "Onbekend",
                     Aantal = streefcijfer.Aantal,
                     ScoutsjaarId = scoutsjaar.Id
@@ -427,7 +428,7 @@ namespace SintLeoPannenkoeken.Blazor.Data
             }
         }
 
-        public async Task DeleteteStreefcijfer(int streefcijferId)
+        public async Task DeleteStreefcijfer(int streefcijferId)
         {
             using (var dbContext = _dbContextFactory.CreateDbContext())
             {
