@@ -18,5 +18,5 @@
 </MasterDetailPage>
 
 @code {
-    private Func<IServerData, Task<IEnumerable<StraatDto>>> _dataProvider => async (serverData) => await serverData.GetStraten();
+    private Func<IServerData, Task<IList<StraatDto>>> _dataProvider => async (serverData) => await serverData.GetStraten();
 }

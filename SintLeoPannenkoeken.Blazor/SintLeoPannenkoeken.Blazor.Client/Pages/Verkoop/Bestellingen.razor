@@ -112,7 +112,7 @@
 </MasterDetailPage>
 
 @code {
-    private async Task<IEnumerable<BestellingDto>> GetBestellingen(IServerData serverData)
+    private async Task<IList<BestellingDto>> GetBestellingen(IServerData serverData)
     {
         var scoutsjaar = await CurrentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
         var result = await serverData.GetBestellingen(scoutsjaar.Begin);
