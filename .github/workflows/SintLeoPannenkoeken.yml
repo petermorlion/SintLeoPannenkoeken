@@ -5,57 +5,61 @@ on:
     - blazor
     - master
 env:
-  BLAZOR_APP_LOCATION: SintLeoPannenkoeken.Blazor/SintLeoPannenkoeken.Blazor.Client
-  BLAZOR_OUTPUT_LOCATION: wwwroot
-  AZURE_WEBAPP_NAME: SintLeoPannenkoeken
-  AZURE_WEBAPP_PACKAGE_PATH: SintLeoPannenkoeken/published
+  CLIENT_AZURE_WEBAPP_NAME: SintLeoPannenkoeken2
+  CLIENT_AZURE_WEBAPP_PACKAGE_PATH: SintLeoPannenkoeken2/published
+  CLIENT_WORKING_DIRECTORY: SintLeoPannenkoeken.Blazor/SintLeoPannenkoeken.Blazor.Client
+
+  SERVER_AZURE_WEBAPP_NAME: f
+  SERVER_AZURE_WEBAPP_PACKAGE_PATH: SintLeoPannenkoeken2Backend/published
+  SERVER_WORKING_DIRECTORY: SintLeoPannenkoeken.Blazor/SintLeoPannenkoeken.Blazor
+
   CONFIGURATION: Release
-  WORKING_DIRECTORY: SintLeoPannenkoeken
 
 jobs:
-  build_and_deploy:
+  build_and_deploy_client:
     runs-on: ubuntu-latest
-    name: Build and deploy Blazor client app
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 8.0.x
-
-    - name: Build and Deploy to Azure Static Web Apps
-      uses: Azure/static-web-apps-deploy@v1
-      with:
-        action: upload
-        azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APP_TOKEN }}
-        app_location: ${{ env.BLAZOR_APP_LOCATION }}
-        output_location: ${{ env.BLAZOR_OUTPUT_LOCATION }}
-        app_build_command: dotnet publish -c Release
-    - name: List workspace contents
-      run: ls -R /github/workspace/SintLeoPannenkoeken.Blazor/SintLeoPannenkoeken.Blazor.Client/bin/Release/net8.0
-  webapp_build_and_publish:
-    runs-on: ubuntu-latest
-    name: Build and deploy legacy app
+    name: Build and deploy Blazor app
     steps:
     - uses: actions/checkout@v4
-    - uses: hashicorp/setup-terraform@v3
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 8.0.x
     - name: Restore
-      run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
+      run: dotnet restore "${{ env.CLIENT_WORKING_DIRECTORY }}"
     - name: Build
-      run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
+      run: dotnet build "${{ env.CLIENT_WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
     - name: Test
-      run: dotnet test "${{ env.WORKING_DIRECTORY }}" --no-build
+      run: dotnet test "${{ env.CLIENT_WORKING_DIRECTORY }}" --no-build
     - name: Publish
-      run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+      run: dotnet publish "${{ env.CLIENT_WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.CLIENT_AZURE_WEBAPP_PACKAGE_PATH }}"
     - name: Deploy to Azure WebApp
       uses: azure/webapps-deploy@v3
       with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.SintLeoPannenkoeken_74AB }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        app-name: ${{ env.CLIENT_AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.SINTLEOPANNENKOEKEN_BLAZOR }}
+        package: ${{ env.CLIENT_AZURE_WEBAPP_PACKAGE_PATH }}
+
+  build_and_deploy_server:
+    runs-on: ubuntu-latest
+    name: Build and deploy Blazor backend app
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore
+      run: dotnet restore "${{ env.SERVER_WORKING_DIRECTORY }}"
+    - name: Build
+      run: dotnet build "${{ env.SERVER_WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
+    - name: Test
+      run: dotnet test "${{ env.SERVER_WORKING_DIRECTORY }}" --no-build
+    - name: Publish
+      run: dotnet publish "${{ env.SERVER_WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.SERVER_AZURE_WEBAPP_PACKAGE_PATH }}"
+    - name: Deploy to Azure WebApp
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: ${{ env.SERVER_AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.SINTLEOPANNENKOEKEN_BLAZOR_SERVER }}
+        package: ${{ env.SERVER_AZURE_WEBAPP_PACKAGE_PATH }}
