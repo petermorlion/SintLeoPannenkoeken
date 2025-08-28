@@ -40,8 +40,6 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__database") ?? throw new InvalidOperationException("No environment variable 'ConnectionStrings__database' found.");
 #endif
 
-//builder.Services.AddDbContext<ApplicationDbContext>(options => 
-//    options.UseSqlServer(connectionString));
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();

@@ -2,8 +2,8 @@
 {
     public static class Roles
     {
-        private const string Admin = "admin";
-        private const string FinanciePloeg = "financieploeg";
+        private const string Admin = "Admin";
+        private const string FinanciePloeg = "FinanciePloeg";
 
         public const string RolesForBeheer = $"{Admin},{FinanciePloeg}";
         public const string RolesForBestellingen = $"{Admin},{FinanciePloeg}";
