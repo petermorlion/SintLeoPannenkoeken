@@ -5,7 +5,7 @@ on:
     - blazor
     - master
 env:
-  BLAZOR_APP_LOCATION: SintLeoPannenkoeken.Blazor/SintLeoPannenkoeken.Blazor.Client
+  BLAZOR_APP_LOCATION: SintLeoPannenkoeken.Blazor.Client
   BLAZOR_OUTPUT_LOCATION: bin/Release/net8.0/wwwroot
   AZURE_WEBAPP_NAME: SintLeoPannenkoeken
   AZURE_WEBAPP_PACKAGE_PATH: SintLeoPannenkoeken/published
