@@ -5,7 +5,7 @@ on:
     - blazor
     - master
 env:
-  BLAZOR_APP_LOCATION: SintLeoPannenkoeken.Blazor.Client
+  BLAZOR_APP_LOCATION: SintLeoPannenkoeken.Blazor/SintLeoPannenkoeken.Blazor.Client
   BLAZOR_OUTPUT_LOCATION: bin/Release/net8.0/wwwroot
   AZURE_WEBAPP_NAME: SintLeoPannenkoeken
   AZURE_WEBAPP_PACKAGE_PATH: SintLeoPannenkoeken/published
@@ -33,6 +33,8 @@ jobs:
         app_location: ${{ env.BLAZOR_APP_LOCATION }}
         output_location: ${{ env.BLAZOR_OUTPUT_LOCATION }}
         app_build_command: dotnet publish -c Release
+    - name: List workspace contents
+      run: ls -R /github/workspace/SintLeoPannenkoeken.Blazor/SintLeoPannenkoeken.Blazor.Client/bin/Release/net8.0
   webapp_build_and_publish:
     runs-on: ubuntu-latest
     name: Build and deploy legacy app
