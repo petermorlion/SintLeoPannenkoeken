@@ -28,10 +28,10 @@ jobs:
     - name: Build and Deploy to Azure Static Web Apps
       uses: Azure/static-web-apps-deploy@v1
       with:
+        action: upload
         azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APP_TOKEN }}
         app_location: ${{ env.BLAZOR_APP_LOCATION }}
         output_location: ${{ env.BLAZOR_OUTPUT_LOCATION }}
-        production_branch: blazor
         app_build_command: dotnet publish -c Release
   webapp_build_and_publish:
     runs-on: ubuntu-latest
