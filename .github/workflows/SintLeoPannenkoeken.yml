@@ -9,7 +9,7 @@ env:
   CLIENT_AZURE_WEBAPP_PACKAGE_PATH: SintLeoPannenkoeken2/published
   CLIENT_WORKING_DIRECTORY: SintLeoPannenkoeken.Blazor/SintLeoPannenkoeken.Blazor.Client
 
-  SERVER_AZURE_WEBAPP_NAME: f
+  SERVER_AZURE_WEBAPP_NAME: SintLeoPannenkoeken2Backend
   SERVER_AZURE_WEBAPP_PACKAGE_PATH: SintLeoPannenkoeken2Backend/published
   SERVER_WORKING_DIRECTORY: SintLeoPannenkoeken.Blazor/SintLeoPannenkoeken.Blazor
 
