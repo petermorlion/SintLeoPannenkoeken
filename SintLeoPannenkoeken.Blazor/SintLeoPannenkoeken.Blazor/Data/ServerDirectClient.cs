@@ -492,9 +492,9 @@ namespace SintLeoPannenkoeken.Blazor.Data
             return await _usersService.CreateUser(gebruiker);
         }
 
-        public Task UpdateGebruiker(GebruikerDto gebruiker)
+        public async Task UpdateGebruiker(GebruikerDto gebruiker)
         {
-            throw new NotImplementedException();
+            await _usersService.UpdateGebruiker(gebruiker);
         }
 
         public async Task DeleteGebruiker(string email)

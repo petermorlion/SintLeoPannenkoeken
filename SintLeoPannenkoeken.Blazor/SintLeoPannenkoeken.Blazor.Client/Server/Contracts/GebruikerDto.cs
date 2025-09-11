@@ -2,15 +2,15 @@
 {
     public class GebruikerDto
     {
-        public GebruikerDto(string id, string email, IList<string> rollen)
+        public GebruikerDto(string id, string email, IEnumerable<string> rollen)
         {
             Id = id;
             Email = email;
             Rollen = rollen ?? new List<string>();
         }
 
-        public string Id { get; init; }
-        public string Email { get; init; }
-        public IList<string> Rollen { get; init; }
+        public string Id { get; set; }
+        public string Email { get; set; }
+        public IEnumerable<string> Rollen { get; set; }
     }
 }

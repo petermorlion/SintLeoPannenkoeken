@@ -81,6 +81,41 @@ namespace SintLeoPannenkoeken.Blazor.Data
             return new GebruikerCreatedDto(gebruikerDto, encodedCode);
         }
 
+        public async Task UpdateGebruiker(GebruikerDto gebruiker)
+        {
+            var user = await _userManager.FindByEmailAsync(gebruiker.Email);
+            if (user == null)
+            {
+                throw new ApplicationException("User not found");
+            }
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            var rolesToAdd = gebruiker.Rollen.Except(currentRoles).ToList();
+            foreach (var role in rolesToAdd)
+            {
+                var roleExists = await _roleManager.RoleExistsAsync(role);
+                if (!roleExists)
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(role));
+                }
+                var roleResult = await _userManager.AddToRoleAsync(user, role);
+                if (!roleResult.Succeeded)
+                {
+                    _logger.LogError("Error adding role to user: {Errors}", string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+                    throw new ApplicationException("Error adding roles to user");
+                }
+            }
+            var rolesToRemove = currentRoles.Except(gebruiker.Rollen).ToList();
+            foreach (var role in rolesToRemove)
+            {
+                var roleResult = await _userManager.RemoveFromRoleAsync(user, role);
+                if (!roleResult.Succeeded)
+                {
+                    _logger.LogError("Error removing role from user: {Errors}", string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+                    throw new ApplicationException("Error removing roles from user");
+                }
+            }
+        }
+
         private string GetRandomPassword()
         {
             var length = 32;

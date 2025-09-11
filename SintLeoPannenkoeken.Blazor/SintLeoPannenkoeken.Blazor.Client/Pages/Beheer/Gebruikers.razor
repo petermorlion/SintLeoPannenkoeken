@@ -12,7 +12,8 @@
                   CanDelete="true"
                   OnCreate="@OnCreate"
                   OnCancel="@OnCancel"
-                  OnDelete="@OnDelete">
+                  OnDelete="@OnDelete"
+                  OnUpdate="@OnUpdate">
     <NewItemFormElements>
         <MudItem xs="12" sm="6">
             <MudTextField @bind-Value="_newGebruikerEmail" T="string" Label="Email" Required="true" RequiredError="Email is verplicht." 
@@ -32,7 +33,18 @@
     </NewItemFormElements>
     <Columns>
         <PropertyColumn T="GebruikerDto" TProperty="string" Property="x => x.Email" Title="Email" InitialDirection="SortDirection.Ascending" />
-        <PropertyColumn T="GebruikerDto" TProperty="string" Property="x => FormatRoles(x.Rollen)" Title="Rollen" />
+        <PropertyColumn T="GebruikerDto" TProperty="string" Property="x => FormatRoles(x.Rollen)" Title="Rollen">
+            <EditTemplate>
+                <MudSelect @bind-SelectedValues="context.Item.Rollen" T="string" Label="Rollen" MultiSelection="true"
+                           Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel
+                           QuickSearchInterval="TimeSpan.FromSeconds(1)">
+                    @foreach (var role in Roles.AllRoles)
+                    {
+                        <MudSelectItem Value="role">@role</MudSelectItem>
+                    }
+                </MudSelect>
+            </EditTemplate>
+        </PropertyColumn>
     </Columns>
 </MasterDetailPage>
 
