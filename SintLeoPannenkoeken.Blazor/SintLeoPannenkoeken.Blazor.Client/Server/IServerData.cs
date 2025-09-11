@@ -15,6 +15,10 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         Task UpdateLid(LidDto lid);
 
         Task<IList<GebruikerDto>> GetGebruikers();
+        Task<GebruikerCreatedDto> CreateGebruiker(NewGebruikerDto gebruiker);
+        Task UpdateGebruiker(GebruikerDto gebruiker);
+
+
         Task<IList<StraatDto>> GetStraten();
         Task<IList<TakDto>> GetTakken();
 

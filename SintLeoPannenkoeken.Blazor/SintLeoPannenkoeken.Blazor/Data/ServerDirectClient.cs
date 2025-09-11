@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
 using SintLeoPannenkoeken.Blazor.Models;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace SintLeoPannenkoeken.Blazor.Data
 {
@@ -12,29 +13,17 @@ namespace SintLeoPannenkoeken.Blazor.Data
     public class ServerDirectClient : IServerData
     {
         private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UsersService _usersService;
 
-        public ServerDirectClient(IDbContextFactory<ApplicationDbContext> dbContextFactory, UserManager<ApplicationUser> userManager)
+        public ServerDirectClient(IDbContextFactory<ApplicationDbContext> dbContextFactory, UsersService usersService)
         {
             _dbContextFactory = dbContextFactory;
-            _userManager = userManager;
+            _usersService = usersService;
         }
 
         public async Task<IList<GebruikerDto>> GetGebruikers()
         {
-            using (var dbContext = _dbContextFactory.CreateDbContext())
-            {
-                var users = await dbContext.Users.ToListAsync();
-
-                var userDtos = new List<GebruikerDto>();
-                foreach (var user in users)
-                {
-                    var roles = await _userManager.GetRolesAsync(user);
-                    userDtos.Add(new GebruikerDto(user.Id, user.Email, roles.ToList()));
-                }
-
-                return userDtos;
-            }
+            return await _usersService.GetGebruikers();
         }
 
         public async Task<IList<LidDto>> GetLeden()
@@ -496,6 +485,29 @@ namespace SintLeoPannenkoeken.Blazor.Data
                 await dbContext.Bestuurders.Where(s => s.Id == chauffeurId).ExecuteDeleteAsync();
                 await dbContext.SaveChangesAsync();
             }
+        }
+
+        public async Task<GebruikerCreatedDto> CreateGebruiker(NewGebruikerDto gebruiker)
+        {
+            return await _usersService.CreateUser(gebruiker);
+        }
+
+        public Task UpdateGebruiker(GebruikerDto gebruiker)
+        {
+            throw new NotImplementedException();
+        }
+
+        private string GetRandomPassword()
+        {
+            var length = 32;
+            var alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890&é'(§è!çà)";
+            var secret = new StringBuilder();
+            while (length-- > 0)
+            {
+                secret.Append(alphabet[RandomNumberGenerator.GetInt32(alphabet.Length)]);
+            }
+
+            return secret.ToString();
         }
     }
 }

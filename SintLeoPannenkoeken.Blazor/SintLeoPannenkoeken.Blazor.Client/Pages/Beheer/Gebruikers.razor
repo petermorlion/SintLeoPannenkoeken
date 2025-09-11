@@ -2,11 +2,32 @@
 @using SintLeoPannenkoeken.Blazor.Client.Auth
 @using SintLeoPannenkoeken.Blazor.Client.Server
 @using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+@using System.ComponentModel.DataAnnotations
 
 <MasterDetailPage TDto="GebruikerDto"
                   AuthorizedRoles="@($"{Roles.RolesForGebruikers}")"
                   Title="Gebruikers"
-                  DataProvider="@_dataProvider">
+                  DataProvider="@_dataProvider"
+                  CanEdit="true"
+                  OnCreate="@OnCreate"
+                  OnCancel="@OnCancel">
+    <NewItemFormElements>
+        <MudItem xs="12" sm="6">
+            <MudTextField @bind-Value="_newGebruikerEmail" T="string" Label="Email" Required="true" RequiredError="Email is verplicht." 
+            Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel
+            Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudSelect @bind-SelectedValues="_newGebruikerRollen" T="string" Label="Rollen" MultiSelection="true" 
+                       Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel
+                       QuickSearchInterval="TimeSpan.FromSeconds(1)">
+                @foreach (var role in Roles.AllRoles)
+                {
+                    <MudSelectItem Value="role">@role</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+    </NewItemFormElements>
     <Columns>
         <PropertyColumn T="GebruikerDto" TProperty="string" Property="x => x.Email" Title="Email" InitialDirection="SortDirection.Ascending" />
         <PropertyColumn T="GebruikerDto" TProperty="string" Property="x => FormatRoles(x.Rollen)" Title="Rollen" />
@@ -16,8 +37,32 @@
 @code {
     private Func<IServerData, Task<IList<GebruikerDto>>> _dataProvider => async (serverData) => await serverData.GetGebruikers();
 
+    private string _newGebruikerEmail = "";
+    private IEnumerable<string> _newGebruikerRollen = new HashSet<string>();
+
+    [Inject]
+    private IServerData _serverData { get; set; } = default!;
+
     private string FormatRoles(IEnumerable<string> roles)
     {
         return string.Join(", ", roles);
+    }
+
+    async Task<GebruikerDto> OnCreate()
+    {
+        var newGebruiker = new NewGebruikerDto(_newGebruikerEmail, _newGebruikerRollen.ToList());
+        var result = await _serverData.CreateGebruiker(newGebruiker);
+        return result.Gebruiker;
+    }
+
+    void OnCancel()
+    {
+        _newGebruikerEmail = "";
+        _newGebruikerRollen = new List<string>();
+    }
+
+    async Task OnUpdate(GebruikerDto item)
+    {
+        await _serverData.UpdateGebruiker(item);
     }
 }

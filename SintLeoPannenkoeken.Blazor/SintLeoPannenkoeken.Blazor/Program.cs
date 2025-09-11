@@ -53,6 +53,7 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 builder.Services.AddScoped<IServerData, ServerDirectClient>();
+builder.Services.AddScoped<UsersService>();
 builder.Services.AddSharedServices();
 
 builder.Services.AddControllers();

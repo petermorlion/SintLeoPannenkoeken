@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SintLeoPannenkoeken.Blazor.Client.Auth;
 using SintLeoPannenkoeken.Blazor.Client.Server;
+using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
 
 namespace SintLeoPannenkoeken.Blazor.Controllers
 {
@@ -25,6 +26,20 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
         {
             var gebruikerDtos = await _serverData.GetGebruikers();
             return Ok(gebruikerDtos);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateGebruiker([FromBody] NewGebruikerDto gebruikerDto)
+        {
+            var result = await _serverData.CreateGebruiker(gebruikerDto);
+            return Ok(result);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateGebruiker([FromBody] GebruikerDto gebruikerDto)
+        {
+            await _serverData.UpdateGebruiker(gebruikerDto);
+            return Ok();
         }
     }
 }

@@ -20,85 +20,46 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
             _authenticationStateProvider = authenticationStateProvider;
         }
 
-        public async Task<IList<ScoutsjaarDto>> GetScoutsjaren()
+        private async Task<TResult> Create<TInput, TResult>(TInput input, string endpoint, string roles)
         {
-            if (!await IsUserAuthorized(Roles.RolesForScoutsjaren))
+            if (!await IsUserAuthorized(roles))
             {
-                return new List<ScoutsjaarDto>();
+                throw new UnauthorizedException();
             }
 
-            var result = await _httpClient.GetFromJsonAsync<IList<ScoutsjaarDto>>("/api/scoutsjaren");
-            return result ?? new List<ScoutsjaarDto>();
+            var result = await _httpClient.PostAsJsonAsync(endpoint, input);
+            return await result.Content.ReadAsAsync<TResult>();
         }
 
-        public async Task<IList<LidDto>> GetLeden()
+        private async Task Update<TInput>(TInput input, string endpoint, string roles)
         {
-            if (!await IsUserAuthorized(Roles.RolesForLeden))
-            {
-                return new List<LidDto>();
-            }
-
-            var result = await _httpClient.GetFromJsonAsync<IList<LidDto>>("/api/leden");
-            return result ?? new List<LidDto>();
-        }
-
-        public async Task<IList<GebruikerDto>> GetGebruikers()
-        {
-            if (!await IsUserAuthorized(Roles.RolesForGebruikers))
-            {
-                return new List<GebruikerDto>();
-            }
-
-            var result = await _httpClient.GetFromJsonAsync<IList<GebruikerDto>>("/api/gebruikers");
-            return result ?? new List<GebruikerDto>();
-        }
-
-        public async Task<IList<StraatDto>> GetStraten()
-        {
-            if (!await IsUserAuthorized(Roles.RolesForStraten))
-            {
-                return new List<StraatDto>();
-            }
-
-            var result = await _httpClient.GetFromJsonAsync<IList<StraatDto>>("/api/straten");
-            return result ?? new List<StraatDto>();
-        }
-
-        public async Task<IList<ChauffeurDto>> GetChauffeurs()
-        {
-            if (!await IsUserAuthorized(Roles.RolesForChauffeurs))
-            {
-                return new List<ChauffeurDto>();
-            }
-
-            var result = await _httpClient.GetFromJsonAsync<IList<ChauffeurDto>>("/api/chauffeurs");
-            return result ?? new List<ChauffeurDto>();
-        }
-
-        public async Task UpdateScoutsjaar(ScoutsjaarDto scoutsjaar)
-        {
-            await _httpClient.PutAsJsonAsync($"/api/scoutsjaren/{scoutsjaar.Begin}", scoutsjaar);
-        }
-
-        public async Task<IList<BestellingDto>> GetBestellingen(int scoutsjaar)
-        {
-            if (!await IsUserAuthorized(Roles.RolesForBestellingen))
-            {
-                return new List<BestellingDto>();
-            }
-
-            var result = await _httpClient.GetFromJsonAsync<IList<BestellingDto>>($"/api/bestellingen/{scoutsjaar}");
-            return result ?? new List<BestellingDto>();
-        }
-
-        public async Task UpdateBestelling(UpdateBestellingDto bestelling)
-        {
-            if (!await IsUserAuthorized(Roles.RolesForBestellingen))
+            if (!await IsUserAuthorized(roles))
             {
                 return;
             }
 
-            await _httpClient.PutAsJsonAsync("/api/bestellingen", bestelling);
+            await _httpClient.PutAsJsonAsync(endpoint, input);
+        }
+
+        private async Task Delete(string endpoint, string roles)
+        {
+            if (!await IsUserAuthorized(roles))
+            {
+                throw new UnauthorizedException();
+            }
+
+            await _httpClient.DeleteAsync(endpoint);
+        }
+
+        private async Task<IList<TResult>> GetList<TResult>(string endpoint, string roles)
+        {
+            if (!await IsUserAuthorized(roles))
+            {
+                return new List<TResult>();
+            }
+
+            var result = await _httpClient.GetFromJsonAsync<IList<TResult>>(endpoint);
+            return result ?? new List<TResult>();
         }
 
         private async Task<bool> IsUserAuthorized(string roleString)
@@ -129,115 +90,109 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
             return false;
         }
 
+        public async Task<IList<ScoutsjaarDto>> GetScoutsjaren()
+        {
+            return await GetList<ScoutsjaarDto>("/api/scoutsjaren", Roles.RolesForScoutsjaren);
+        }
+
+        public async Task<IList<LidDto>> GetLeden()
+        {
+            return await GetList<LidDto>("/api/leden", Roles.RolesForLeden);
+        }
+
+        public async Task<IList<GebruikerDto>> GetGebruikers()
+        {
+            return await GetList<GebruikerDto>("/api/gebruikers", Roles.RolesForGebruikers);
+        }
+
+        public async Task<GebruikerCreatedDto> CreateGebruiker(NewGebruikerDto gebruiker)
+        {
+            return await Create<NewGebruikerDto, GebruikerCreatedDto>(gebruiker, "/api/gebruikers", Roles.RolesForGebruikers);
+        }
+
+        public async Task UpdateGebruiker(GebruikerDto gebruiker)
+        {
+            await Update(gebruiker, "/api/gebruikers", Roles.RolesForGebruikers);
+        }
+
+        public async Task<IList<StraatDto>> GetStraten()
+        {
+            return await GetList<StraatDto>("/api/straten", Roles.RolesForStraten);
+        }
+
+        public async Task<IList<ChauffeurDto>> GetChauffeurs()
+        {
+            return await GetList<ChauffeurDto>("/api/chauffeurs", Roles.RolesForChauffeurs);
+        }
+
+        public async Task UpdateScoutsjaar(ScoutsjaarDto scoutsjaar)
+        {
+            await Update(scoutsjaar, "/api/scoutsjaren", Roles.RolesForScoutsjaren);
+        }
+
+        public async Task<IList<BestellingDto>> GetBestellingen(int scoutsjaar)
+        {
+            return await GetList<BestellingDto>($"/api/bestellingen/{scoutsjaar}", Roles.RolesForBestellingen);
+        }
+
+        public async Task UpdateBestelling(UpdateBestellingDto bestelling)
+        {
+            await Update(bestelling, "/api/bestellingen", Roles.RolesForBestellingen);
+        }
+
         public async Task UpdateLid(LidDto lid)
         {
-            if (!await IsUserAuthorized(Roles.RolesForLeden))
-            {
-                throw new UnauthorizedException();
-            }
-
-            await _httpClient.PutAsJsonAsync("/api/leden", lid);
+            await Update(lid, "/api/leden", Roles.RolesForLeden);
         }
 
         public async Task<IList<TakDto>> GetTakken()
         {
-            var result = await _httpClient.GetFromJsonAsync<IList<TakDto>>("/api/takken");
-            return result ?? new List<TakDto>();
+            return await GetList<TakDto>("/api/takken", Roles.RolesForTakken);
         }
 
         public async Task<LidDto> CreateLid(NewLidDto lid)
         {
-            if (!await IsUserAuthorized(Roles.RolesForLeden))
-            {
-                throw new UnauthorizedException();
-            }
-
-            var result = await _httpClient.PostAsJsonAsync("/api/leden", lid);
-            return await result.Content.ReadAsAsync<LidDto>();
+            return await Create<NewLidDto, LidDto>(lid, "/api/leden", Roles.RolesForLeden);
         }
 
         public async Task<BestellingDto> CreateBestelling(NewBestellingDto bestelling)
         {
-            if (!await IsUserAuthorized(Roles.RolesForBestellingen))
-            {
-                throw new UnauthorizedException();
-            }
-
-            var result = await _httpClient.PostAsJsonAsync("/api/bestellingen", bestelling);
-            return await result.Content.ReadAsAsync<BestellingDto>();
+            return await Create<NewBestellingDto, BestellingDto>(bestelling, "/api/bestellingen", Roles.RolesForBestellingen);
         }
 
         public async Task<IList<StreefcijferDto>> GetStreefcijfers(int jaar)
         {
-            if (!await IsUserAuthorized(Roles.RolesForStreefcijfers))
-            {
-                throw new UnauthorizedException();
-            }
-
-            var result = await _httpClient.GetFromJsonAsync<IList<StreefcijferDto>>($"/api/streefcijfers/{jaar}");
-            return result ?? new List<StreefcijferDto>();
+            return await GetList<StreefcijferDto>($"/api/streefcijfers/{jaar}", Roles.RolesForStreefcijfers);
         }
 
         public async Task<StreefcijferDto> CreateStreefcijfer(StreefcijferDto streefcijfer)
         {
-            if (!await IsUserAuthorized(Roles.RolesForStreefcijfers))
-            {
-                throw new UnauthorizedException();
-            }
-
-            var result = await _httpClient.PostAsJsonAsync("/api/streefcijfers", streefcijfer);
-            return await result.Content.ReadAsAsync<StreefcijferDto>();
+            return await Create<StreefcijferDto, StreefcijferDto>(streefcijfer, "/api/streefcijfers", Roles.RolesForStreefcijfers);
         }
 
         public async Task UpdateStreefcijfer(StreefcijferDto streefcijfer)
         {
-            if (!await IsUserAuthorized(Roles.RolesForStreefcijfers))
-            {
-                throw new UnauthorizedException();
-            }
-
-            await _httpClient.PutAsJsonAsync("/api/streefcijfers", streefcijfer);
+            await Update(streefcijfer, "/api/streefcijfers", Roles.RolesForStreefcijfers);
         }
 
         public async Task DeleteStreefcijfer(int streefcijferId)
         {
-            if (!await IsUserAuthorized(Roles.RolesForStreefcijfers))
-            {
-                throw new UnauthorizedException();
-            }
-
-            await _httpClient.DeleteAsync($"/api/streefcijfers/{streefcijferId}");
+            await Delete($"/api/streefcijfers/{streefcijferId}", Roles.RolesForStreefcijfers);
         }
 
         public async Task<ChauffeurDto> CreateChauffeur(ChauffeurDto chauffeur)
         {
-            if (!await IsUserAuthorized(Roles.RolesForChauffeurs))
-            {
-                throw new UnauthorizedException();
-            }
-
-            var result = await _httpClient.PostAsJsonAsync("/api/chauffeurs", chauffeur);
-            return await result.Content.ReadAsAsync<ChauffeurDto>();
+            return await Create<ChauffeurDto, ChauffeurDto>(chauffeur, "/api/chauffeurs", Roles.RolesForChauffeurs);
         }
 
         public async Task UpdateChauffeur(ChauffeurDto chauffeur)
         {
-            if (!await IsUserAuthorized(Roles.RolesForChauffeurs))
-            {
-                throw new UnauthorizedException();
-            }
-
-            await _httpClient.PutAsJsonAsync("/api/chauffeurs", chauffeur);
+            await Update(chauffeur, "/api/chauffeurs", Roles.RolesForChauffeurs);
         }
 
         public async Task DeleteChauffeur(int chauffeurId)
         {
-            if (!await IsUserAuthorized(Roles.RolesForChauffeurs))
-            {
-                throw new UnauthorizedException();
-            }
-
-            await _httpClient.DeleteAsync($"/api/chauffeurs/{chauffeurId}");
+            await Delete($"/api/chauffeurs/{chauffeurId}", Roles.RolesForChauffeurs);
         }
     }
 }
