@@ -49,6 +49,7 @@
                  CommittedItemChanges="@OnUpdate"
                  Dense="true"
                  Striped="true"
+                 Loading="_loadinData"
                  @ref="_grid">
         <Columns>
             @Columns
@@ -77,6 +78,7 @@
 </RoleAuthorizedView>
 
 @code {
+    private bool _loadinData = false;
     private IList<TDto> _data = new List<TDto>();
     private IEnumerable<ScoutsjaarDto> _scoutsjaren = new List<ScoutsjaarDto>();
     private int _selectedScoutsjaarBegin;
@@ -160,6 +162,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        _loadinData = true;
         var uriBuilder = new UriBuilder(NavigationManager.Uri);
         var query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
         var scoutsjaarParameter = query["scoutsjaar"];
@@ -188,6 +191,8 @@
         {
             _data = await DataProvider(ServerData);
         }
+
+        _loadinData = false;
     }
 
     async Task Create()
