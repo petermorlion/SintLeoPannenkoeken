@@ -497,17 +497,9 @@ namespace SintLeoPannenkoeken.Blazor.Data
             throw new NotImplementedException();
         }
 
-        private string GetRandomPassword()
+        public async Task DeleteGebruiker(string email)
         {
-            var length = 32;
-            var alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890&é'(§è!çà)";
-            var secret = new StringBuilder();
-            while (length-- > 0)
-            {
-                secret.Append(alphabet[RandomNumberGenerator.GetInt32(alphabet.Length)]);
-            }
-
-            return secret.ToString();
+            await _usersService.DeleteGebruiker(email);
         }
     }
 }

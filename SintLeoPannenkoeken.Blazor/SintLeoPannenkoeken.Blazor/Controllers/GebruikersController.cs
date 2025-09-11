@@ -41,5 +41,13 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
             await _serverData.UpdateGebruiker(gebruikerDto);
             return Ok();
         }
+
+        [HttpDelete]
+        [Route("{email}")]
+        public async Task<IActionResult> DeleteGebruiker([FromRoute] string email)
+        {
+            await _serverData.DeleteGebruiker(email);
+            return Ok();
+        }
     }
 }

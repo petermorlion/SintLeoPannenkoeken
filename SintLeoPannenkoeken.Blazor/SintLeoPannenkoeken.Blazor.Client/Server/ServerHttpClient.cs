@@ -194,5 +194,10 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         {
             await Delete($"/api/chauffeurs/{chauffeurId}", Roles.RolesForChauffeurs);
         }
+
+        public async Task DeleteGebruiker(string email)
+        {
+            await Delete($"/api/gebruikers/{email}", Roles.RolesForGebruikers);
+        }
     }
 }

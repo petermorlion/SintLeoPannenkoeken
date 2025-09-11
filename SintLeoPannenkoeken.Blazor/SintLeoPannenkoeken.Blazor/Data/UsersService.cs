@@ -93,5 +93,16 @@ namespace SintLeoPannenkoeken.Blazor.Data
 
             return secret.ToString();
         }
+
+        internal async Task DeleteGebruiker(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return;
+            }
+
+            await _userManager.DeleteAsync(user);
+        }
     }
 }

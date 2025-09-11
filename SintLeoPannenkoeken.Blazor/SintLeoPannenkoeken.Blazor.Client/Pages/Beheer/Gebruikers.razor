@@ -9,8 +9,10 @@
                   Title="Gebruikers"
                   DataProvider="@_dataProvider"
                   CanEdit="true"
+                  CanDelete="true"
                   OnCreate="@OnCreate"
-                  OnCancel="@OnCancel">
+                  OnCancel="@OnCancel"
+                  OnDelete="@OnDelete">
     <NewItemFormElements>
         <MudItem xs="12" sm="6">
             <MudTextField @bind-Value="_newGebruikerEmail" T="string" Label="Email" Required="true" RequiredError="Email is verplicht." 
@@ -64,5 +66,10 @@
     async Task OnUpdate(GebruikerDto item)
     {
         await _serverData.UpdateGebruiker(item);
+    }
+
+    async Task OnDelete(GebruikerDto item)
+    {
+        await _serverData.DeleteGebruiker(item.Email);
     }
 }

@@ -17,6 +17,7 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         Task<IList<GebruikerDto>> GetGebruikers();
         Task<GebruikerCreatedDto> CreateGebruiker(NewGebruikerDto gebruiker);
         Task UpdateGebruiker(GebruikerDto gebruiker);
+        Task DeleteGebruiker(string email);
 
 
         Task<IList<StraatDto>> GetStraten();
