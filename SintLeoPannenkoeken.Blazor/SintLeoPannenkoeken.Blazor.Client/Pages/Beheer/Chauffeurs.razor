@@ -7,6 +7,7 @@
                   AuthorizedRoles="@($"{Roles.RolesForChauffeurs}")"
                   Title="Chauffeurs"
                   DataProvider="@_dataProvider"
+                  IsForScoutsjaar="true"
                   CanEdit="true"
                   CanDelete="true"
                   OnCreate="@OnCreate"
@@ -24,17 +25,36 @@
     <Columns>
         <PropertyColumn T="ChauffeurDto" TProperty="string" Property="x => x.Achternaam" Title="Achternaam" InitialDirection="SortDirection.Ascending" />
         <PropertyColumn T="ChauffeurDto" TProperty="string" Property="x => x.Voornaam" Title="Voornaam" />
+        <TemplateColumn T="ChauffeurDto" CellClass="justify-end">
+            <CellTemplate>
+                <MudIconButton title="Zones voor deze chauffeur"
+                    Size="@Size.Small" 
+                    Icon="@Icons.Material.Outlined.DirectionsCar" 
+                    Color="Color.Primary" 
+                    Href="@($"chauffeurs/rondes?bestuurderId={context.Item.Id}&scoutsjaar={_currentScoutsjaar}")" />
+            </CellTemplate>
+        </TemplateColumn>
     </Columns>
 </MasterDetailPage>
 
 @code {
     private Func<IServerData, Task<IList<ChauffeurDto>>> _dataProvider => async (serverData) => await serverData.GetChauffeurs();
+    private int _currentScoutsjaar;
 
     private string _newChauffeurAchternaam = "";
     private string _newChauffeurVoornaam = "";
 
     [Inject]
     private IServerData _serverData { get; set; } = default!;
+
+    [Inject]
+    private CurrentScoutsjaarQuerystringParameterProvider _currentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var currentScoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        _currentScoutsjaar = currentScoutsjaar.Begin;
+    }
 
     async Task OnUpdate(ChauffeurDto item)
     {

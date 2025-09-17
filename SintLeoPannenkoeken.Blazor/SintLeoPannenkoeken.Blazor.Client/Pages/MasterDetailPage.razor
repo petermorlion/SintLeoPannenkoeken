@@ -59,11 +59,11 @@
                     <CellTemplate>
                          @if (CanEdit)
                         {
-                            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Color="Color.Primary" OnClick="@context.Actions.StartEditingItemAsync" />
+                            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Color="Color.Primary" OnClick="@context.Actions.StartEditingItemAsync" title="Bewerken" />
                         }           
                         @if (CanDelete)
                         {
-                            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" Color="Color.Error" OnClick="async () => await Delete(context.Item)" />
+                            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" Color="Color.Error" OnClick="async () => await Delete(context.Item)" title="Verwijderen" />
                         }
                     </CellTemplate>
                 </TemplateColumn>
