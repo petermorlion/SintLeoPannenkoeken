@@ -32,11 +32,11 @@ namespace SintLeoPannenkoeken.Blazor.Startup
                 user.EmailConfirmed = true;
                 var userResult = await userManager.CreateAsync(user, "adminPassword1234!");
 
-                var adminRole = "admin";
+                var adminRole = "Admin";
                 var roleExists = await roleManager.RoleExistsAsync(adminRole);
                 if (!roleExists)
                 {
-                    await roleManager.CreateAsync(new IdentityRole("admin"));
+                    await roleManager.CreateAsync(new IdentityRole("Admin"));
                 }
 
                 var roleResult = await userManager.AddToRoleAsync(user, adminRole);

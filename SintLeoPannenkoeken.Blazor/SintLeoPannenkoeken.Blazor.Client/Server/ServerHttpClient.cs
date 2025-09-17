@@ -180,6 +180,11 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
             await Delete($"/api/streefcijfers/{streefcijferId}", Roles.RolesForStreefcijfers);
         }
 
+        public async Task DeleteBestelling(int bestellingId)
+        {
+            await Delete($"/api/bestellingen/{bestellingId}", Roles.RolesForBestellingen);
+        }
+
         public async Task<ChauffeurDto> CreateChauffeur(ChauffeurDto chauffeur)
         {
             return await Create<ChauffeurDto, ChauffeurDto>(chauffeur, "/api/chauffeurs", Roles.RolesForChauffeurs);

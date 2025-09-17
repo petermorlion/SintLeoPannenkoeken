@@ -7,7 +7,7 @@ using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
 namespace SintLeoPannenkoeken.Blazor.Controllers
 {
     [Route("api/[controller]")]
-    //[Authorize(Roles = $"{Roles.RolesForBestellingen}")]
+    [Authorize(Roles = $"{Roles.RolesForBestellingen}")]
     [ApiController]
     public class BestellingenController : ControllerBase
     {
@@ -40,6 +40,14 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
         {
             await _serverData.UpdateBestelling(bestellingDto);
             return NoContent();
+        }
+
+        [HttpDelete]
+        [Route("{bestellingId:int}")]
+        public async Task<IActionResult> Delete(int bestellingId)
+        {
+            await _serverData.DeleteBestelling(bestellingId);
+            return Ok();
         }
     }
 }

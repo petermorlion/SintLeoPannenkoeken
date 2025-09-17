@@ -12,7 +12,9 @@
                   OnUpdate="@OnUpdate"
                   OnCancel="@OnCancel"
                   OnCreate="@OnCreate"
+                  OnDelete="@OnDelete"
                   CanEdit="false"
+                  CanDelete="true"
                   IsForScoutsjaar="true"
                   NewItemTitle="Nieuwe bestelling"
                   NewItemExpanded="true">
@@ -236,6 +238,11 @@
         };
 
         await _serverData.UpdateBestelling(updateBestellingDto);
+    }
+
+    async Task OnDelete(BestellingDto item)
+    {
+        await _serverData.DeleteBestelling(item.Id);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

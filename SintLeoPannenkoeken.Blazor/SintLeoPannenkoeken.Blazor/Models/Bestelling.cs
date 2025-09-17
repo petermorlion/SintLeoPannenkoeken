@@ -30,5 +30,8 @@
         public DateTime IngaveDatum { get; set; }
         public int ScoutsjaarId { get; set; }
         public bool Geleverd { get; set; }
+
+        public DateTime? DeletedOn { get; set; }
+        public string? DeletedBy { get; set; }
     }
 }

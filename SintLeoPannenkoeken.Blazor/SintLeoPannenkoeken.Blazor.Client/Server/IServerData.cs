@@ -26,8 +26,9 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         Task<IList<BestellingDto>> GetBestellingen(int scoutsjaar);
         Task<BestellingDto> CreateBestelling(NewBestellingDto bestelling);
         Task UpdateBestelling(UpdateBestellingDto bestelling);
+        Task DeleteBestelling(int bestellingId);
 
-        
+
 
         Task<IList<StreefcijferDto>> GetStreefcijfers(int jaar);
         Task<StreefcijferDto> CreateStreefcijfer(StreefcijferDto streefcijfer);

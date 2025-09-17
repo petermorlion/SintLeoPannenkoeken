@@ -11,7 +11,7 @@
     
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
     <!-- Important: Increment the version parameter whenever you update MudBlazor to prevent caching issues -->
-    <link href="_content/MudBlazor/MudBlazor.min.css?v=1" rel="stylesheet" />
+    <link href="_content/MudBlazor/MudBlazor.min.css?v=@(_mudBlazorVersion)" rel="stylesheet" />
     
     <HeadOutlet @rendermode="RenderModeForPage" />
 </head>
@@ -20,7 +20,7 @@
     <Routes @rendermode="RenderModeForPage" />
     <script src="_framework/blazor.web.js"></script>
     <!-- Important: Increment the version parameter whenever you update MudBlazor to prevent caching issues -->
-    <script src="_content/MudBlazor/MudBlazor.min.js?v=1"></script>
+    <script src="_content/MudBlazor/MudBlazor.min.js?v=@(_mudBlazorVersion)"></script>
     <script src="_content/Extensions.MudBlazor.StaticInput/NavigationObserver.js"></script>
 </body>
 
@@ -29,6 +29,19 @@
 @code {
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
+
+    private string _mudBlazorVersion = "x.x.x";
+
+    protected override void OnInitialized()
+    {
+        // get version of MudBlazor assembly
+        System.Reflection.Assembly? mudBlazorAssembly = AppDomain.CurrentDomain.GetAssemblies()
+            .FirstOrDefault(assembly => assembly.GetName().Name == "MudBlazor");
+        if (mudBlazorAssembly != null)
+        {
+            _mudBlazorVersion = mudBlazorAssembly.GetName().Version?.ToString() ?? "x.x.x";
+        }
+    }
 
     private IComponentRenderMode? RenderModeForPage => HttpContext.Request.Path.StartsWithSegments("/Account")
         ? null

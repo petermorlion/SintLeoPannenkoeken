@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
 using SintLeoPannenkoeken.Blazor.Models;
@@ -12,13 +13,19 @@ namespace SintLeoPannenkoeken.Blazor.Data
     /// </summary>
     public class ServerDirectClient : IServerData
     {
+        private readonly ILogger<ServerDirectClient> _logger;
         private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly UsersService _usersService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ServerDirectClient(IDbContextFactory<ApplicationDbContext> dbContextFactory, UsersService usersService)
+        public ServerDirectClient(ILogger<ServerDirectClient> logger, 
+            IDbContextFactory<ApplicationDbContext> dbContextFactory, 
+            UsersService usersService, IHttpContextAccessor httpContextAccessor)
         {
+            _logger = logger;
             _dbContextFactory = dbContextFactory;
             _usersService = usersService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IList<GebruikerDto>> GetGebruikers()
@@ -155,6 +162,7 @@ namespace SintLeoPannenkoeken.Blazor.Data
                  .ThenInclude(lid => lid.Tak)
                  .SingleOrDefaultAsync(scoutsjaar => scoutsjaar.Begin == begin))
                  ?.Bestellingen
+                 ?.Where(bestelling => bestelling.DeletedOn == null)
                  ?.ToList();
 
                 var bestellingenDtos = bestellingen == null
@@ -500,6 +508,29 @@ namespace SintLeoPannenkoeken.Blazor.Data
         public async Task DeleteGebruiker(string email)
         {
             await _usersService.DeleteGebruiker(email);
+        }
+
+        public async Task DeleteBestelling(int bestellingId)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var bestelling = await dbContext.Bestellingen.SingleOrDefaultAsync(b => b.Id == bestellingId);
+                if (bestelling == null)
+                {
+                    return;
+                }
+
+                var user = _httpContextAccessor?.HttpContext?.User;
+                if (user == null || user.Identity == null)
+                {
+                    _logger.LogError("No authentication state or user found when deleting bestelling.");
+                    return;
+                }
+
+                bestelling.DeletedOn = DateTime.UtcNow;
+                bestelling.DeletedBy = user.Identity.Name ?? "Unknown";
+                await dbContext.SaveChangesAsync();
+            }
         }
     }
 }
