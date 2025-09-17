@@ -21,10 +21,10 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
         }
 
         [HttpGet]
-        [Route("")]
-        public async Task<IActionResult> Get()
+        [Route("{scoutsjaar:int}")]
+        public async Task<IActionResult> Get(int scoutsjaar)
         {
-            var chauffeurDtos = await _serverData.GetChauffeurs();
+            var chauffeurDtos = await _serverData.GetChauffeurs(scoutsjaar);
             return Ok(chauffeurDtos);
         }
 

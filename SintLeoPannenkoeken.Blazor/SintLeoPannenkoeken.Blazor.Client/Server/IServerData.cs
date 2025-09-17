@@ -35,7 +35,7 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         Task UpdateStreefcijfer(StreefcijferDto streefcijfer);
         Task DeleteStreefcijfer(int streefcijferId);
 
-        Task<IList<ChauffeurDto>> GetChauffeurs();
+        Task<IList<ChauffeurDto>> GetChauffeurs(int scoutsjaar);
         Task<ChauffeurDto> CreateChauffeur(ChauffeurDto chauffeur);
         Task UpdateChauffeur(ChauffeurDto chauffeur);
         Task DeleteChauffeur(int chauffeurId);

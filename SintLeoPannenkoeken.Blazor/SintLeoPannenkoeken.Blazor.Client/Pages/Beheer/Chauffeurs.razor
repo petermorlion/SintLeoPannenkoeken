@@ -6,7 +6,7 @@
 <MasterDetailPage TDto="ChauffeurDto"
                   AuthorizedRoles="@($"{Roles.RolesForChauffeurs}")"
                   Title="Chauffeurs"
-                  DataProvider="@_dataProvider"
+                  DataProvider="@GetChauffeurs"
                   IsForScoutsjaar="true"
                   CanEdit="true"
                   CanDelete="true"
@@ -25,6 +25,9 @@
     <Columns>
         <PropertyColumn T="ChauffeurDto" TProperty="string" Property="x => x.Achternaam" Title="Achternaam" InitialDirection="SortDirection.Ascending" />
         <PropertyColumn T="ChauffeurDto" TProperty="string" Property="x => x.Voornaam" Title="Voornaam" />
+        <PropertyColumn T="ChauffeurDto" TProperty="string" Property="x => x.Voornaam" Title="Voornaam" />
+        <PropertyColumn T="ChauffeurDto" TProperty="int" Property="x => x.AantalBestellingen" Title="Bestellingen" />
+        <PropertyColumn T="ChauffeurDto" TProperty="int" Property="x => x.AantalPakken" Title="Pakken" />
         <TemplateColumn T="ChauffeurDto" CellClass="justify-end">
             <CellTemplate>
                 <MudIconButton title="Zones voor deze chauffeur"
@@ -38,7 +41,13 @@
 </MasterDetailPage>
 
 @code {
-    private Func<IServerData, Task<IList<ChauffeurDto>>> _dataProvider => async (serverData) => await serverData.GetChauffeurs();
+    private async Task<IList<ChauffeurDto>> GetChauffeurs(IServerData serverData)
+    {
+        var scoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        var result = await serverData.GetChauffeurs(scoutsjaar.Begin);
+        return result;
+    }
+
     private int _currentScoutsjaar;
 
     private string _newChauffeurAchternaam = "";

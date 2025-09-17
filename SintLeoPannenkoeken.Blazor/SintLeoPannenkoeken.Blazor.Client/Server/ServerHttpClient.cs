@@ -120,9 +120,9 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
             return await GetList<StraatDto>("/api/straten", Roles.RolesForStraten);
         }
 
-        public async Task<IList<ChauffeurDto>> GetChauffeurs()
+        public async Task<IList<ChauffeurDto>> GetChauffeurs(int scoutsjaar)
         {
-            return await GetList<ChauffeurDto>("/api/chauffeurs", Roles.RolesForChauffeurs);
+            return await GetList<ChauffeurDto>($"/api/chauffeurs/{scoutsjaar}", Roles.RolesForChauffeurs);
         }
 
         public async Task UpdateScoutsjaar(ScoutsjaarDto scoutsjaar)
