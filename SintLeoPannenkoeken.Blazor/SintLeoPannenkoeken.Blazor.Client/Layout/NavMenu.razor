@@ -1,6 +1,8 @@
 ﻿@using SintLeoPannenkoeken.Blazor.Client.Auth
 
 <MudAppBar Elevation="10" Color="Color.Info">
+    <img src="zeescouts.svg" style="max-height: 50px;" />
+
     <AuthorizeView Roles="@($"{Roles.RolesForBestellingen}")" Context="childContext">
         <MudNavLink Href="/bestellingen">Bestellingen</MudNavLink>
     </AuthorizeView>
