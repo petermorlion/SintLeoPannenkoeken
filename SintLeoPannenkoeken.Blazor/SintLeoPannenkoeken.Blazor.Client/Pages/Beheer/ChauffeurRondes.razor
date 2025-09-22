@@ -63,6 +63,11 @@
     protected override async Task OnInitializedAsync()
     {
         var currentScoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        if (currentScoutsjaar == null)
+        {
+            return;
+        }
+
         _currentScoutsjaar = currentScoutsjaar.Begin;
         _zones = await _serverData.GetZones();
 
