@@ -3,6 +3,7 @@
 @using SintLeoPannenkoeken.Blazor.Client.Auth
 @using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
 @typeparam TDto
+@implements IDisposable
 
 <PageTitle>@Title</PageTitle>
 
@@ -49,7 +50,7 @@
                  CommittedItemChanges="@OnUpdate"
                  Dense="true"
                  Striped="true"
-                 Loading="_loadinData"
+                 Loading="_loadingData"
                  @ref="_grid">
         <Columns>
             @Columns
@@ -78,8 +79,10 @@
 </RoleAuthorizedView>
 
 @code {
-    private bool _loadinData = false;
+    private bool _loadingData = false;
     private IList<TDto> _data = new List<TDto>();
+    private PersistingComponentStateSubscription _persistingSubscription;
+
     private IEnumerable<ScoutsjaarDto> _scoutsjaren = new List<ScoutsjaarDto>();
     private int _selectedScoutsjaarBegin;
 
@@ -89,6 +92,9 @@
 
     [Inject]
     private IServerData _serverData { get; set; } = default!;
+
+    [Inject]
+    private PersistentComponentState ApplicationState { get; set; } = default!;
 
     [Parameter]
     public string Title { get; set; } = "";
@@ -162,7 +168,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _loadinData = true;
+        _loadingData = true;
         var uriBuilder = new UriBuilder(NavigationManager.Uri);
         var query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
         var scoutsjaarParameter = query["scoutsjaar"];
@@ -178,7 +184,7 @@
             if (selectedScoutsjaar != null)
             {
                 _selectedScoutsjaarBegin = selectedScoutsjaar.Begin;
-                _data = await DataProvider(ServerData);
+                _data = await GetData();
             }
             else
             {
@@ -189,10 +195,32 @@
         }
         else
         {
-            _data = await DataProvider(ServerData);
+            _data = await GetData();
         }
 
-        _loadinData = false;
+        _loadingData = false;
+        _persistingSubscription = ApplicationState.RegisterOnPersisting(PersistData);
+    }
+
+    private async Task<IList<TDto>> GetData()
+    {
+        IList<TDto>? result = new List<TDto>();
+        if (!ApplicationState.TryTakeFromJson<IList<TDto>>(nameof(_data), out var restoredServerData))
+        {
+            result = await DataProvider(ServerData);
+        }
+        else
+        {
+            result = restoredServerData;
+        }
+
+        return result ?? new List<TDto>();
+    }
+
+    private Task PersistData()
+    {
+        ApplicationState.PersistAsJson(nameof(_data), _data);
+        return Task.CompletedTask;
     }
 
     async Task Create()
@@ -246,4 +274,6 @@
 
         NavigationManager.NavigateTo(uriBuilder.Uri.ToString(), forceLoad: true);
     }
+
+    void IDisposable.Dispose() => _persistingSubscription.Dispose();
 }
