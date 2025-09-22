@@ -229,6 +229,7 @@ namespace SintLeoPannenkoeken.Blazor.Data
                  .SingleOrDefaultAsync(scoutsjaar => scoutsjaar.Begin == begin))
                  ?.Bestellingen
                  ?.Where(bestelling => bestelling.DeletedOn == null)
+                 ?.OrderByDescending(bestelling => bestelling.BestellingNummer)
                  ?.ToList();
 
                 var bestellingenDtos = bestellingen == null
@@ -362,7 +363,7 @@ namespace SintLeoPannenkoeken.Blazor.Data
                 bestelling.Opmerkingen = bestellingDto.Opmerkingen ?? "";
                 bestelling.Betaald = bestellingDto.Betaald;
                 bestelling.Geleverd = bestellingDto.Geleverd;
-                bestelling.LidId = bestellingDto.LidId ?? 0;
+                bestelling.LidId = bestellingDto.LidId;
                 bestelling.TakId = takId;
                 bestelling.StraatId = bestellingDto.StraatId;
                 bestelling.Nummer = bestellingDto.Nummer ?? "";
