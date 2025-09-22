@@ -20,7 +20,10 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         Task DeleteGebruiker(string email);
 
 
+        Task<StraatDto> CreateStraat(StraatDto straatDto);
         Task<IList<StraatDto>> GetStraten();
+
+
         Task<IList<TakDto>> GetTakken();
 
         Task<IList<BestellingDto>> GetBestellingen(int scoutsjaar);
@@ -39,5 +42,7 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         Task<ChauffeurDto> CreateChauffeur(ChauffeurDto chauffeur);
         Task UpdateChauffeur(ChauffeurDto chauffeur);
         Task DeleteChauffeur(int chauffeurId);
+
+        Task<IList<ZoneDto>> GetZones();
     }
 }

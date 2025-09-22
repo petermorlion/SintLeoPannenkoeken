@@ -6,7 +6,37 @@
 <MasterDetailPage TDto="StraatDto"
                   AuthorizedRoles="@($"{Roles.RolesForStraten}")"
                   Title="Straten"
-                  DataProvider="@_dataProvider">
+                  DataProvider="@_dataProvider"
+                  OnCreate="@OnCreate"
+                  oncancel="@OnCancel">
+    <NewItemFormElements>
+        <MudItem xs="12" sm="2">
+            <MudSelect @bind-Value="_newStraatZone" T="ZoneDto" Label="Zone" MultiSelection="false" 
+                       Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel
+                       QuickSearchInterval="TimeSpan.FromSeconds(1)">
+                @foreach (var zone in _zones)
+                {
+                    <MudSelectItem Value="zone">@zone.Naam</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" sm="2">
+            <MudNumericField @bind-Value="_newStraatNummer" T="int?" Label="Nummer" Required="true" RequiredError="Het nummer is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+        </MudItem>
+        <MudItem xs="12" sm="8">
+            <MudTextField @bind-Value="_newStraatNaam" T="string" Label="Naam" Required="true" RequiredError="De naam is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+        </MudItem>
+
+        <MudItem xs="12" sm="2">
+            <MudNumericField @bind-Value="_newStraatPostNummer" T="int?" Label="Postcode" Required="true" RequiredError="De postcode is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <MudTextField @bind-Value="_newStraatGemeente" T="string" Label="Gemeente" Required="true" RequiredError="De gemeente is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudTextField @bind-Value="_newStraatOmschrijving" T="string" Label="Omschrijving" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+        </MudItem>
+    </NewItemFormElements>
     <Columns>
         <PropertyColumn T="StraatDto" TProperty="int" Property="x => x.Nummer" Title="Nummer" />
         <PropertyColumn T="StraatDto" TProperty="string" Property="x => x.ZoneNaam" Title="Zone" />
@@ -19,4 +49,47 @@
 
 @code {
     private Func<IServerData, Task<IList<StraatDto>>> _dataProvider => async (serverData) => await serverData.GetStraten();
+
+    private IList<ZoneDto> _zones = new List<ZoneDto>();
+
+    private int? _newStraatNummer;
+    private string _newStraatNaam = "";
+    private int? _newStraatPostNummer;
+    private string _newStraatGemeente = "";
+    private string _newStraatOmschrijving = "";
+    private ZoneDto? _newStraatZone = null;
+
+    [Inject]
+    private IServerData _serverData { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _zones = await _serverData.GetZones();
+    }
+
+    async Task<StraatDto> OnCreate()
+    {
+        var newItem = new StraatDto
+        {
+            ZoneId = _newStraatZone?.Id ?? 0,
+            Nummer = _newStraatNummer ?? 0,
+            Naam = _newStraatNaam,
+            PostNummer = _newStraatPostNummer ?? 0,
+            Gemeente = _newStraatGemeente,
+            Omschrijving = _newStraatOmschrijving
+        };
+
+        var result = await _serverData.CreateStraat(newItem);
+        return result;
+    }
+
+    void OnCancel()
+    {
+        _newStraatGemeente = "";
+        _newStraatNaam = "";
+        _newStraatNummer = null;
+        _newStraatOmschrijving = "";
+        _newStraatPostNummer = null;
+        _newStraatZone = null;
+    }
 }

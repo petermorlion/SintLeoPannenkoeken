@@ -115,6 +115,11 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
             await Update(gebruiker, "/api/gebruikers", Roles.RolesForGebruikers);
         }
 
+        public async Task<StraatDto> CreateStraat(StraatDto straatDto)
+        {
+            return await Create<StraatDto, StraatDto>(straatDto, "/api/straten", Roles.RolesForStraten);
+        }
+
         public async Task<IList<StraatDto>> GetStraten()
         {
             return await GetList<StraatDto>("/api/straten", Roles.RolesForStraten);
@@ -203,6 +208,11 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         public async Task DeleteGebruiker(string email)
         {
             await Delete($"/api/gebruikers/{email}", Roles.RolesForGebruikers);
+        }
+
+        public async Task<IList<ZoneDto>> GetZones()
+        {
+            return await GetList<ZoneDto>("/api/zones", Roles.RolesForBeheer);
         }
     }
 }

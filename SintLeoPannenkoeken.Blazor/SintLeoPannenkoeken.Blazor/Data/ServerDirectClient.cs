@@ -78,6 +78,38 @@ namespace SintLeoPannenkoeken.Blazor.Data
             }
         }
 
+        public async Task<StraatDto> CreateStraat(StraatDto straatDto)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var straat = new Straat(straatDto.Naam, straatDto.Gemeente)
+                {
+                    PostNummer = straatDto.PostNummer,
+                    Omschrijving = straatDto.Omschrijving,
+                    Nummer = straatDto.Nummer,
+                    ZoneId = straatDto.ZoneId
+                };
+
+                dbContext.Straten.Add(straat);
+
+                await dbContext.SaveChangesAsync();
+
+                var zoneNaam = (await dbContext.Zones.SingleAsync(z => z.Id == straat.ZoneId)).Naam;
+
+                return new StraatDto
+                {
+                    Id = straat.Id,
+                    Naam = straat.Naam,
+                    PostNummer = straat.PostNummer,
+                    Gemeente = straat.Gemeente,
+                    Omschrijving = straat.Omschrijving,
+                    ZoneId = straat.ZoneId,
+                    ZoneNaam = zoneNaam,
+                    Nummer = straat.Nummer
+                };
+            }
+        }
+
         public async Task<IList<StraatDto>> GetStraten()
         {
             using (var dbContext = _dbContextFactory.CreateDbContext())
@@ -90,15 +122,17 @@ namespace SintLeoPannenkoeken.Blazor.Data
 
                 var straatDtos = straten == null
                     ? new List<StraatDto>()
-                    : straten.Select(straat => new StraatDto(
-                        straat.Id,
-                        straat.Naam,
-                        straat.PostNummer,
-                        straat.Gemeente,
-                        straat.Omschrijving,
-                        straat.ZoneId,
-                        straat.Zone?.Naam ?? "",
-                        straat.Nummer)).ToList();
+                    : straten.Select(straat => new StraatDto
+                    {
+                        Id = straat.Id,
+                        Naam = straat.Naam,
+                        PostNummer = straat.PostNummer,
+                        Gemeente = straat.Gemeente,
+                        Omschrijving = straat.Omschrijving,
+                        ZoneId = straat.ZoneId,
+                        ZoneNaam = straat.Zone?.Naam ?? "",
+                        Nummer = straat.Nummer
+                    }).ToList();
 
                 return straatDtos;
             }
@@ -562,6 +596,26 @@ namespace SintLeoPannenkoeken.Blazor.Data
                 bestelling.DeletedOn = DateTime.UtcNow;
                 bestelling.DeletedBy = user.Identity.Name ?? "Unknown";
                 await dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task<IList<ZoneDto>> GetZones()
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var zones = await dbContext
+                .Zones
+                .ToListAsync();
+
+                var zoneDtos = zones == null
+                    ? new List<ZoneDto>()
+                    : zones.Select(zone => new ZoneDto
+                    {
+                        Id = zone.Id,
+                        Naam = zone.Naam
+                    }).ToList();
+
+                return zoneDtos;
             }
         }
     }

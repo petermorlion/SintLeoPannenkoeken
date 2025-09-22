@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SintLeoPannenkoeken.Blazor.Client.Auth;
 using SintLeoPannenkoeken.Blazor.Client.Server;
+using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
 
 namespace SintLeoPannenkoeken.Blazor.Controllers
 {
@@ -17,6 +18,13 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
         {
             _logger = logger;
             _serverData = serverData;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateStraat([FromBody] StraatDto straatDto)
+        {
+            var result = await _serverData.CreateStraat(straatDto);
+            return Ok(result);
         }
 
         [HttpGet]
