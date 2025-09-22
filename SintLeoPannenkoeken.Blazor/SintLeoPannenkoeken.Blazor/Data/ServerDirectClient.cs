@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SintLeoPannenkoeken.Blazor.Client.Pages.Beheer;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
 using SintLeoPannenkoeken.Blazor.Models;
@@ -186,6 +187,57 @@ namespace SintLeoPannenkoeken.Blazor.Data
                     }).ToList();
 
                 return chauffeurDtos;
+            }
+        }
+
+        public async Task<ChauffeurDto> GetChauffeur(int scoutsjaar, int chauffeurId)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var chauffeur = await dbContext
+                    .Bestuurders
+                    .SingleOrDefaultAsync(x => x.Id == chauffeurId);
+
+                if (chauffeur == null)
+                {
+                    return null;
+                }
+
+                var data = await dbContext
+                    .Scoutsjaren
+                    .Include(sj => sj.Bestellingen)
+                    .ThenInclude(b => b.Straat)
+                    .Include(sj => sj.Rondes)
+                    .SingleOrDefaultAsync(sj => sj.Begin == scoutsjaar);
+
+                var bestellingenPerZone = data
+                    .Bestellingen
+                    .GroupBy(b => b.Straat.ZoneId)
+                    .ToDictionary(group => group.Key, group => group.ToList());
+
+                var zonesPerChauffeur = data
+                    .Rondes
+                    .GroupBy(r => r.BestuurderId, r => r.ZoneId)
+                    .ToDictionary(group => group.Key, group => group.ToList());
+
+                var aantalPakken = 0;
+                var aantalBestellingen = 0;
+                var zonesForChauffeur = zonesPerChauffeur.ContainsKey(chauffeur.Id) ? zonesPerChauffeur[chauffeur.Id] : new List<int>();
+                foreach (var zoneId in zonesForChauffeur)
+                {
+                    var bestellingenForZone = bestellingenPerZone.ContainsKey(zoneId) ? bestellingenPerZone[zoneId] : new List<Bestelling>();
+                    aantalPakken += bestellingenForZone.Sum(x => x.AantalPakken);
+                    aantalBestellingen += bestellingenForZone.Count;
+                }
+
+                return new ChauffeurDto
+                {
+                    Id = chauffeur.Id,
+                    Voornaam = chauffeur.Voornaam,
+                    Achternaam = chauffeur.Achternaam,
+                    AantalBestellingen = aantalBestellingen,
+                    AantalPakken = aantalPakken
+                };
             }
         }
 

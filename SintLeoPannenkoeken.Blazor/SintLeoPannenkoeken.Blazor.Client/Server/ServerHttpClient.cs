@@ -88,6 +88,17 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
             return result ?? new List<TResult>();
         }
 
+        private async Task<TResult> Get<TResult>(string endpoint, string roles)
+        {
+            if (!await IsUserAuthorized(roles))
+            {
+                throw new UnauthorizedException();
+            }
+
+            var result = await _httpClient.GetFromJsonAsync<TResult>(endpoint);
+            return result;
+        }
+
         private async Task<bool> IsUserAuthorized(string roleString)
         {
             var roles = roleString.Split(',');
@@ -249,6 +260,11 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         public async Task<IList<RondeDto>> GetRondesForChauffeur(int chauffeurId, int scoutsjaarBegin)
         {
             return await GetList<RondeDto>($"/api/chauffeurs/{chauffeurId}/rondes/{scoutsjaarBegin}", Roles.RolesForChauffeurs);
+        }
+
+        public async Task<ChauffeurDto> GetChauffeur(int scoutsjaar, int chauffeurId)
+        {
+            return await Get<ChauffeurDto>($"/api/chauffeurs/{scoutsjaar}/{chauffeurId}", Roles.RolesForChauffeurs);
         }
     }
 }

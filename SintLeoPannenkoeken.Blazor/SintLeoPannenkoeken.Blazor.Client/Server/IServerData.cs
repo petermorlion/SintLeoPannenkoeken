@@ -42,6 +42,7 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         Task<ChauffeurDto> CreateChauffeur(ChauffeurDto chauffeur);
         Task UpdateChauffeur(ChauffeurDto chauffeur);
         Task DeleteChauffeur(int chauffeurId);
+        Task<ChauffeurDto> GetChauffeur(int scoutsjaar, int chauffeurId);
 
         Task<IList<ZoneDto>> GetZones();
 

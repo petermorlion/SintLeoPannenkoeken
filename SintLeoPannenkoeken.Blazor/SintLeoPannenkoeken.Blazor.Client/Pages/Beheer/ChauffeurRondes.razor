@@ -5,7 +5,7 @@
 
 <MasterDetailPage TDto="RondeDto"
                   AuthorizedRoles="@($"{Roles.RolesForChauffeurs}")"
-                  Title="Rondes"
+                  Title="@($"Rondes {_currentChauffeur?.Achternaam ?? ""} {_currentChauffeur?.Voornaam ?? ""}")"
                   DataProvider="@GetRondes"
                   IsForScoutsjaar="true"
                   CanDelete="true"
@@ -48,6 +48,7 @@
     }
 
     private int _currentScoutsjaar;
+    private ChauffeurDto? _currentChauffeur;
 
     private IList<ZoneDto> _zones = new List<ZoneDto>();
 
@@ -64,6 +65,8 @@
         var currentScoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
         _currentScoutsjaar = currentScoutsjaar.Begin;
         _zones = await _serverData.GetZones();
+
+        _currentChauffeur = await _serverData.GetChauffeur(ScoutsjaarBegin, ChauffeurId);
     }
 
     async Task OnDelete(RondeDto item)
