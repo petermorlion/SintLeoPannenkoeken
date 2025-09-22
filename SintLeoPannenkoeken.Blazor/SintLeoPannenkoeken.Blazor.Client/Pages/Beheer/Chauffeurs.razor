@@ -31,10 +31,10 @@
         <TemplateColumn T="ChauffeurDto" CellClass="justify-end">
             <CellTemplate>
                 <MudIconButton title="Zones voor deze chauffeur"
-                    Size="@Size.Small" 
-                    Icon="@Icons.Material.Outlined.DirectionsCar" 
-                    Color="Color.Primary"
-                    Href="@($"beheer/chauffeurs/{context.Item.Id}/rondes/{_currentScoutsjaar}")" />
+                               Size="@Size.Small" 
+                               Icon="@Icons.Material.Outlined.DirectionsCar" 
+                               Color="Color.Primary"
+                               Href="@($"beheer/chauffeurs/{context.Item.Id}/rondes/{_currentScoutsjaar}?scoutsjaar={_currentScoutsjaar}")" />
             </CellTemplate>
         </TemplateColumn>
     </Columns>

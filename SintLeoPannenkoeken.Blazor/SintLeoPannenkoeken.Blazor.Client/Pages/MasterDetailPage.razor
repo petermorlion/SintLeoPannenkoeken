@@ -47,7 +47,7 @@
                  ReadOnly="false"
                  EditMode="DataGridEditMode.Form"
                  EditTrigger="DataGridEditTrigger.Manual"
-                 CommittedItemChanges="@OnUpdate"
+                 CommittedItemChanges="@Update"
                  Dense="true"
                  Striped="true"
                  Loading="_loadingData"
@@ -204,17 +204,25 @@
 
     private async Task<IList<TDto>> GetData()
     {
-        IList<TDto>? result = new List<TDto>();
-        if (!ApplicationState.TryTakeFromJson<IList<TDto>>(nameof(_data), out var restoredServerData))
+        try
         {
-            result = await DataProvider(ServerData);
-        }
-        else
-        {
-            result = restoredServerData;
-        }
+            IList<TDto>? result = new List<TDto>();
+            if (!ApplicationState.TryTakeFromJson<IList<TDto>>(nameof(_data), out var restoredServerData))
+            {
+                result = await DataProvider(ServerData);
+            }
+            else
+            {
+                result = restoredServerData;
+            }
 
-        return result ?? new List<TDto>();
+            return result ?? new List<TDto>();
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add($"Er is een fout gebeurd: {e.Message}", Severity.Error);
+            return new List<TDto>();
+        }
     }
 
     private Task PersistData()
@@ -225,12 +233,19 @@
 
     async Task Create()
     {
-        await _form.Validate();
-        if (_form.IsValid)
+        try
         {
-            var result = await OnCreate();
-            AddItem(result);
-            await OnCancel.InvokeAsync();
+            await _form.Validate();
+            if (_form.IsValid)
+            {
+                var result = await OnCreate();
+                AddItem(result);
+                await OnCancel.InvokeAsync();
+            }
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add($"Er is een fout gebeurd: {e.Message}", Severity.Error);
         }
     }
 
@@ -251,9 +266,28 @@
         var result = await dialog.Result;
         if (!result.Canceled)
         {
-            await OnDelete.InvokeAsync(dto);
-            Snackbar.Add("De gegevens werden succesvol verwijderd.", Severity.Success);
-            _data.Remove(dto);
+            try
+            {
+                await OnDelete.InvokeAsync(dto);
+                Snackbar.Add("De gegevens werden succesvol verwijderd.", Severity.Success);
+                _data.Remove(dto);
+            }
+            catch (Exception e)
+            {
+                Snackbar.Add($"Er is een fout gebeurd: {e.Message}", Severity.Error);
+            }
+        }
+    }
+
+    async Task Update(TDto item)
+    {
+        try
+        {
+            await OnUpdate.InvokeAsync(item);
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add($"Er is een fout gebeurd: {e.Message}", Severity.Error);
         }
     }
 

@@ -28,17 +28,34 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
             }
 
             var result = await _httpClient.PostAsJsonAsync(endpoint, input);
-            return await result.Content.ReadAsAsync<TResult>();
+            if (result.IsSuccessStatusCode)
+            {
+                return await result.Content.ReadAsAsync<TResult>();
+            }
+            else 
+            {
+                var error = await result.Content.ReadAsStringAsync();
+                throw new ApplicationException(error);
+            }
         }
 
         private async Task Update<TInput>(TInput input, string endpoint, string roles)
         {
             if (!await IsUserAuthorized(roles))
             {
-                return;
+                throw new UnauthorizedException();
             }
 
-            await _httpClient.PutAsJsonAsync(endpoint, input);
+            var result = await _httpClient.PutAsJsonAsync(endpoint, input);
+            if (result.IsSuccessStatusCode)
+            {
+                return;
+            }
+            else
+            {
+                var error = await result.Content.ReadAsStringAsync();
+                throw new ApplicationException(error);
+            }
         }
 
         private async Task Delete(string endpoint, string roles)
@@ -48,7 +65,16 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
                 throw new UnauthorizedException();
             }
 
-            await _httpClient.DeleteAsync(endpoint);
+            var result = await _httpClient.DeleteAsync(endpoint);
+            if (result.IsSuccessStatusCode)
+            {
+                return;
+            }
+            else
+            {
+                var error = await result.Content.ReadAsStringAsync();
+                throw new ApplicationException(error);
+            }
         }
 
         private async Task<IList<TResult>> GetList<TResult>(string endpoint, string roles)

@@ -626,6 +626,7 @@ namespace SintLeoPannenkoeken.Blazor.Data
                     .SelectMany(scoutsjaar => scoutsjaar.Rondes)
                     .Include(ronde => ronde.Zone)
                     .ThenInclude(zone => zone.Straten)
+                    .Include(ronde => ronde.Bestuurder)
                     .Where(ronde => ronde.BestuurderId == chauffeurId)
                     .ToListAsync();
 
