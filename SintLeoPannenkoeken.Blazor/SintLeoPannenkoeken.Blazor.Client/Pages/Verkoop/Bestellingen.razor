@@ -27,7 +27,7 @@
         </MudItem>
 
         <MudItem xs="12" sm="2">
-            <MudCheckBox T="bool" Label="Zelf afhalen" ValueChanged="@OnZelfAfhalenChanged" />
+            <MudCheckBox T="bool" Value="@_zelfAfhalen" Label="Zelf afhalen" ValueChanged="@OnZelfAfhalenChanged" />
         </MudItem>
         <MudItem xs="12" sm="5">
             <MudAutocomplete @bind-Value="_newBestellingStraat"
@@ -86,7 +86,9 @@
                                 Clearable="true"
                                 CoerceText="true"
                                 ResetValueOnEmptyText="true"
-                                SelectValueOnTab="true" />
+                                SelectValueOnTab="true"
+                                Required="true"
+                                RequiredError="Het lid is verplicht."/>
         </MudItem>
     </NewItemFormElements>
     
@@ -189,20 +191,21 @@
     {
         var newBestellingDto = new NewBestellingDto
         {
-            Naam = _newBestellingNaam,
+            Naam = _newBestellingNaam ?? "",
             Telefoon = _newBestellingTelefoon,
-            StraatId = (int)_newBestellingStraat?.Id,
+            StraatId = _newBestellingStraat?.Id ?? 0,
             Nummer = _newBestellingNummer,
             Bus = _newBestellingBus,
-            AantalPakken = _newBestellingAantalPakken.Value,
+            AantalPakken = _newBestellingAantalPakken ?? 0,
             Betaald = _newBestellingBetaald,
             Geleverd = _newBestellingGeleverd,
             Opmerkingen = _newBestellingOpmerkingen,
-            LidId = (int)_newBestellingLid?.Id,
+            LidId = _newBestellingLid?.Id ?? 0,
             ScoutsjaarId = (await CurrentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar())!.Id!.Value
         };
 
         var result = await _serverData.CreateBestelling(newBestellingDto);
+        OnCancel();
         return result;
     }
 
@@ -218,6 +221,7 @@
         _newBestellingGeleverd = false;
         _newBestellingOpmerkingen = null;
         _newBestellingLid = null;
+        _zelfAfhalen = false;
     }
 
     async Task OnUpdate(BestellingDto item)
