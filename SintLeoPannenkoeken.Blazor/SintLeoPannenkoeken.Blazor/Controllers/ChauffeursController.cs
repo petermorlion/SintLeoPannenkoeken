@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SintLeoPannenkoeken.Blazor.Client.Auth;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
+using System.Threading.Tasks;
 
 namespace SintLeoPannenkoeken.Blazor.Controllers
 {
@@ -44,10 +45,26 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
 
         [HttpDelete]
         [Route("{id:int}")]
-        public async Task<IActionResult> UpdateChauffeur(int id)
+        public async Task<IActionResult> DeleteChauffeur(int id)
         {
             await _serverData.DeleteChauffeur(id);
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("{chauffeurId:int}/rondes/{scoutsjaarBegin:int}")]
+        public async Task<IActionResult> GetRondes(int chauffeurId, int scoutsjaarBegin)
+        {
+            var result = await _serverData.GetRondesForChauffeur(chauffeurId, scoutsjaarBegin);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("{chauffeurId:int}/rondes/{scoutsjaarBegin:int}")]
+        public async Task<IActionResult> CreateRonde(int chauffeurId, int scoutsjaarBegin, [FromBody] CreateRondeDto rondeDto)
+        {
+            var result = await _serverData.CreateRonde(chauffeurId, scoutsjaarBegin, rondeDto);
+            return Ok(result);
         }
     }
 }

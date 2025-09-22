@@ -33,8 +33,8 @@
                 <MudIconButton title="Zones voor deze chauffeur"
                     Size="@Size.Small" 
                     Icon="@Icons.Material.Outlined.DirectionsCar" 
-                    Color="Color.Primary" 
-                    Href="@($"chauffeurs/rondes?bestuurderId={context.Item.Id}&scoutsjaar={_currentScoutsjaar}")" />
+                    Color="Color.Primary"
+                    Href="@($"beheer/chauffeurs/{context.Item.Id}/rondes/{_currentScoutsjaar}")" />
             </CellTemplate>
         </TemplateColumn>
     </Columns>

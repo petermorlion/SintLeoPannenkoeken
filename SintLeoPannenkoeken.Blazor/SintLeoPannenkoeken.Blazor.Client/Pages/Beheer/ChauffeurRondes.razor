@@ -1,0 +1,89 @@
+﻿@page "/beheer/chauffeurs/{chauffeurId:int}/rondes/{scoutsjaarBegin:int}"
+@using SintLeoPannenkoeken.Blazor.Client.Auth
+@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+
+<MasterDetailPage TDto="RondeDto"
+                  AuthorizedRoles="@($"{Roles.RolesForChauffeurs}")"
+                  Title="Rondes"
+                  DataProvider="@GetRondes"
+                  IsForScoutsjaar="true"
+                  CanDelete="true"
+                  OnCreate="@OnCreate"
+                  OnCancel="@OnCancel"
+                  OnDelete="@OnDelete">
+    <NewItemFormElements>
+        <MudItem xs="12" sm="6">
+            <MudSelect @bind-Value="_newRondeZone" T="ZoneDto" Label="Zone" MultiSelection="false"
+                       Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel Required="true" RequiredError="De zone is verplicht"
+                       QuickSearchInterval="TimeSpan.FromSeconds(1)">
+                @foreach (var zone in _zones)
+                {
+                    <MudSelectItem Value="zone">@zone.Naam</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+    </NewItemFormElements>
+    <Columns>
+        <PropertyColumn T="RondeDto" TProperty="string" Property="x => x.ZoneNaam" Title="Zone" InitialDirection="SortDirection.Ascending" />
+        <PropertyColumn T="RondeDto" TProperty="string" Property="x => x.Gemeente" Title="Gemeente" />
+        <PropertyColumn T="RondeDto" TProperty="string" Property="x => x.Kaartnummer" Title="Kaartnummer" />
+        <PropertyColumn T="RondeDto" TProperty="int" Property="x => x.Straten" Title="Straten" />
+        <PropertyColumn T="RondeDto" TProperty="int" Property="x => x.Pakken" Title="Pakken" />
+    </Columns>
+</MasterDetailPage>
+
+@code {
+    [Parameter]
+    public int ChauffeurId { get; set; }
+
+    [Parameter]
+    public int ScoutsjaarBegin { get; set; }
+
+    private async Task<IList<RondeDto>> GetRondes(IServerData serverData)
+    {
+        var scoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        var result = await serverData.GetRondesForChauffeur(ChauffeurId, ScoutsjaarBegin);
+        return result;
+    }
+
+    private int _currentScoutsjaar;
+
+    private IList<ZoneDto> _zones = new List<ZoneDto>();
+
+    private ZoneDto? _newRondeZone = null;
+
+    [Inject]
+    private IServerData _serverData { get; set; } = default!;
+
+    [Inject]
+    private CurrentScoutsjaarQuerystringParameterProvider _currentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var currentScoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        _currentScoutsjaar = currentScoutsjaar.Begin;
+        _zones = await _serverData.GetZones();
+    }
+
+    async Task OnDelete(RondeDto item)
+    {
+        // TODO
+    }
+
+    async Task<RondeDto> OnCreate()
+    {
+        var newItem = new CreateRondeDto
+        {
+            ZoneId = _newRondeZone?.Id ?? 0
+        };
+
+        var result = await _serverData.CreateRonde(ChauffeurId, ScoutsjaarBegin, newItem);
+        return result;
+    }
+
+    void OnCancel()
+    {
+        _newRondeZone = null;
+    }
+}

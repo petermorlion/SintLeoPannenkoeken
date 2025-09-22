@@ -4,7 +4,9 @@
     <AuthorizeView Roles="@($"{Roles.RolesForBestellingen}")" Context="childContext">
         <MudNavLink Href="/bestellingen">Bestellingen</MudNavLink>
     </AuthorizeView>
-    <MudNavLink Href="/streefcijfers">Rondes</MudNavLink>
+    <AuthorizeView Roles="@($"{Roles.RolesForChauffeurs}")" Context="childContext">
+        <MudNavLink Href="/rondes">Rondes</MudNavLink>
+    </AuthorizeView>
     <MudNavGroup Title="Rapporten">
         <MudNavLink Href="/rapporten/verkooppertak">Verkoop per tak</MudNavLink>
         <MudNavLink Href="/rapporten/verkoopperlid">Verkoop per lid</MudNavLink>

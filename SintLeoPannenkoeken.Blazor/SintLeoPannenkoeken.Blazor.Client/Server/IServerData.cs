@@ -44,5 +44,9 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         Task DeleteChauffeur(int chauffeurId);
 
         Task<IList<ZoneDto>> GetZones();
+
+
+        Task<IList<RondeDto>> GetRondesForChauffeur(int chauffeurId, int scoutsjaarBegin);
+        Task<RondeDto> CreateRonde(int chauffeurId, int scoutsjaarBegin, CreateRondeDto rondeDto);
     }
 }
