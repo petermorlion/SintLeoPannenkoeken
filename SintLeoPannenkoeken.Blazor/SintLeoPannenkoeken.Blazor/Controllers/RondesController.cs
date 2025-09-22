@@ -24,6 +24,14 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
 
         // POst
 
-        // Delete
+
+
+        [HttpDelete]
+        [Route("{rondeId:int}")]
+        public async Task<IActionResult> Delete(int rondeId)
+        {
+            await _serverData.DeleteRonde(rondeId);
+            return Ok();
+        }
     }
 }

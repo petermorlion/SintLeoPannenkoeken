@@ -71,7 +71,7 @@
 
     async Task OnDelete(RondeDto item)
     {
-        // TODO
+        await _serverData.DeleteRonde(item.Id);
     }
 
     async Task<RondeDto> OnCreate()

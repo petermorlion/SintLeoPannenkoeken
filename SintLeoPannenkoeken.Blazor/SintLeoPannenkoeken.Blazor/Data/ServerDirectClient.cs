@@ -241,6 +241,15 @@ namespace SintLeoPannenkoeken.Blazor.Data
             }
         }
 
+        public async Task DeleteRonde(int rondeId)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                await dbContext.Rondes.Where(s => s.Id == rondeId).ExecuteDeleteAsync();
+                await dbContext.SaveChangesAsync();
+            }
+        }
+
         public async Task UpdateScoutsjaar(ScoutsjaarDto scoutsjaarDto)
         {
             using (var dbContext = _dbContextFactory.CreateDbContext())
