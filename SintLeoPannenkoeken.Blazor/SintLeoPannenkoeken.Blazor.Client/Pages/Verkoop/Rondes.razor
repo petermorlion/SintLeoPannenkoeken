@@ -1,0 +1,109 @@
+﻿@page "/rondes"
+@using SintLeoPannenkoeken.Blazor.Client.Auth
+@using SintLeoPannenkoeken.Blazor.Client.Components
+@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+@using System.Linq;
+
+<MasterDetailPage TDto="RondeDto"
+                  AuthorizedRoles="@($"{Roles.RolesForRondes}")"
+                  Title="Rondes"
+                  DataProvider="@GetRondes"
+                  OnCancel="@OnCancel"
+                  OnCreate="@OnCreate"
+                  OnDelete="@OnDelete"
+                  CanEdit="false"
+                  CanDelete="true"
+                  IsForScoutsjaar="true"
+                  NewItemTitle="Nieuwe ronde toewijzen"
+                  NewItemExpanded="true">
+    <NewItemFormElements>
+        <MudItem xs="12" sm="6">
+            <MudSelect @bind-Value="_newRondeChauffeur" T="ChauffeurDto" Label="Chauffeur" MultiSelection="false"
+                       Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel Required="true" RequiredError="De chauffeur is verplicht"
+                       QuickSearchInterval="TimeSpan.FromSeconds(1)">
+                @foreach (var chauffeur in _chauffeurs)
+                {
+                    <MudSelectItem Value="chauffeur">@($"{chauffeur.Achternaam} {chauffeur.Voornaam}")</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudSelect @bind-Value="_newRondeZone" T="ZoneDto" Label="Zone" MultiSelection="false"
+                       Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel Required="true" RequiredError="De zone is verplicht"
+                       QuickSearchInterval="TimeSpan.FromSeconds(1)">
+                @foreach (var zone in _zones)
+                {
+                    <MudSelectItem Value="zone">@zone.Naam</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+    </NewItemFormElements>
+    
+    <Columns>
+        <PropertyColumn T="RondeDto" TProperty="string" Property="x => x.ZoneNaam" Title="Zone" InitialDirection="SortDirection.Descending" />
+        <PropertyColumn T="RondeDto" TProperty="string" Property="x => x.Gemeente" Title="Gemeente" />
+        <PropertyColumn T="RondeDto" TProperty="int" Property="x => x.Adressen" Title="Adressen" />
+        <PropertyColumn T="RondeDto" TProperty="int" Property="x => x.Bestellingen" Title="Bestellingen" />
+        <PropertyColumn T="RondeDto" TProperty="int" Property="x => x.Pakken" Title="Pakken" />
+        <PropertyColumn T="RondeDto" TProperty="string" Property="x => x.ChauffeurNaam" Title="Chauffeur" />
+    </Columns>
+</MasterDetailPage>
+
+@code {
+    private async Task<IList<RondeDto>> GetRondes(IServerData serverData)
+    {
+        var scoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        var result = await serverData.GetRondes(_currentScoutsjaar);
+        return result;
+    }
+
+    private int _currentScoutsjaar;
+    private ZoneDto? _newRondeZone = null;
+    private ChauffeurDto? _newRondeChauffeur = null;
+    private IList<ZoneDto> _zones = new List<ZoneDto>();
+    private IList<ChauffeurDto> _chauffeurs = new List<ChauffeurDto>();
+
+    [Inject]
+    private IServerData _serverData { get; set; } = default!;
+
+    [Inject]
+    private CurrentScoutsjaarQuerystringParameterProvider _currentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var currentScoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        if (currentScoutsjaar == null)
+        {
+            return;
+        }
+
+        _currentScoutsjaar = currentScoutsjaar.Begin;
+
+        _zones = await _serverData.GetZones();
+        _chauffeurs = await _serverData.GetChauffeurs(_currentScoutsjaar);
+    }
+
+    async Task<RondeDto> OnCreate()
+    {
+        var chauffeurId = _newRondeChauffeur?.Id ?? 0;
+        var newItem = new CreateRondeDto
+        {
+            ZoneId = _newRondeZone?.Id ?? 0
+        };
+
+        var result = await _serverData.CreateRonde(chauffeurId, _currentScoutsjaar, newItem);
+        return result;
+    }
+
+    async Task OnDelete(RondeDto item)
+    {
+        await _serverData.DeleteRonde(item.Id);
+    }
+
+    void OnCancel()
+    {
+        _newRondeZone = null;
+        _newRondeChauffeur = null;
+    }
+}

@@ -47,7 +47,6 @@
         return result;
     }
 
-    private int _currentScoutsjaar;
     private ChauffeurDto? _currentChauffeur;
 
     private IList<ZoneDto> _zones = new List<ZoneDto>();
@@ -68,7 +67,6 @@
             return;
         }
 
-        _currentScoutsjaar = currentScoutsjaar.Begin;
         _zones = await _serverData.GetZones();
 
         _currentChauffeur = await _serverData.GetChauffeur(ScoutsjaarBegin, ChauffeurId);

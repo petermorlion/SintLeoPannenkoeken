@@ -271,5 +271,10 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         {
             await Delete($"/api/rondes/{rondeId}", Roles.RolesForChauffeurs);
         }
+
+        public async Task<IList<RondeDto>> GetRondes(int scoutsjaarBegin)
+        {
+            return await GetList<RondeDto>($"/api/rondes/{scoutsjaarBegin}", Roles.RolesForRondes);
+        }
     }
 }

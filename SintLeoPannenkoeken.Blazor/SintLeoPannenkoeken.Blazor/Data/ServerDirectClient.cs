@@ -778,5 +778,60 @@ namespace SintLeoPannenkoeken.Blazor.Data
                 };
             }
         }
+
+        public async Task<IList<RondeDto>> GetRondes(int scoutsjaarBegin)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var rondes = await dbContext.Scoutsjaren
+                    .Where(sj => sj.Begin == scoutsjaarBegin)
+                    .SelectMany(scoutsjaar => scoutsjaar.Rondes)
+                    .Include(ronde => ronde.Zone)
+                    .ThenInclude(zone => zone.Straten)
+                    .Include(ronde => ronde.Bestuurder)
+                    .ToListAsync();
+
+                var zoneIds = rondes.Select(ronde => ronde.ZoneId).ToList();
+
+                var bestellingen = await dbContext.Scoutsjaren
+                    .Where(sj => sj.Begin == scoutsjaarBegin)
+                    .SelectMany(scoutsjaar => scoutsjaar.Bestellingen)
+                    .Include(bestelling => bestelling.Straat)
+                    .Where(bestelling => zoneIds.Contains(bestelling.Straat.ZoneId))
+                    .ToListAsync();
+
+                var bestellingenPerZone = bestellingen
+                    .GroupBy(b => b.Straat.ZoneId)
+                    .ToDictionary(g => g.Key, g => g.ToList());
+
+                var rondeDtos = rondes == null
+                    ? new List<RondeDto>()
+                    : rondes.Select(ronde => {
+
+                        var bestellingenForZone = bestellingenPerZone.ContainsKey(ronde.ZoneId) ? bestellingenPerZone[ronde.ZoneId] : new List<Bestelling>();
+                        var adressenCount = bestellingen.GroupBy(b => $"{b.StraatId}-{b.Nummer}").Count();
+                        var bestellingenCount = bestellingen.Count;
+                        var pakkenCount = bestellingen.Sum(b => b.AantalPakken);
+                        
+                        return new RondeDto
+                        {
+                            Id = ronde.Id,
+                            ChauffeurId = ronde.BestuurderId,
+                            ChauffeurNaam = ronde.Bestuurder.Achternaam + " " + ronde.Bestuurder.Voornaam,
+                            ZoneId = ronde.ZoneId,
+                            ZoneNaam = ronde.Zone.Naam,
+                            Gemeente = ronde.Zone.Gemeente,
+                            Straten = ronde.Zone.Straten.Count,
+                            Kaartnummer = ronde.Zone.KaartNummer ?? "",
+                            ScoutsjaarId = ronde.ScoutsjaarId,
+                            Adressen = adressenCount,
+                            Bestellingen = bestellingenCount,
+                            Pakken = pakkenCount
+                        };
+                    }).ToList();
+
+                return rondeDtos;
+            }
+        }
     }
 }

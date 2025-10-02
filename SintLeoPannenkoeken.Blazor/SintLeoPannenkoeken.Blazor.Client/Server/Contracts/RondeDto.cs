@@ -11,6 +11,8 @@
         public string Kaartnummer { get; init; } = "";
         public int Straten { get; init; }
         public int Pakken { get; init; }
+        public int Adressen { get; init; }
+        public int Bestellingen { get; init; }
         public int ScoutsjaarId { get; init; }
     }
 }

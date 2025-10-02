@@ -20,7 +20,13 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
             _serverData = serverData;
         }
 
-        // Get all rondes for scoutsjaar
+        [HttpGet]
+        [Route("{scoutsjaarBegin:int}")]
+        public async Task<IActionResult> GetRondes(int scoutsjaarBegin)
+        {
+            var result = await _serverData.GetRondes(scoutsjaarBegin);
+            return Ok(result);
+        }
 
         // POst
 

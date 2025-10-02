@@ -129,14 +129,12 @@
     public Func<IServerData, Task<IList<TDto>>> DataProvider { get; set; } = default!;
 
     [Parameter]
-    [EditorRequired]
     public Func<Task<TDto>> OnCreate { get; set; } = default!;
 
     [Parameter]
     public EventCallback<TDto> OnUpdate { get; set; }
 
     [Parameter]
-    [EditorRequired]
     public EventCallback OnCancel { get; set; }
 
     [Parameter]
