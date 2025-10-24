@@ -4,10 +4,10 @@
     <img src="zeescouts.svg" style="max-height: 50px;" />
 
     <AuthorizeView Roles="@($"{Roles.RolesForBestellingen}")" Context="childContext">
-        <MudNavLink Href="/bestellingen">Bestellingen</MudNavLink>
+        <MudNavLink Href="/verkoop/bestellingen">Bestellingen</MudNavLink>
     </AuthorizeView>
     <AuthorizeView Roles="@($"{Roles.RolesForChauffeurs}")" Context="childContext">
-        <MudNavLink Href="/rondes">Rondes</MudNavLink>
+        <MudNavLink Href="/verdeling/rondes">Rondes</MudNavLink>
     </AuthorizeView>
     <MudNavGroup Title="Rapporten">
         <MudNavLink Href="/rapporten/verkooppertak">Verkoop per tak</MudNavLink>
