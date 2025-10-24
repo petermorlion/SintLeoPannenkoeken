@@ -28,9 +28,13 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
             return Ok(result);
         }
 
-        // POst
-
-
+        [HttpGet]
+        [Route("{scoutsjaarBegin:int}/ronde/{rondeId:int}")]
+        public async Task<IActionResult> GetRonde(int scoutsjaarBegin, int rondeId)
+        {
+            var result = await _serverData.GetRonde(scoutsjaarBegin, rondeId);
+            return Ok(result);
+        }
 
         [HttpDelete]
         [Route("{rondeId:int}")]

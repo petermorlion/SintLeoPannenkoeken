@@ -1,0 +1,70 @@
+﻿@page "/verdeling/ronde/{rondeId}"
+@using SintLeoPannenkoeken.Blazor.Client.Auth
+@using SintLeoPannenkoeken.Blazor.Client.Components
+@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+@using System.Linq;
+
+<MasterDetailPage TDto="RondeDetailsBestellingDto"
+                  AuthorizedRoles="@($"{Roles.RolesForRondes}")"
+                  Title="@($"Zone {RondeDetails?.ZoneNaam}")"
+                  DataProvider="@GetRonde"
+                  CanAdd="false"
+                  CanEdit="false"
+                  CanDelete="false"
+                  IsForScoutsjaar="false"
+                  NewItemTitle="Nieuwe ronde toewijzen"
+                  NewItemExpanded="true">
+    <ContentBeforeData>
+        <h3>@($"{RondeDetails?.ZoneNaam} - {RondeDetails?.PostNummer} {RondeDetails?.Gemeente} - {RondeDetails?.ChauffeurNaam}")</h3>
+        <MudChip T="string" Color="Color.Info">Geleverd: @RondeDetails?.AantalGeleverd</MudChip>
+        <MudChip T="string" Color="Color.Info">Niet geleverd: @RondeDetails?.AantalNietGeleverd</MudChip>
+        <MudChip T="string" Color="Color.Info">Totaal: @RondeDetails?.TotaalAantal</MudChip>
+    </ContentBeforeData>
+    <Columns>
+        <PropertyColumn T="RondeDetailsBestellingDto" TProperty="string" Property="x => x.Straat" Title="Straat" InitialDirection="SortDirection.Ascending" />
+        <PropertyColumn T="RondeDetailsBestellingDto" TProperty="string" Property="x => x.Nummer" Title="Nummer" InitialDirection="SortDirection.Ascending" />
+        <PropertyColumn T="RondeDetailsBestellingDto" TProperty="string" Property="x => x.Bus" Title="Bus" />
+        <PropertyColumn T="RondeDetailsBestellingDto" TProperty="string" Property="x => x.Naam" Title="Naam" />
+        <PropertyColumn T="RondeDetailsBestellingDto" TProperty="int" Property="x => x.AantalPakken" Title="Aantal" />
+        <TemplateColumn T="RondeDetailsBestellingDto" Title="Geleverd">
+            <CellTemplate>
+                <BooleanIcon T="BestellingDto" Value="@context.Item.Geleverd" />
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MasterDetailPage>
+
+@code {
+    private async Task<IList<RondeDetailsBestellingDto>> GetRonde(IServerData serverData)
+    {
+        var scoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        RondeDetails = await serverData.GetRonde(_currentScoutsjaar, int.Parse(RondeId));
+        return RondeDetails.Bestellingen;
+    }
+
+    private int _currentScoutsjaar;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var currentScoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        if (currentScoutsjaar == null)
+        {
+            return;
+        }
+
+        _currentScoutsjaar = currentScoutsjaar.Begin;
+    }
+
+    [Parameter]
+    public string RondeId { get; set; }
+
+    [Parameter]
+    public RondeDetailsDto? RondeDetails { get; set; }
+
+    [Inject]
+    private IServerData _serverData { get; set; } = default!;
+
+    [Inject]
+    private CurrentScoutsjaarQuerystringParameterProvider _currentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
+}

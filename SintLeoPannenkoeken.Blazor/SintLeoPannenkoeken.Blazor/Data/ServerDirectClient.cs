@@ -702,7 +702,8 @@ namespace SintLeoPannenkoeken.Blazor.Data
 
                 var rondeDtos = rondes == null
                     ? new List<RondeDto>()
-                    : rondes.Select(ronde => {
+                    : rondes.Select(ronde =>
+                    {
                         var aantalPakken = bestellingen
                         .Where(bestelling => bestelling.Straat.ZoneId == ronde.ZoneId)
                         .Sum(bestelling => bestelling.AantalPakken);
@@ -735,7 +736,7 @@ namespace SintLeoPannenkoeken.Blazor.Data
                     .Include(ronde => ronde.Bestuurder)
                     .SingleOrDefaultAsync(ronde => ronde.ScoutsjaarId == scoutsjaarModel.Id
                         && ronde.ZoneId == createRondeDto.ZoneId);
-                
+
                 if (existing != null)
                 {
                     throw new ArgumentException($"Deze zonde is al toegekend aan {existing.Bestuurder.Achternaam} {existing.Bestuurder.Voornaam}");
@@ -791,13 +792,10 @@ namespace SintLeoPannenkoeken.Blazor.Data
                     .Include(ronde => ronde.Bestuurder)
                     .ToListAsync();
 
-                var zoneIds = rondes.Select(ronde => ronde.ZoneId).ToList();
-
                 var bestellingen = await dbContext.Scoutsjaren
                     .Where(sj => sj.Begin == scoutsjaarBegin)
                     .SelectMany(scoutsjaar => scoutsjaar.Bestellingen)
                     .Include(bestelling => bestelling.Straat)
-                    .Where(bestelling => zoneIds.Contains(bestelling.Straat.ZoneId))
                     .ToListAsync();
 
                 var bestellingenPerZone = bestellingen
@@ -806,13 +804,13 @@ namespace SintLeoPannenkoeken.Blazor.Data
 
                 var rondeDtos = rondes == null
                     ? new List<RondeDto>()
-                    : rondes.Select(ronde => {
-
+                    : rondes.Select(ronde =>
+                    {
                         var bestellingenForZone = bestellingenPerZone.ContainsKey(ronde.ZoneId) ? bestellingenPerZone[ronde.ZoneId] : new List<Bestelling>();
-                        var adressenCount = bestellingen.GroupBy(b => $"{b.StraatId}-{b.Nummer}").Count();
-                        var bestellingenCount = bestellingen.Count;
-                        var pakkenCount = bestellingen.Sum(b => b.AantalPakken);
-                        
+                        var adressenCount = bestellingenForZone.GroupBy(b => $"{b.StraatId}-{b.Nummer}").Count();
+                        var bestellingenCount = bestellingenForZone.Count;
+                        var pakkenCount = bestellingenForZone.Sum(b => b.AantalPakken);
+
                         return new RondeDto
                         {
                             Id = ronde.Id,
@@ -828,9 +826,59 @@ namespace SintLeoPannenkoeken.Blazor.Data
                             Bestellingen = bestellingenCount,
                             Pakken = pakkenCount
                         };
-                    }).ToList();
+                    })
+                    .OrderBy(x => x.ZoneNaam)
+                    .ToList();
 
                 return rondeDtos;
+            }
+        }
+
+        public async Task<RondeDetailsDto> GetRonde(int scoutsjaarBegin, int rondeId)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                Scoutsjaar? sj = dbContext.Scoutsjaren.SingleOrDefault(s => s.Begin == scoutsjaarBegin);
+                var ronde = await dbContext.Rondes
+                    .Include(x => x.Bestuurder)
+                    .Include(x => x.Zone)
+                    .SingleOrDefaultAsync(x => x.Id == rondeId && x.ScoutsjaarId == sj.Id);
+
+                if (ronde == null)
+                {
+                    return new RondeDetailsDto();
+                }
+
+                var zone = ronde.Zone;
+
+                var bestellingen = await dbContext.Bestellingen
+                    .Include(b => b.Straat)
+                    .Where(b => b.Straat.ZoneId == ronde.ZoneId && b.ScoutsjaarId == sj.Id)
+                    .ToListAsync();
+
+                var rondeDetailsDto = new RondeDetailsDto
+                {
+                    Id = ronde.Id,
+                    ChauffeurId = ronde.BestuurderId,
+                    ChauffeurNaam = ronde.Bestuurder != null ? $"{ronde.Bestuurder.Voornaam} {ronde.Bestuurder.Achternaam}" : "",
+                    ZoneId = zone != null ? zone.Id : 0,
+                    ZoneNaam = zone != null ? zone.Naam : "",
+                    PostNummer = zone?.PostNummer ?? 0,
+                    Gemeente = zone != null ? zone.Gemeente : "",
+                    ScoutsjaarId = sj.Id,
+                    Bestellingen = bestellingen.Select(b => new RondeDetailsBestellingDto
+                    {
+                        BestellingId = b.Id,
+                        Naam = b.Naam,
+                        Straat = b.Straat.Naam,
+                        Nummer = b.Nummer,
+                        Bus = b.Bus,
+                        AantalPakken = b.AantalPakken,
+                        Geleverd = b.Geleverd
+                    }).ToList()
+                };
+
+                return rondeDetailsDto;
             }
         }
     }

@@ -52,5 +52,6 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         Task DeleteRonde(int rondeId);
 
         Task<IList<RondeDto>> GetRondes(int scoutsjaarBegin);
+        Task<RondeDetailsDto> GetRonde(int scoutsjaarBegin, int rondeId);
     }
 }
