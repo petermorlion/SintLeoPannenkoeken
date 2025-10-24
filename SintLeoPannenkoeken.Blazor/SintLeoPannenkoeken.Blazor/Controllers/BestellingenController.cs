@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Blazor.Client.Auth;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
@@ -48,6 +49,15 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
         {
             await _serverData.DeleteBestelling(bestellingId);
             return Ok();
+        }
+
+        [HttpPut]
+        [Route("{bestellingId:int}/delivery")]
+        public async Task<IActionResult> Delivery(int bestellingId, [FromBody] BestellingGeleverdDto dto)
+        {
+            await _serverData.UpdateGeleverd(bestellingId, dto.Geleverd);
+
+            return NoContent();
         }
     }
 }

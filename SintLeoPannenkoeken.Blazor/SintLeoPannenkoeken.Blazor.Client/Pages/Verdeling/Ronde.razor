@@ -29,7 +29,23 @@
         <PropertyColumn T="RondeDetailsBestellingDto" TProperty="int" Property="x => x.AantalPakken" Title="Aantal" />
         <TemplateColumn T="RondeDetailsBestellingDto" Title="Geleverd">
             <CellTemplate>
-                <BooleanIcon T="BestellingDto" Value="@context.Item.Geleverd" />
+                @if (context.Item.Geleverd)
+                {
+                    <MudChip 
+                        T="string" 
+                        Color="Color.Success"
+                        OnClick="@(async () => await OnGeleverdClicked(context.Item))"
+                        Icon="@Icons.Material.Filled.Check"
+                        title="Bestelling is geleverd. Klik om te markeren als niet geleverd.">Ja</MudChip>
+                }
+                else
+                {
+                    <MudChip 
+                        T="string" 
+                        Color="Color.Dark" 
+                        OnClick="@(async () => await OnGeleverdClicked(context.Item))"
+                        title="Bestelling is niet geleverd. Klik om te markeren als geleverd.">Nee</MudChip>
+                }
             </CellTemplate>
         </TemplateColumn>
     </Columns>
@@ -67,4 +83,10 @@
 
     [Inject]
     private CurrentScoutsjaarQuerystringParameterProvider _currentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
+
+    public async Task OnGeleverdClicked(RondeDetailsBestellingDto bestelling)
+    {
+        await _serverData.UpdateGeleverd(bestelling.BestellingId, !bestelling.Geleverd);
+        bestelling.Geleverd = !bestelling.Geleverd;
+    }
 }

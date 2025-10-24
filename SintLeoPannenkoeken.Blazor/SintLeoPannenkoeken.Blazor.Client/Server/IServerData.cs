@@ -30,6 +30,7 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         Task<BestellingDto> CreateBestelling(NewBestellingDto bestelling);
         Task UpdateBestelling(UpdateBestellingDto bestelling);
         Task DeleteBestelling(int bestellingId);
+        Task UpdateGeleverd(int bestellingId, bool gelevered);
 
 
 

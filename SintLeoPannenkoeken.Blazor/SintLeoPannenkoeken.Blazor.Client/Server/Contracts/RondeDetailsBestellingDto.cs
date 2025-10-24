@@ -8,6 +8,6 @@
         public string Nummer { get; init; } = "";
         public string Bus { get; init; } = "";
         public int AantalPakken { get; init; }
-        public bool Geleverd { get; init; }
+        public bool Geleverd { get; set; }
     }
 }

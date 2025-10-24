@@ -881,5 +881,20 @@ namespace SintLeoPannenkoeken.Blazor.Data
                 return rondeDetailsDto;
             }
         }
+
+        public async Task UpdateGeleverd(int bestellingId, bool gelevered)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var bestelling = await dbContext.Bestellingen.SingleOrDefaultAsync(b => b.Id == bestellingId);
+                if (bestelling == null)
+                {
+                    return;
+                }
+
+                bestelling.Geleverd = gelevered;
+                await dbContext.SaveChangesAsync();
+            }
+        }
     }
 }
