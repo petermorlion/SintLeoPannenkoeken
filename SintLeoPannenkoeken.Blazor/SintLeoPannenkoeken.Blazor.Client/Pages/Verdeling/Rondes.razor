@@ -41,11 +41,13 @@
     </NewItemFormElements>
     
     <Columns>
-        <PropertyColumn T="RondeDto" TProperty="string" Property="x => x.ZoneNaam" Title="Zone" InitialDirection="SortDirection.Descending" />
+        <PropertyColumn T="RondeDto" TProperty="string" Property="x => x.ZoneNaam" Title="Zone" InitialDirection="SortDirection.Ascending" />
         <PropertyColumn T="RondeDto" TProperty="string" Property="x => x.Gemeente" Title="Gemeente" />
         <PropertyColumn T="RondeDto" TProperty="int" Property="x => x.Adressen" Title="Adressen" />
         <PropertyColumn T="RondeDto" TProperty="int" Property="x => x.Bestellingen" Title="Bestellingen" />
         <PropertyColumn T="RondeDto" TProperty="int" Property="x => x.Pakken" Title="Pakken" />
+        <PropertyColumn T="RondeDto" TProperty="int" Property="x => x.Geleverd" Title="Geleverd" />
+        <PropertyColumn T="RondeDto" TProperty="int" Property="x => x.NietGeleverd" Title="Niet geleverd" />
         <PropertyColumn T="RondeDto" TProperty="string" Property="x => x.ChauffeurNaam" Title="Chauffeur" />
         <TemplateColumn T="RondeDto" CellClass="justify-end">
             <CellTemplate>

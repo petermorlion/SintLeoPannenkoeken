@@ -13,6 +13,8 @@
         public int Pakken { get; init; }
         public int Adressen { get; init; }
         public int Bestellingen { get; init; }
+        public int Geleverd { get; init; }
+        public int NietGeleverd { get; init; }
         public int ScoutsjaarId { get; init; }
     }
 }
