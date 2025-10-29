@@ -810,6 +810,8 @@ namespace SintLeoPannenkoeken.Blazor.Data
                         var adressenCount = bestellingenForZone.GroupBy(b => $"{b.StraatId}-{b.Nummer}").Count();
                         var bestellingenCount = bestellingenForZone.Count;
                         var pakkenCount = bestellingenForZone.Sum(b => b.AantalPakken);
+                        var geleverdCount = bestellingenForZone.Where(b => b.Geleverd).Count();
+                        var nietGeleverdCount = bestellingenForZone.Where(b => !b.Geleverd).Count();
 
                         return new RondeDto
                         {
@@ -824,6 +826,8 @@ namespace SintLeoPannenkoeken.Blazor.Data
                             ScoutsjaarId = ronde.ScoutsjaarId,
                             Adressen = adressenCount,
                             Bestellingen = bestellingenCount,
+                            Geleverd = geleverdCount,
+                            NietGeleverd = nietGeleverdCount,
                             Pakken = pakkenCount
                         };
                     })
@@ -894,6 +898,43 @@ namespace SintLeoPannenkoeken.Blazor.Data
 
                 bestelling.Geleverd = gelevered;
                 await dbContext.SaveChangesAsync();
+            }
+        }
+
+        public async Task<ChauffeurRondeDetailsDto> GetChauffeurRondeDetails(int scoutsjaarBegin, int chauffeurId)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var zoneIds = await dbContext.Scoutsjaren
+                    .Where(sj => sj.Begin == scoutsjaarBegin)
+                    .SelectMany(scoutsjaar => scoutsjaar.Rondes)
+                    .Where(ronde => ronde.BestuurderId == chauffeurId)
+                    .Select(x => x.ZoneId)
+                    .ToListAsync();
+
+                var bestellingen = await dbContext.Scoutsjaren
+                    .Where(sj => sj.Begin == scoutsjaarBegin)
+                    .SelectMany(scoutsjaar => scoutsjaar.Bestellingen)
+                    .Include(bestelling => bestelling.Straat)
+                    .ThenInclude(straat => straat.Zone)
+                    .Where(b => zoneIds.Contains(b.Straat.ZoneId))
+                    .ToListAsync();
+
+                var bestuurder = dbContext.Bestuurders.Single(b => b.Id == chauffeurId);
+
+                return new ChauffeurRondeDetailsDto
+                {
+                    ChauffeurNaam = $"{bestuurder.Voornaam} {bestuurder.Achternaam}",
+                    Details = bestellingen.Select(b => new ChauffeurRondeDetailDto
+                    {
+                        ZoneNaam = b.Straat?.Zone?.Naam ?? "",
+                        Naam = b.Naam,
+                        Straat = b.Straat?.Naam ?? "",
+                        Nummer = b.Nummer,
+                        Bus = b.Bus,
+                        AantalPakken = b.AantalPakken,
+                    }).ToList()
+                };
             }
         }
     }

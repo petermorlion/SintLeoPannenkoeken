@@ -10,7 +10,8 @@
         public const string RolesForChauffeurs = $"{Admin},{FinanciePloeg}";
         public const string RolesForGebruikers = $"{Admin},{FinanciePloeg}";
         public const string RolesForLeden = $"{Admin}";
-        public const string RolesForRondes= $"{Admin},{FinanciePloeg}";
+        public const string RolesForRapporten = $"{Admin},{FinanciePloeg}";
+        public const string RolesForRondes = $"{Admin},{FinanciePloeg}";
         public const string RolesForScoutsjaren = $"{Admin},{FinanciePloeg}";
         public const string RolesForStraten= $"{Admin},{FinanciePloeg}";
         public const string RolesForStreefcijfers = $"{Admin},{FinanciePloeg}";

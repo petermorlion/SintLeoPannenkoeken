@@ -1,0 +1,58 @@
+﻿@page "/verdeling/chauffeurteverdelen/{chauffeurId}"
+@using SintLeoPannenkoeken.Blazor.Client.Auth
+@using SintLeoPannenkoeken.Blazor.Client.Components
+@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+@using System.Linq;
+
+<MasterDetailPage TDto="ChauffeurRondeDetailDto"
+                  AuthorizedRoles="@($"{Roles.RolesForRondes}")"
+                  Title="@($"Chauffeur {Details?.ChauffeurNaam}")"
+                  DataProvider="@GetDetails"
+                  CanAdd="false"
+                  CanEdit="false"
+                  CanDelete="false"
+                  IsForScoutsjaar="true">    
+    <Columns>
+        <PropertyColumn T="ChauffeurRondeDetailDto" TProperty="string" Property="x => x.ZoneNaam" Title="Zone" InitialDirection="SortDirection.Ascending" />
+        <PropertyColumn T="ChauffeurRondeDetailDto" TProperty="string" Property="x => x.Straat" Title="Straat" InitialDirection="SortDirection.Ascending" />
+        <PropertyColumn T="ChauffeurRondeDetailDto" TProperty="string" Property="x => x.Nummer" Title="Nummer" />
+        <PropertyColumn T="ChauffeurRondeDetailDto" TProperty="string" Property="x => x.Bus" Title="Bus" />
+        <PropertyColumn T="ChauffeurRondeDetailDto" TProperty="string" Property="x => x.Naam" Title="Naam" />
+        <PropertyColumn T="ChauffeurRondeDetailDto" TProperty="int" Property="x => x.AantalPakken" Title="Aantal" />
+    </Columns>
+</MasterDetailPage>
+
+@code {
+    private async Task<IList<ChauffeurRondeDetailDto>> GetDetails(IServerData serverData)
+    {
+        var scoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        Details = await serverData.GetChauffeurRondeDetails(_currentScoutsjaar, int.Parse(ChauffeurId));
+        return Details.Details;
+    }
+
+    private int _currentScoutsjaar;
+
+    [Parameter]
+    public ChauffeurRondeDetailsDto? Details { get; set; }
+
+    [Parameter]
+    public string ChauffeurId { get; set; } = string.Empty;
+
+    [Inject]
+    private IServerData _serverData { get; set; } = default!;
+
+    [Inject]
+    private CurrentScoutsjaarQuerystringParameterProvider _currentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var currentScoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        if (currentScoutsjaar == null)
+        {
+            return;
+        }
+
+        _currentScoutsjaar = currentScoutsjaar.Begin;
+    }
+}
