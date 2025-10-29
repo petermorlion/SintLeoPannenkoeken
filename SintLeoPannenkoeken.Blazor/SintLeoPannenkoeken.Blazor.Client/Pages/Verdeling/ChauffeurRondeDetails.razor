@@ -7,7 +7,7 @@
 
 <MasterDetailPage TDto="ChauffeurRondeDetailDto"
                   AuthorizedRoles="@($"{Roles.RolesForRondes}")"
-                  Title="@($"Chauffeur {Details?.ChauffeurNaam}")"
+                  Title="@($"{Details?.ChauffeurNaam}")"
                   DataProvider="@GetDetails"
                   CanAdd="false"
                   CanEdit="false"
@@ -28,6 +28,7 @@
     {
         var scoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
         Details = await serverData.GetChauffeurRondeDetails(_currentScoutsjaar, int.Parse(ChauffeurId));
+        StateHasChanged();
         return Details.Details;
     }
 

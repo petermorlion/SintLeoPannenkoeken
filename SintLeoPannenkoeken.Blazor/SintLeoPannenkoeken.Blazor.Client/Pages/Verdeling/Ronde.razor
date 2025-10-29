@@ -56,6 +56,7 @@
     {
         var scoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
         RondeDetails = await serverData.GetRonde(_currentScoutsjaar, int.Parse(RondeId));
+        StateHasChanged();
         return RondeDetails.Bestellingen;
     }
 
