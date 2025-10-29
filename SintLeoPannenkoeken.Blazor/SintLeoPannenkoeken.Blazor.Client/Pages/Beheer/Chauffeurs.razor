@@ -28,16 +28,19 @@
         <PropertyColumn T="ChauffeurDto" TProperty="string" Property="x => x.Voornaam" Title="Voornaam" />
         <PropertyColumn T="ChauffeurDto" TProperty="int" Property="x => x.AantalBestellingen" Title="Bestellingen" />
         <PropertyColumn T="ChauffeurDto" TProperty="int" Property="x => x.AantalPakken" Title="Pakken" />
-        <TemplateColumn T="ChauffeurDto" CellClass="justify-end">
-            <CellTemplate>
-                <MudIconButton title="Rondes voor deze chauffeur"
-                               Size="@Size.Small" 
-                               Icon="@Icons.Material.Outlined.DirectionsCar" 
-                               Color="Color.Primary"
-                               Href="@($"beheer/chauffeurs/{context.Item.Id}/rondes/{_currentScoutsjaar}?scoutsjaar={_currentScoutsjaar}")" />
-            </CellTemplate>
-        </TemplateColumn>
     </Columns>
+    <ActionColumnContent>
+        <MudIconButton title="Rondes voor deze chauffeur"
+                       Size="@Size.Small"
+                       Icon="@Icons.Material.Outlined.DirectionsCar"
+                       Color="Color.Primary"
+                       Href="@($"beheer/chauffeurs/{context.Item.Id}/rondes/{_currentScoutsjaar}?scoutsjaar={_currentScoutsjaar}")" />
+        <MudIconButton title="Detaillijst voor verdeling"
+                       Size="@Size.Small"
+                       Icon="@Icons.Material.Outlined.Print"
+                       Color="Color.Primary"
+                       Href="@($"verdeling/chauffeurteverdelen/{context.Item.Id}?scoutsjaar={_currentScoutsjaar}")" />
+    </ActionColumnContent>
 </MasterDetailPage>
 
 @code {

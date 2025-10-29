@@ -31,16 +31,14 @@
         <PropertyColumn T="RondeDto" TProperty="string" Property="x => x.Kaartnummer" Title="Kaartnummer" />
         <PropertyColumn T="RondeDto" TProperty="int" Property="x => x.Straten" Title="Straten" />
         <PropertyColumn T="RondeDto" TProperty="int" Property="x => x.Pakken" Title="Pakken" />
-        <TemplateColumn T="RondeDto" CellClass="justify-end">
-            <CellTemplate>
-                <MudIconButton title="Details"
-                               Size="@Size.Small"
-                               Icon="@Icons.Material.Outlined.Print"
-                               Color="Color.Primary"
-                               Href="@($"verdeling/ronde/{context.Item.Id}?scoutsjaar={_currentScoutsjaar}")" />
-            </CellTemplate>
-        </TemplateColumn>
     </Columns>
+    <ActionColumnContent>
+        <MudIconButton title="Details"
+                       Size="@Size.Small"
+                       Icon="@Icons.Material.Outlined.Print"
+                       Color="Color.Primary"
+                       Href="@($"verdeling/ronde/{context.Item.Id}?scoutsjaar={_currentScoutsjaar}")" />
+    </ActionColumnContent>
 </MasterDetailPage>
 
 @code {

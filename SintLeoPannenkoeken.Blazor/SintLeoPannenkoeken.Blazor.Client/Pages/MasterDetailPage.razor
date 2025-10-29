@@ -63,7 +63,11 @@
             {
                 <TemplateColumn T="TDto" CellClass="d-flex justify-end">
                     <CellTemplate>
-                         @if (CanEdit)
+                        @if (ActionColumnContent != null)
+                        {
+                            @ActionColumnContent(context)
+                        }
+                        @if (CanEdit)
                         {
                             <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Color="Color.Primary" OnClick="@context.Actions.StartEditingItemAsync" title="Bewerken" />
                         }           
@@ -125,6 +129,9 @@
 
     [Parameter]
     public RenderFragment Columns { get; set; } = builder => { };
+
+    [Parameter]
+    public RenderFragment<CellContext<TDto>>? ActionColumnContent { get; set; } = null;
 
     [Parameter]
     public RenderFragment ContentAfterData { get; set; } = builder => { };
