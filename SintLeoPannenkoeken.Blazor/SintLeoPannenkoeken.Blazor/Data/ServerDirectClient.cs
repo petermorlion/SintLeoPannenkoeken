@@ -2,6 +2,7 @@
 using SintLeoPannenkoeken.Blazor.Client.Pages.Beheer;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
+using SintLeoPannenkoeken.Blazor.External;
 using SintLeoPannenkoeken.Blazor.Models;
 
 namespace SintLeoPannenkoeken.Blazor.Data
@@ -15,15 +16,18 @@ namespace SintLeoPannenkoeken.Blazor.Data
         private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly UsersService _usersService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly HereGeoCodingService _hereGeoCodingService;
 
         public ServerDirectClient(ILogger<ServerDirectClient> logger,
             IDbContextFactory<ApplicationDbContext> dbContextFactory,
-            UsersService usersService, IHttpContextAccessor httpContextAccessor)
+            UsersService usersService, IHttpContextAccessor httpContextAccessor,
+            HereGeoCodingService hereGeoCodingService)
         {
             _logger = logger;
             _dbContextFactory = dbContextFactory;
             _usersService = usersService;
             _httpContextAccessor = httpContextAccessor;
+            _hereGeoCodingService = hereGeoCodingService;
         }
 
         public async Task<IList<GebruikerDto>> GetGebruikers()
@@ -932,10 +936,33 @@ namespace SintLeoPannenkoeken.Blazor.Data
                         Straat = b.Straat?.Naam ?? "",
                         Nummer = b.Nummer,
                         Bus = b.Bus,
+                        PostNummer = b.Straat?.Zone?.PostNummer.ToString() ?? "",
+                        Gemeente = b.Straat?.Zone?.Gemeente ?? "",
                         AantalPakken = b.AantalPakken,
                     }).ToList()
                 };
             }
+        }
+
+        public async Task<ChauffeurRondeDetailsDto> GetChauffeurRondeDetailsRoute(int scoutsjaarBegin, int chauffeurId)
+        {
+            var result = await GetChauffeurRondeDetails(scoutsjaarBegin, chauffeurId);
+
+            foreach (var detail in result.Details)
+            {
+                var response = await _hereGeoCodingService.GetGeocode(detail.Straat, detail.Nummer, detail.PostNummer, detail.Gemeente);
+                var firstItem = response.Items.FirstOrDefault();
+                if (firstItem != null)
+                {
+                    detail.Position = new PositionDto
+                    {
+                        Latitude = firstItem.Position.Lat,
+                        Longitude = firstItem.Position.Lng
+                    };
+                }
+            }
+
+            return result;
         }
     }
 }

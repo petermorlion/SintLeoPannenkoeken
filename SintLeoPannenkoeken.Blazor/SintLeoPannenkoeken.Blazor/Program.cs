@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using SintLeoPannenkoeken.Blazor.Client;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Components;
 using SintLeoPannenkoeken.Blazor.Components.Account;
 using SintLeoPannenkoeken.Blazor.Data;
+using SintLeoPannenkoeken.Blazor.External;
 using SintLeoPannenkoeken.Blazor.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -105,6 +107,11 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
+});
+
+builder.Services.AddHttpClient<HereGeoCodingService>((serviceProvider, client) =>
+{
+    client.BaseAddress = new Uri("https://geocode.search.hereapi.com");
 });
 
 var app = builder.Build();

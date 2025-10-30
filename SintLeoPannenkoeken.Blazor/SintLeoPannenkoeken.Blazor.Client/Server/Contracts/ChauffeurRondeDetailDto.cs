@@ -9,5 +9,8 @@
         public string Bus { get; init; } = "";
         public string Naam { get; init; } = "";
         public int AantalPakken { get; init; }
+        public string PostNummer { get; init; } = "";
+        public string Gemeente { get; init; } = "";
+        public PositionDto? Position { get; set; }
     }
 }

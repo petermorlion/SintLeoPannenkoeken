@@ -12,7 +12,10 @@
                   CanAdd="false"
                   CanEdit="false"
                   CanDelete="false"
-                  IsForScoutsjaar="true">    
+                  IsForScoutsjaar="true">
+    <ContentBeforeData>
+        <MudButton Href="@($"/verdeling/chauffeurteverdelen/{ChauffeurId}/map?scoutsjaar={_currentScoutsjaar}")">Bekijk route voorstel</MudButton>
+    </ContentBeforeData>
     <Columns>
         <PropertyColumn T="ChauffeurRondeDetailDto" TProperty="string" Property="x => x.ZoneNaam" Title="Zone" InitialDirection="SortDirection.Ascending" />
         <PropertyColumn T="ChauffeurRondeDetailDto" TProperty="string" Property="x => x.Straat" Title="Straat" InitialDirection="SortDirection.Ascending" />

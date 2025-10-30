@@ -13,7 +13,8 @@
                   OnCreate="@OnCreate"
                   OnUpdate="@OnUpdate"
                   OnCancel="@OnCancel"
-                  OnDelete="@OnDelete">
+                  OnDelete="@OnDelete"
+                  NewItemExpanded="true">
     <NewItemFormElements>
         <MudItem xs="12" sm="6">
             <MudTextField @bind-Value="_newChauffeurAchternaam" T="string" Label="Achternaam" Required="true" RequiredError="De achternaam is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />

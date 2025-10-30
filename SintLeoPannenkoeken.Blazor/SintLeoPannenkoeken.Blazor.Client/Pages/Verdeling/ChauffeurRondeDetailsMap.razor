@@ -1,0 +1,48 @@
+﻿@page "/verdeling/chauffeurteverdelen/{chauffeurId}/map"
+@using SintLeoPannenkoeken.Blazor.Client.Auth
+@using SintLeoPannenkoeken.Blazor.Client.Components
+@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+@using System.Linq;
+
+<PageTitle>Ronde voorstel</PageTitle>
+<h1>Ronde voorstel</h1>
+
+<RoleAuthorizedView Roles="@($"{Roles.RolesForRondes}")">
+    @foreach (var d in Details?.Details ?? Enumerable.Empty<ChauffeurRondeDetailDto>())
+    {
+        <div>
+            @d.Straat @d.Nummer - @d.AantalPakken pak(ken) - Lat: @d.Position?.Latitude, Lng: @d.Position?.Longitude
+        </div>
+    }
+</RoleAuthorizedView>
+
+@code {
+    private int _currentScoutsjaar;
+
+    [Parameter]
+    public ChauffeurRondeDetailsDto? Details { get; set; }
+
+    [Parameter]
+    public string ChauffeurId { get; set; } = string.Empty;
+
+    [Inject]
+    private IServerData _serverData { get; set; } = default!;
+
+    [Inject]
+    private CurrentScoutsjaarQuerystringParameterProvider _currentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var currentScoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        if (currentScoutsjaar == null)
+        {
+            return;
+        }
+
+        _currentScoutsjaar = currentScoutsjaar.Begin;
+
+        Details = await _serverData.GetChauffeurRondeDetailsRoute(_currentScoutsjaar, int.Parse(ChauffeurId));
+        StateHasChanged();
+    }
+}
