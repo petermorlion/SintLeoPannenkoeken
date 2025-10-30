@@ -10,7 +10,7 @@ namespace SintLeoPannenkoeken.Blazor.External
         public HereGeoCodingService(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
-            _hereApiKey = configuration["HereApiKey"] ?? throw new ArgumentNullException("HereApiKey not configured");
+            _hereApiKey = Environment.GetEnvironmentVariable("HereApiKey") ?? "";
         }
 
         public async Task<HereGeocodingResponse> GetGeocode(string straat, string nummer, string postNummer, string gemeente)

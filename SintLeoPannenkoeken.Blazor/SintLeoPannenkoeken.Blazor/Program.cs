@@ -1,8 +1,8 @@
+using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using SintLeoPannenkoeken.Blazor.Client;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Components;
@@ -12,6 +12,8 @@ using SintLeoPannenkoeken.Blazor.External;
 using SintLeoPannenkoeken.Blazor.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Env.Load();
 
 builder.AddServiceDefaults();
 
