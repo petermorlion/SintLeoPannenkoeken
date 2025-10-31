@@ -2,6 +2,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var sql = builder.AddSqlServer("sqlserver")
                  .WithLifetime(ContainerLifetime.Persistent)
+                 .WithDataVolume("sqlserver-data")
                  .WithHostPort(61847);
 
 var db = sql.AddDatabase("database");

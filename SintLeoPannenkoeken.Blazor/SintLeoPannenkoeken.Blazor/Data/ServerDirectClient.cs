@@ -451,7 +451,17 @@ namespace SintLeoPannenkoeken.Blazor.Data
                     .Include(b => b.Tak)
                     .Include(b => b.Lid)
                     .Include(b => b.Straat)
+                    .ThenInclude(s => s.Zone)
                     .SingleAsync(b => b.Id == bestelling.Id);
+
+                var geocodes = await _hereGeoCodingService.GetGeocode(bestelling.Straat.Naam, bestelling.Nummer, bestelling.Straat.Zone?.PostNummer.ToString() ?? "", bestelling.Straat.Zone.Gemeente);
+                var geocode = geocodes.Items.FirstOrDefault();
+                if (geocode != null)
+                {
+                    bestelling.Latitude = geocode.Position.Lat;
+                    bestelling.Longitude = geocode.Position.Lng;
+                    await dbContext.SaveChangesAsync();
+                }
 
                 return new BestellingDto
                 {
@@ -939,6 +949,13 @@ namespace SintLeoPannenkoeken.Blazor.Data
                         PostNummer = b.Straat?.Zone?.PostNummer.ToString() ?? "",
                         Gemeente = b.Straat?.Zone?.Gemeente ?? "",
                         AantalPakken = b.AantalPakken,
+                        Position = b.Latitude.HasValue && b.Longitude.HasValue
+                            ? new PositionDto
+                            {
+                                Latitude = b.Latitude.Value,
+                                Longitude = b.Longitude.Value
+                            }
+                            : null
                     }).ToList()
                 };
             }
@@ -950,6 +967,11 @@ namespace SintLeoPannenkoeken.Blazor.Data
 
             foreach (var detail in result.Details)
             {
+                if (detail.Position != null)
+                {
+                    continue;
+                }
+
                 var response = await _hereGeoCodingService.GetGeocode(detail.Straat, detail.Nummer, detail.PostNummer, detail.Gemeente);
                 var firstItem = response.Items.FirstOrDefault();
                 if (firstItem != null)
