@@ -941,6 +941,7 @@ namespace SintLeoPannenkoeken.Blazor.Data
                     ChauffeurNaam = $"{bestuurder.Voornaam} {bestuurder.Achternaam}",
                     Details = bestellingen.Select(b => new ChauffeurRondeDetailDto
                     {
+                        BestellingId = b.Id,
                         ZoneNaam = b.Straat?.Zone?.Naam ?? "",
                         Naam = b.Naam,
                         Straat = b.Straat?.Naam ?? "",
@@ -973,6 +974,7 @@ namespace SintLeoPannenkoeken.Blazor.Data
                 }
 
                 var response = await _hereGeoCodingService.GetGeocode(detail.Straat, detail.Nummer, detail.PostNummer, detail.Gemeente);
+
                 var firstItem = response.Items.FirstOrDefault();
                 if (firstItem != null)
                 {
@@ -981,6 +983,17 @@ namespace SintLeoPannenkoeken.Blazor.Data
                         Latitude = firstItem.Position.Lat,
                         Longitude = firstItem.Position.Lng
                     };
+
+                    using (var dbContext = _dbContextFactory.CreateDbContext())
+                    {
+                        var bestelling = await dbContext.Bestellingen.SingleOrDefaultAsync(b => b.Id == detail.BestellingId);
+                        if (bestelling != null)
+                        {
+                            bestelling.Latitude = firstItem.Position.Lat;
+                            bestelling.Longitude = firstItem.Position.Lng;
+                            await dbContext.SaveChangesAsync();
+                        }
+                    }
                 }
             }
 
