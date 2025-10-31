@@ -3,6 +3,6 @@
     public class ChauffeurRondeDetailsDto
     {
         public string ChauffeurNaam { get; init; } = "";
-        public IList<ChauffeurRondeDetailDto> Details { get; init; } = new List<ChauffeurRondeDetailDto>();
+        public IList<ChauffeurRondeDetailDto> Details { get; set; } = new List<ChauffeurRondeDetailDto>();
     }
 }

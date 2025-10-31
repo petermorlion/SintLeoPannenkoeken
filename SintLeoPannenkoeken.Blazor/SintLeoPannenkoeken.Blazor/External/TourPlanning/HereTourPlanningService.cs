@@ -14,7 +14,7 @@ namespace SintLeoPannenkoeken.Blazor.External.TourPlanning
             _hereApiKey = Environment.GetEnvironmentVariable("HereApiKey") ?? "";
         }
 
-        public async Task<TourPlanningResponse> GetRoute(IList<PositionDto> positions)
+        public async Task<TourPlanningResponse> GetRoute(IList<ChauffeurRondeDetailDto> details)
         {
             var requestUri = $"v3/problems?apiKey={_hereApiKey}";
 
@@ -22,7 +22,7 @@ namespace SintLeoPannenkoeken.Blazor.External.TourPlanning
             {
                 plan = new
                 {
-                    jobs = positions.Select(position => new
+                    jobs = details.Select(detail => new
                     {
                         id = Guid.NewGuid().ToString(),
                         tasks = new
@@ -37,10 +37,11 @@ namespace SintLeoPannenkoeken.Blazor.External.TourPlanning
                                         {
                                             location = new
                                             {
-                                                lat = position.Latitude,
-                                                lng = position.Longitude
+                                                lat = detail.Position?.Latitude,
+                                                lng = detail.Position?.Longitude
                                             },
-                                            duration = 300 // seconds (5 minutes)
+                                            duration = 300, // seconds (5 minutes),
+                                            tag = detail.BestellingId.ToString()
                                         }
                                     },
                                     demand = new [] { 1 } // TODO: use aantalpakken?
@@ -67,6 +68,7 @@ namespace SintLeoPannenkoeken.Blazor.External.TourPlanning
                                     start = new
                                     {
                                         time = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                                        tag = "Start",
                                         location = new
                                         {
                                             // Zeescouts Sint-Leo (Lodewijk Coiseaukaai 9, 8000 Brugge)
