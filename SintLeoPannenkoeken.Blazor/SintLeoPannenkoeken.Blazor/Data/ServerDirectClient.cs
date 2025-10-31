@@ -2,7 +2,8 @@
 using SintLeoPannenkoeken.Blazor.Client.Pages.Beheer;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
-using SintLeoPannenkoeken.Blazor.External;
+using SintLeoPannenkoeken.Blazor.External.Geocoding;
+using SintLeoPannenkoeken.Blazor.External.TourPlanning;
 using SintLeoPannenkoeken.Blazor.Models;
 
 namespace SintLeoPannenkoeken.Blazor.Data
@@ -16,18 +17,21 @@ namespace SintLeoPannenkoeken.Blazor.Data
         private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly UsersService _usersService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly HereGeoCodingService _hereGeoCodingService;
+        private readonly HereGeocodingService _hereGeoCodingService;
+        private readonly HereTourPlanningService _hereTourPlanningService;
 
         public ServerDirectClient(ILogger<ServerDirectClient> logger,
             IDbContextFactory<ApplicationDbContext> dbContextFactory,
             UsersService usersService, IHttpContextAccessor httpContextAccessor,
-            HereGeoCodingService hereGeoCodingService)
+            HereGeocodingService hereGeoCodingService,
+            HereTourPlanningService hereTourPlanningService)
         {
             _logger = logger;
             _dbContextFactory = dbContextFactory;
             _usersService = usersService;
             _httpContextAccessor = httpContextAccessor;
             _hereGeoCodingService = hereGeoCodingService;
+            _hereTourPlanningService = hereTourPlanningService;
         }
 
         public async Task<IList<GebruikerDto>> GetGebruikers()
@@ -996,6 +1000,12 @@ namespace SintLeoPannenkoeken.Blazor.Data
                     }
                 }
             }
+
+            var tour = await _hereTourPlanningService.GetRoute(
+                result.Details
+                .Where(d => d.Position != null)
+                .Select(d => d.Position!)
+                .ToList());
 
             return result;
         }

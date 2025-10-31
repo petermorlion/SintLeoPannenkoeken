@@ -1,4 +1,4 @@
-﻿namespace SintLeoPannenkoeken.Blazor.External
+﻿namespace SintLeoPannenkoeken.Blazor.External.Geocoding
 {
     public class HereGeocodingPosition
     {

@@ -41,6 +41,11 @@
                        Icon="@Icons.Material.Outlined.Print"
                        Color="Color.Primary"
                        Href="@($"verdeling/chauffeurteverdelen/{context.Item.Id}?scoutsjaar={_currentScoutsjaar}")" />
+        <MudIconButton title="Route voorstel"
+                       Size="@Size.Small"
+                       Icon="@Icons.Material.Outlined.Map"
+                       Color="Color.Primary"
+                       Href="@($"verdeling/chauffeurteverdelen/{context.Item.Id}/map?scoutsjaar={_currentScoutsjaar}")" />
     </ActionColumnContent>
 </MasterDetailPage>
 

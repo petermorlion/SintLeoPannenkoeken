@@ -8,7 +8,8 @@ using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Components;
 using SintLeoPannenkoeken.Blazor.Components.Account;
 using SintLeoPannenkoeken.Blazor.Data;
-using SintLeoPannenkoeken.Blazor.External;
+using SintLeoPannenkoeken.Blazor.External.Geocoding;
+using SintLeoPannenkoeken.Blazor.External.TourPlanning;
 using SintLeoPannenkoeken.Blazor.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -112,9 +113,14 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddHttpClient<HereGeoCodingService>((serviceProvider, client) =>
+builder.Services.AddHttpClient<HereGeocodingService>((serviceProvider, client) =>
 {
     client.BaseAddress = new Uri("https://geocode.search.hereapi.com");
+});
+
+builder.Services.AddHttpClient<HereTourPlanningService>((serviceProvider, client) =>
+{
+    client.BaseAddress = new Uri("https://tourplanning.hereapi.com");
 });
 
 var app = builder.Build();

@@ -1,13 +1,11 @@
-﻿using SintLeoPannenkoeken.Blazor.Components.Account.Pages.Manage;
-
-namespace SintLeoPannenkoeken.Blazor.External
+﻿namespace SintLeoPannenkoeken.Blazor.External.Geocoding
 {
-    public class HereGeoCodingService
+    public class HereGeocodingService
     {
         private readonly HttpClient _httpClient;
         private readonly string _hereApiKey;
 
-        public HereGeoCodingService(HttpClient httpClient, IConfiguration configuration)
+        public HereGeocodingService(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
             _hereApiKey = Environment.GetEnvironmentVariable("HereApiKey") ?? "";
