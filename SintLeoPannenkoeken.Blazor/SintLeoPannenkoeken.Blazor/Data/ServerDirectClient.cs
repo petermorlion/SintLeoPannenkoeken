@@ -1007,7 +1007,7 @@ namespace SintLeoPannenkoeken.Blazor.Data
                 .Select(d => d)
                 .ToList());
 
-            result.Details = result.Details.OrderBy(d => tour.Tours.First().Stops.ToList().FindIndex(s => s.Activities.First().JobTag == d.BestellingId)).ToList();
+            result.Details = result.Details.OrderBy(d => tour.Tours.First().Stops.ToList().FindIndex(s => s.Activities.First().JobTag == d.BestellingId.ToString())).ToList();
 
             return result;
         }
