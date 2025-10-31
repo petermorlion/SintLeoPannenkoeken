@@ -3,7 +3,7 @@
 
     public class ChauffeurRondeDetailDto
     {
-        public int BestellingId { get; init } = 0;
+        public int BestellingId { get; init; } = 0;
         public string ZoneNaam { get; init; } = "";
         public string Straat { get; init; } = "";
         public string Nummer { get; init; } = "";
