@@ -682,6 +682,7 @@ namespace SintLeoPannenkoeken.Blazor.Data
             {
                 var zones = await dbContext
                 .Zones
+                .OrderBy(x => x.Naam)
                 .ToListAsync();
 
                 var zoneDtos = zones == null
