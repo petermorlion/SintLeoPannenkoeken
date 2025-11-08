@@ -1,0 +1,138 @@
+﻿@page "/rapporten/verkooppertak"
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Serialization
+@using SintLeoPannenkoeken.Blazor.Client.Auth
+@using SintLeoPannenkoeken.Blazor.Client.Components
+@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+@using System.Linq;
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts.Rapporten
+
+<canvas id="chart"></canvas>
+
+<HeadContent>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+    @* <script src="/takverkopen.js"></script> *@
+    <script type="text/javascript">
+        function loadTakverkopenChart(data) {
+            const rapport = document.getElementById('chart');
+            new Chart(
+                rapport,
+                {
+                    type: 'bar',
+                    data: {
+                        labels: data.takVerkopen.map(getRowLabel),
+                        datasets: [
+                            {
+                                label: 'Verkoop',
+                                data: data.takVerkopen.map(row => row.aantalPakkenVerkocht)
+                            }
+                        ]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        plugins: {
+                            annotation: {
+                                annotations: getStreefcijferAnnotations(data)
+                            }
+                        },
+                        scales: {
+                            y: {
+                                grid: {
+                                    lineWidth: 1,
+                                    color: 'black'
+                                }
+                            }
+                        }
+                    }
+                }
+            );
+        }
+
+        function getRowLabel(row) {
+            return [
+                `${row.naam} (${row.leden} leden)`,
+                `Verkocht: ${row.aantalPakkenVerkocht}`,
+                `Streefcijfer: ${row.streefcijfer}`,
+                `% Verkocht: ${(row.aantalPakkenVerkocht / row.streefcijfer * 100).toFixed(2)}%`
+            ]
+        }
+
+        function getStreefcijferAnnotations(data) {
+            var annotations = {};
+            for (var i = 0; i < data.takVerkopen.length; i++) {
+                var row = data.takVerkopen[i];
+                annotations['line' + i] = {
+                    type: 'line',
+                    xMin: row.streefcijfer,
+                    xMax: row.streefcijfer,
+                    yMin: i - 0.5,
+                    yMax: i + 0.5,
+                    borderColor: '#7C9885',
+                    borderWidth: 2,
+                    label: {
+                        display: true,
+                        content: row.streefcijfer
+                    }
+                };
+
+                annotations['label' + i] = {
+                    type: 'label',
+                    xValue: row.aantalPakkenVerkocht,
+                    yValue: i,
+                    content: row.aantalPakkenVerkocht,
+                    backgroundColor: '#0d6efd',
+                    color: 'white',
+                    borderRadius: 6
+                };
+            }
+
+            return annotations;
+        }
+    </script>
+</HeadContent>
+
+@code {
+    private async Task<IList<RondeDto>> GetData(IServerData serverData)
+    {
+        var scoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        var result = await serverData.GetRondes(_currentScoutsjaar);
+        return result;
+    }
+
+    private int _currentScoutsjaar;
+    private VerkoopPerTakDto _data = new VerkoopPerTakDto();
+
+    [Inject]
+    private IServerData _serverData { get; set; } = default!;
+
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; } = default!;
+
+    [Inject]
+    private CurrentScoutsjaarQuerystringParameterProvider _currentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var currentScoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        if (currentScoutsjaar == null)
+        {
+            return;
+        }
+
+        _currentScoutsjaar = currentScoutsjaar.Begin;
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        _data = await _serverData.GetVerkoopPerTakRapport(_currentScoutsjaar);
+        await JSRuntime.InvokeVoidAsync("loadTakverkopenChart", _data);
+    }
+}

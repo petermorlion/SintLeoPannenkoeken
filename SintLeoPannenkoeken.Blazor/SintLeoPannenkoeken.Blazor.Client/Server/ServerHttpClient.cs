@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using SintLeoPannenkoeken.Blazor.Client.Auth;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
+using SintLeoPannenkoeken.Blazor.Client.Server.Contracts.Rapporten;
 using System.Net.Http.Json;
 
 namespace SintLeoPannenkoeken.Blazor.Client.Server
@@ -295,6 +296,11 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         public async Task<ChauffeurRondeDetailsDto> GetChauffeurRondeDetailsRoute(int scoutsjaarBegin, int chauffeurId)
         {
             return await Get<ChauffeurRondeDetailsDto>($"/api/rapporten/{scoutsjaarBegin}/chaffeurrondedetails/{chauffeurId}/route", Roles.RolesForRapporten);
+        }
+
+        public async Task<VerkoopPerTakDto> GetVerkoopPerTakRapport(int scoutsjaarBegin)
+        {
+            return await Get<VerkoopPerTakDto>($"/api/rapporten/{scoutsjaarBegin}/verkooppertak", Roles.RolesForRapporten);
         }
     }
 }

@@ -2,6 +2,7 @@
 using SintLeoPannenkoeken.Blazor.Client.Pages.Beheer;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
+using SintLeoPannenkoeken.Blazor.Client.Server.Contracts.Rapporten;
 using SintLeoPannenkoeken.Blazor.External.Geocoding;
 using SintLeoPannenkoeken.Blazor.External.TourPlanning;
 using SintLeoPannenkoeken.Blazor.Models;
@@ -1011,6 +1012,58 @@ namespace SintLeoPannenkoeken.Blazor.Data
             result.Details = result.Details.OrderBy(d => tour.Tours.First().Stops.ToList().FindIndex(s => s.Activities.First().JobTag == d.BestellingId.ToString())).ToList();
 
             return result;
+        }
+
+        public async Task<VerkoopPerTakDto> GetVerkoopPerTakRapport(int scoutsjaarBegin)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                Scoutsjaar? sj = dbContext
+                .Scoutsjaren
+                .Include(x => x.StreefCijfers)
+                .ThenInclude(x => x.Tak)
+                .SingleOrDefault(s => s.Begin == scoutsjaarBegin);
+
+                if (sj == null)
+                {
+                    return new VerkoopPerTakDto();
+                }
+
+                var bestellingen = dbContext.Scoutsjaren
+                    .Include(scoutsjaar => scoutsjaar.Bestellingen)
+                    .ThenInclude(bestelling => bestelling.Tak)
+                    .SingleOrDefault(scoutsjaar => scoutsjaar.Id == sj.Id)
+                    ?.Bestellingen
+                    ?.ToList();
+
+                if (bestellingen == null || bestellingen.Count == 0)
+                {
+                    return new VerkoopPerTakDto();
+                }
+
+                var verkoopPerTak = bestellingen
+                    .GroupBy(x => x.Tak)
+                    .ToDictionary(x => x.Key.Id, x => x.Sum(y => y.AantalPakken));
+
+                var streefcijfersPerTak = sj.StreefCijfers.ToDictionary(x => x.Tak.Id, x => x.Aantal);
+                var takken = dbContext.Takken.Include(x => x.Leden).ToList();
+
+                var result = new VerkoopPerTakDto
+                {
+                    ScoutsjaarBegin = scoutsjaarBegin,
+                    TakVerkopen = takken.Select(x => {
+                        return new TakVerkoopDto
+                        {
+                            Naam = x.Naam,
+                            AantalPakkenVerkocht = verkoopPerTak.ContainsKey(x.Id) ? verkoopPerTak[x.Id] : 0,
+                            Streefcijfer = streefcijfersPerTak.ContainsKey(x.Id) ? streefcijfersPerTak[x.Id] : 0,
+                            Leden = x.Leden.Count()
+                        };
+                    }).ToList()
+                };
+
+                return result;
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
+using SintLeoPannenkoeken.Blazor.Client.Server.Contracts.Rapporten;
 
 namespace SintLeoPannenkoeken.Blazor.Client.Server
 {
@@ -58,5 +59,8 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
        
         Task<ChauffeurRondeDetailsDto> GetChauffeurRondeDetails(int scoutsjaarBegin, int chauffeurId);
         Task<ChauffeurRondeDetailsDto> GetChauffeurRondeDetailsRoute(int scoutsjaarBegin, int chauffeurId);
+
+
+        Task<VerkoopPerTakDto> GetVerkoopPerTakRapport(int scoutsjaarBegin);
     }
 }

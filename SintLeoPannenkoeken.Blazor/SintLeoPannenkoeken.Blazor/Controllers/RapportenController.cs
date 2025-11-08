@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SintLeoPannenkoeken.Blazor.Client.Auth;
 using SintLeoPannenkoeken.Blazor.Client.Server;
-using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
 
 namespace SintLeoPannenkoeken.Blazor.Controllers
 {
@@ -25,6 +24,14 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
         public async Task<IActionResult> GetChauffeurRondeDetails(int scoutsjaarBegin, int chauffeurId)
         {
             var result = await _serverData.GetChauffeurRondeDetails(scoutsjaarBegin, chauffeurId);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("{scoutsjaarBegin:int}/verkooppertak")]
+        public async Task<IActionResult> GetVerkoopPerTakRapport(int scoutsjaarBegin)
+        {
+            var result = await _serverData.GetVerkoopPerTakRapport(scoutsjaarBegin);
             return Ok(result);
         }
     }
