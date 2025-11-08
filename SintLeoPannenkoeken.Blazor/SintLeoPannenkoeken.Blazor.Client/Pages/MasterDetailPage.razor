@@ -203,8 +203,8 @@
             else
             {
                 selectedScoutsjaar = _scoutsjaren.FirstOrDefault();
-                NavigationManager.NavigateTo($"{NavigationManager.Uri}?scoutsjaar={selectedScoutsjaar.Begin}", forceLoad: true);
-                return;
+                NavigationManager.NavigateTo($"{NavigationManager.Uri}?scoutsjaar={selectedScoutsjaar.Begin}");
+                _data = await GetData();
             }
         }
         else

@@ -28,6 +28,11 @@ namespace SintLeoPannenkoeken.Blazor.Client
                 scoutsjaar = _scoutsjaren.FirstOrDefault(sj => sj.Begin == scoutsjaarBegin);
             }
 
+            if (scoutsjaar == null)
+            {
+                scoutsjaar = _scoutsjaren.OrderByDescending(sj => sj.Begin).FirstOrDefault();
+            }
+
             return scoutsjaar;
         }
     }
