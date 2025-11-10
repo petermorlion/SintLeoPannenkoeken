@@ -8,6 +8,11 @@
 @using System.Linq;
 @using SintLeoPannenkoeken.Blazor.Client.Server.Contracts.Rapporten
 
+<MudStack Row="true" Breakpoint="Breakpoint.Xs">
+    <h1>Verkoop per tak</h1>
+    <ScoutsjaarSelect Value="_currentScoutsjaar" />
+</MudStack>
+
 <canvas id="chart"></canvas>
 
 <HeadContent>

@@ -11,15 +11,7 @@
     <h1>@Title</h1>
     @if (IsForScoutsjaar)
     {
-        <MudSelect @bind-Value="_selectedScoutsjaarBegin"
-                   @bind-Value:after="OnSelectedScoutsjaarChanged"
-                   FitContent="true"
-                   QuickSearchInterval="TimeSpan.FromSeconds(1)">
-            @foreach (var scoutsjaar in _scoutsjaren)
-            {
-                <MudSelectItem Value="@scoutsjaar.Begin">@scoutsjaar.Begin</MudSelectItem>
-            }
-        </MudSelect>
+        <ScoutsjaarSelect Value="_selectedScoutsjaarBegin"/>
     }
 </MudStack>
 
@@ -310,17 +302,6 @@
         var dataList = _data.ToList();
         dataList.Add(item);
         _data = dataList;
-    }
-
-    private async Task OnSelectedScoutsjaarChanged()
-    {
-        var uriWithoutScoutsjaar = $"{NavigationManager.Uri}?scoutsjaar={_selectedScoutsjaarBegin}";
-        var uriBuilder = new UriBuilder(NavigationManager.Uri)
-        {
-            Query = $"scoutsjaar={_selectedScoutsjaarBegin}"
-        };
-
-        NavigationManager.NavigateTo(uriBuilder.Uri.ToString(), forceLoad: true);
     }
 
     void IDisposable.Dispose() => _persistingSubscription.Dispose();

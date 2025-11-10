@@ -1,0 +1,44 @@
+﻿@using System.Linq.Expressions
+@using System.Diagnostics.CodeAnalysis
+@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+
+<MudSelect @bind-Value="Value"
+           @bind-Value:after="OnValueChanged"
+           FitContent="true"
+           QuickSearchInterval="@TimeSpan.FromSeconds(1)">
+    @foreach (var scoutsjaar in _scoutsjaren)
+    {
+        <MudSelectItem Value="@scoutsjaar.Begin">@scoutsjaar.Begin</MudSelectItem>
+    }
+</MudSelect>
+
+@code {
+    private IEnumerable<ScoutsjaarDto> _scoutsjaren = new List<ScoutsjaarDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _scoutsjaren = await ServerData.GetScoutsjaren();
+    }
+
+    [Parameter]
+    [EditorRequired]
+    public int Value { get; set; }
+
+    [Inject]
+    public IServerData ServerData { get; set; } = default!;
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; } = default!;
+
+    private void OnValueChanged()
+    {
+        var uriWithoutScoutsjaar = $"{NavigationManager.Uri}?scoutsjaar={Value}";
+        var uriBuilder = new UriBuilder(NavigationManager.Uri)
+        {
+            Query = $"scoutsjaar={Value}"
+        };
+
+        NavigationManager.NavigateTo(uriBuilder.Uri.ToString(), forceLoad: true);
+    }
+}
