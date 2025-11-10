@@ -319,6 +319,9 @@ namespace SintLeoPannenkoeken.Blazor.Data
                             bestelling.Lid.Tak.Naam
                         ),
                         StraatId = bestelling.StraatId,
+                        StraatNaam = bestelling.Straat.Naam,
+                        StraatNummer = bestelling.Straat?.Nummer,
+                        ZoneNaam = bestelling?.Straat?.Zone?.Naam ?? "",
                         Nummer = bestelling.Nummer,
                         Bus = bestelling.Bus
                     }).ToList();
@@ -480,6 +483,9 @@ namespace SintLeoPannenkoeken.Blazor.Data
                     Geleverd = bestelling.Geleverd,
                     Lid = new LidDto(bestelling.Lid.Achternaam, bestelling.Lid.Voornaam, bestelling.Lid.Functie, bestelling.Lid.Tak?.Naam ?? "Onbekend", bestelling.Lid.Id),
                     StraatId = bestelling.StraatId,
+                    StraatNaam = bestelling.Straat.Naam,
+                    StraatNummer = bestelling.Straat?.Nummer,
+                    ZoneNaam = bestelling?.Straat?.Zone?.Naam ?? "",
                     Nummer = bestelling.Nummer,
                     Bus = bestelling.Bus
                 };

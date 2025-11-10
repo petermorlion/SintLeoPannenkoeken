@@ -10,10 +10,13 @@
         public string? Opmerkingen { get; set; }
         public bool Betaald { get; set; }
         public bool Geleverd { get; set; }
-        public int StraatId { get; set; }
         public string Nummer { get; set; }
         public string Bus { get; set; }
         public LidDto Lid { get; set; }
+        public int StraatId { get; set; }
+        public string StraatNaam { get; set; }
+        public int? StraatNummer { get; set; }
+        public string ZoneNaam { get; set; }
 
 
         public string TakNaam => Lid?.TakNaam ?? string.Empty;

@@ -96,8 +96,8 @@
         <PropertyColumn T="BestellingDto" TProperty="int" Property="x => x.BestellingNummer" Title="Nr" InitialDirection="SortDirection.Descending" />
         <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.Naam" Title="Koper" />
         <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.Telefoon" Title="Telefoon" />
-        @* <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.Co" Title="Code" /> *@
-        @* <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x." Title="Adres" />  *@
+        <PropertyColumn T="BestellingDto" TProperty="string" Property="x => FormatCode(x)" Title="Code" />
+        <PropertyColumn T="BestellingDto" TProperty="string" Property="x => FormatAdres(x)" Title="Adres" /> 
         <PropertyColumn T="BestellingDto" TProperty="int" Property="x => x.AantalPakken" Title="Aantal pakken" />
         <PropertyColumn T="BestellingDto" TProperty="string" Property="x => x.Opmerkingen" Title="Opmerkingen" />
         <TemplateColumn T="BestellingDto" Title="Betaald">
@@ -269,5 +269,20 @@
             _newBestellingNummer = null;
             _newBestellingBus = null;
         }
+    }
+
+    private string FormatAdres(BestellingDto bestelling)
+    {
+        var adres = $"{bestelling.StraatNaam} {bestelling.Nummer}";
+        if (!string.IsNullOrWhiteSpace(bestelling.Bus))
+        {
+            adres += $"/bus {bestelling.Bus}";
+        }
+        return adres;
+    }
+
+    private string FormatCode(BestellingDto bestelling)
+    {
+        return $"{bestelling.ZoneNaam} {bestelling.StraatNummer}";
     }
 }
