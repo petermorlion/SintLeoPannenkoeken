@@ -31,20 +31,20 @@
             <CellTemplate>
                 @if (context.Item.Geleverd)
                 {
-                    <MudChip 
-                        T="string" 
-                        Color="Color.Success"
-                        OnClick="@(async () => await OnGeleverdClicked(context.Item))"
-                        Icon="@Icons.Material.Filled.Check"
-                        title="Bestelling is geleverd. Klik om te markeren als niet geleverd.">Ja</MudChip>
+                    <MudTooltip Text="Bestelling is geleverd. Klik om te markeren als niet geleverd.">
+                        <MudChip T="string"
+                                 Color="Color.Success"
+                                 OnClick="@(async () => await OnGeleverdClicked(context.Item))"
+                                 Icon="@Icons.Material.Filled.Check" ²>Ja</MudChip>
+                    </MudTooltip>
                 }
                 else
                 {
-                    <MudChip 
-                        T="string" 
-                        Color="Color.Dark" 
-                        OnClick="@(async () => await OnGeleverdClicked(context.Item))"
-                        title="Bestelling is niet geleverd. Klik om te markeren als geleverd.">Nee</MudChip>
+                    <MudTooltip Text="Bestelling is niet geleverd. Klik om te markeren als geleverd.">
+                        <MudChip T="string"
+                                 Color="Color.Dark"
+                                 OnClick="@(async () => await OnGeleverdClicked(context.Item))">Nee</MudChip>
+                    </MudTooltip>
                 }
             </CellTemplate>
         </TemplateColumn>

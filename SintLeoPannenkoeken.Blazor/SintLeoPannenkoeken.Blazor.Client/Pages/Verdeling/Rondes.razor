@@ -39,7 +39,7 @@
             </MudSelect>
         </MudItem>
     </NewItemFormElements>
-    
+
     <Columns>
         <PropertyColumn T="RondeDto" TProperty="string" Property="x => x.ZoneNaam" Title="Zone" InitialDirection="SortDirection.Ascending" />
         <PropertyColumn T="RondeDto" TProperty="string" Property="x => x.Gemeente" Title="Gemeente" />
@@ -51,11 +51,12 @@
         <PropertyColumn T="RondeDto" TProperty="string" Property="x => x.ChauffeurNaam" Title="Chauffeur" />
     </Columns>
     <ActionColumnContent>
-        <MudIconButton title="Details"
-                       Size="@Size.Small"
-                       Icon="@Icons.Material.Outlined.Print"
-                       Color="Color.Primary"
-                       Href="@($"verdeling/ronde/{context.Item.Id}?scoutsjaar={_currentScoutsjaar}")" />
+        <MudTooltip Text="Details">
+            <MudIconButton Size="@Size.Small"
+                           Icon="@Icons.Material.Outlined.Print"
+                           Color="Color.Primary"
+                           Href="@($"verdeling/ronde/{context.Item.Id}?scoutsjaar={_currentScoutsjaar}")" />
+        </MudTooltip>
     </ActionColumnContent>
 </MasterDetailPage>
 

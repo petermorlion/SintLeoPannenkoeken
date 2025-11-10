@@ -27,7 +27,7 @@
                         @NewItemFormElements
                         <MudItem xs="12">
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_isFormValid)" OnClick="@Create" Class="me-1 px-3">Opslaan</MudButton>
-                            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@OnCancel" Class="mx-1 px-3">Annuleren</MudButton>
+                            <MudButton Variant="Variant.Filled" OnClick="@OnCancel" Class="mx-1 px-3">Annuleren</MudButton>
                         </MudItem>
                     </MudGrid>
                 </MudForm>
@@ -75,11 +75,23 @@
                         }
                         @if (CanEdit)
                         {
-                            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Color="Color.Primary" OnClick="@context.Actions.StartEditingItemAsync" title="Bewerken" />
+                            <MudTooltip Text="@(_isScoutsjaarGearchiveerd ? "Wijzigingen aan een gearchiveerd scoutsjaar zijn niet mogelijk." : "Bewerken")">
+                                <MudIconButton Size="@Size.Small"
+                                               Icon="@Icons.Material.Outlined.Edit"
+                                               Color="Color.Primary"
+                                               OnClick="@context.Actions.StartEditingItemAsync"
+                                               Disabled="_isScoutsjaarGearchiveerd" />
+                            </MudTooltip>
                         }           
                         @if (CanDelete)
                         {
-                            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" Color="Color.Error" OnClick="async () => await Delete(context.Item)" title="Verwijderen" />
+                            <MudTooltip Text="@(_isScoutsjaarGearchiveerd ? "Wijzigingen aan een gearchiveerd scoutsjaar zijn niet mogelijk." : "Verwijderen")">
+                                <MudIconButton Size="@Size.Small"
+                                               Icon="@Icons.Material.Outlined.Delete"
+                                               Color="Color.Error"
+                                               OnClick="async () => await Delete(context.Item)"
+                                               Disabled="_isScoutsjaarGearchiveerd" />
+                            </MudTooltip>
                         }
                     </CellTemplate>
                 </TemplateColumn>
@@ -110,6 +122,7 @@
     private bool _isFormValid;
     private MudForm _form = default!;
     private MudDataGrid<TDto> _grid = default!;
+    private bool _isScoutsjaarGearchiveerd = false;
 
     [Inject]
     private IServerData _serverData { get; set; } = default!;
@@ -206,23 +219,17 @@
         {
             _scoutsjaren = await ServerData.GetScoutsjaren();
             var selectedScoutsjaar = await CurrentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
-            if (selectedScoutsjaar != null)
-            {
-                _selectedScoutsjaarBegin = selectedScoutsjaar.Begin;
-                _data = await GetData();
-            }
-            else
+            if (selectedScoutsjaar == null)
             {
                 selectedScoutsjaar = _scoutsjaren.FirstOrDefault();
-                NavigationManager.NavigateTo($"{NavigationManager.Uri}?scoutsjaar={selectedScoutsjaar.Begin}");
-                _data = await GetData();
+                NavigationManager.NavigateTo($"{NavigationManager.Uri}?scoutsjaar={selectedScoutsjaar!.Begin}");
             }
-        }
-        else
-        {
-            _data = await GetData();
+
+            _selectedScoutsjaarBegin = selectedScoutsjaar.Begin;
+            _isScoutsjaarGearchiveerd = selectedScoutsjaar.Status == ScoutsjaarStatusDto.Gearchiveerd;
         }
 
+        _data = await GetData();
         _loadingData = false;
         _persistingSubscription = ApplicationState.RegisterOnPersisting(PersistData);
     }

@@ -33,11 +33,12 @@
         <PropertyColumn T="RondeDto" TProperty="int" Property="x => x.Pakken" Title="Pakken" />
     </Columns>
     <ActionColumnContent>
-        <MudIconButton title="Details"
-                       Size="@Size.Small"
-                       Icon="@Icons.Material.Outlined.Print"
-                       Color="Color.Primary"
-                       Href="@($"verdeling/ronde/{context.Item.Id}?scoutsjaar={_currentScoutsjaar}")" />
+        <MudTooltip Text="Details">
+            <MudIconButton Size="@Size.Small"
+                           Icon="@Icons.Material.Outlined.Print"
+                           Color="Color.Primary"
+                           Href="@($"verdeling/ronde/{context.Item.Id}?scoutsjaar={_currentScoutsjaar}")" />
+        </MudTooltip>
     </ActionColumnContent>
 </MasterDetailPage>
 

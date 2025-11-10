@@ -31,21 +31,24 @@
         <PropertyColumn T="ChauffeurDto" TProperty="int" Property="x => x.AantalPakken" Title="Pakken" />
     </Columns>
     <ActionColumnContent>
-        <MudIconButton title="Rondes voor deze chauffeur"
-                       Size="@Size.Small"
-                       Icon="@Icons.Material.Outlined.DirectionsCar"
-                       Color="Color.Primary"
-                       Href="@($"beheer/chauffeurs/{context.Item.Id}/rondes/{_currentScoutsjaar}?scoutsjaar={_currentScoutsjaar}")" />
-        <MudIconButton title="Detaillijst voor verdeling"
-                       Size="@Size.Small"
-                       Icon="@Icons.Material.Outlined.Print"
-                       Color="Color.Primary"
-                       Href="@($"verdeling/chauffeurteverdelen/{context.Item.Id}?scoutsjaar={_currentScoutsjaar}")" />
-        <MudIconButton title="Route voorstel"
-                       Size="@Size.Small"
-                       Icon="@Icons.Material.Outlined.Map"
-                       Color="Color.Primary"
-                       Href="@($"verdeling/chauffeurteverdelen/{context.Item.Id}/map?scoutsjaar={_currentScoutsjaar}")" />
+        <MudTooltip Text="Rondes voor deze chauffeur">
+            <MudIconButton Size="@Size.Small"
+                           Icon="@Icons.Material.Outlined.DirectionsCar"
+                           Color="Color.Primary"
+                           Href="@($"beheer/chauffeurs/{context.Item.Id}/rondes/{_currentScoutsjaar}?scoutsjaar={_currentScoutsjaar}")" />
+        </MudTooltip>
+        <MudTooltip Text="Detaillijst voor verdeling">
+            <MudIconButton Size="@Size.Small"
+                           Icon="@Icons.Material.Outlined.Print"
+                           Color="Color.Primary"
+                           Href="@($"verdeling/chauffeurteverdelen/{context.Item.Id}?scoutsjaar={_currentScoutsjaar}")" />
+        </MudTooltip>
+        <MudTooltip Text="Route voorstel">
+            <MudIconButton Size="@Size.Small"
+                           Icon="@Icons.Material.Outlined.Map"
+                           Color="Color.Primary"
+                           Href="@($"verdeling/chauffeurteverdelen/{context.Item.Id}/map?scoutsjaar={_currentScoutsjaar}")" />
+        </MudTooltip>
     </ActionColumnContent>
 </MasterDetailPage>
 
