@@ -49,8 +49,20 @@
                  Striped="true"
                  Hover="true"
                  Loading="_loadingData"
+                 QuickFilter="QuickFilter"
                  @ref="_grid"
                  Class="mt-4">
+        <ToolBarContent>
+            <div class="d-flex flex-row-reverse flex-grow-1">
+                <MudTextField @bind-Value="_searchString"
+                              Placeholder="Zoeken"
+                              Adornment="Adornment.Start"
+                              Immediate="true"
+                              AdornmentIcon="@Icons.Material.Filled.Search"
+                              IconSize="Size.Medium"
+                              Class="mt-0 flex-grow-0" Style="width: 500px;"></MudTextField>
+            </div>
+        </ToolBarContent>
         <Columns>
             @Columns
             @if (CanEdit || CanDelete)
@@ -93,6 +105,7 @@
 
     private IEnumerable<ScoutsjaarDto> _scoutsjaren = new List<ScoutsjaarDto>();
     private int _selectedScoutsjaarBegin;
+    private string _searchString = "";
 
     private bool _isFormValid;
     private MudForm _form = default!;
@@ -309,6 +322,20 @@
         dataList.Add(item);
         _data = dataList;
     }
+
+    private Func<TDto, bool> QuickFilter => x =>
+    {
+        foreach (var prop in typeof(TDto).GetProperties())
+        {
+            var value = prop.GetValue(x);
+            if (value != null && value.ToString() != null && value.ToString()!.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    };
 
     void IDisposable.Dispose() => _persistingSubscription.Dispose();
 }
