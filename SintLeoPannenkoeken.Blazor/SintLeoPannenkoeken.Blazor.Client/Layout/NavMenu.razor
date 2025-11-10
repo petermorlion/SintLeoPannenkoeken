@@ -1,41 +1,43 @@
 ﻿@using SintLeoPannenkoeken.Blazor.Client.Auth
+@using SintLeoPannenkoeken.Blazor.Client.Pages
+@using Microsoft.AspNetCore.Components.Routing
 
 <MudAppBar Elevation="10" Color="Color.Info">
     <NavLink ActiveClass="d-flex align-center me-4" href="/">
         <img src="zeescouts.svg" style="max-height: 50px;" />
     </NavLink>
     <AuthorizeView Roles="@($"{Roles.RolesForBestellingen}")" Context="childContext">
-        <MudButton Href="/verkoop/bestellingen" Class="mx-1 px-3">Bestellingen</MudButton>
+        <MudButton Href="@Hrefs.Bestellingen" Class="@GetActiveClass(Hrefs.Bestellingen)">Bestellingen</MudButton>
     </AuthorizeView>
     <AuthorizeView Roles="@($"{Roles.RolesForChauffeurs}")" Context="childContext">
-        <MudButton Href="/beheer/chauffeurs" Class="mx-1 px-3">Chauffeurs</MudButton>
+        <MudButton Href="@Hrefs.Chauffeurs" Class="@GetActiveClass(Hrefs.Chauffeurs)">Chauffeurs</MudButton>
     </AuthorizeView>
     <AuthorizeView Roles="@($"{Roles.RolesForChauffeurs}")" Context="childContext">
-        <MudButton Href="/verdeling/rondes" Class="mx-1 px-3">Rondes</MudButton>
+        <MudButton Href="@Hrefs.Rondes" Class="@GetActiveClass(Hrefs.Rondes)">Rondes</MudButton>
     </AuthorizeView>
     <AuthorizeView Roles="@($"{Roles.RolesForStreefcijfers}")" Context="childContext">
-        <MudButton Href="/beheer/streefcijfers" Class="mx-1 px-3">Streefcijfers</MudButton>
+        <MudButton Href="@Hrefs.Streefcijfers" Class="@GetActiveClass(Hrefs.Streefcijfers)">Streefcijfers</MudButton>
     </AuthorizeView>
     <MudMenu Label="Rapporten" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Class="mx-1 px-3">
-        <MudNavLink Href="/rapporten/verkooppertak">Verkoop per tak</MudNavLink>
-        <MudNavLink Href="/rapporten/verkoopperlid">Verkoop per lid</MudNavLink>
-        <MudNavLink Href="/rapporten/ingavetotalen">Totaal ingegeven</MudNavLink>
+        <MudNavLink Href="@Hrefs.VerkoopPerTak">Verkoop per tak</MudNavLink>
+        <MudNavLink Href="@Hrefs.VerkoopPerLid">Verkoop per lid</MudNavLink>
+        <MudNavLink Href="@Hrefs.IngegevenTotalen">Totaal ingegeven</MudNavLink>
     </MudMenu>
 
     <AuthorizeView Roles="@($"{Roles.RolesForBeheer}")">
         <Authorized>
             <MudMenu Label="Beheer" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Class="mx-1 px-3">
                 <AuthorizeView Roles="@($"{Roles.RolesForGebruikers}")" Context="childContext">
-                    <MudNavLink Href="/beheer/gebruikers">Gebruikers</MudNavLink>
+                    <MudNavLink Href="@Hrefs.Gebruikers">Gebruikers</MudNavLink>
                 </AuthorizeView>
                 <AuthorizeView Roles="@($"{Roles.RolesForLeden}")" Context="childContext">
-                    <MudNavLink Href="/beheer/leden">Leden</MudNavLink>
+                    <MudNavLink Href="@Hrefs.Leden">Leden</MudNavLink>
                 </AuthorizeView>
                 <AuthorizeView Roles="@($"{Roles.RolesForScoutsjaren}")" Context="childContext">
-                    <MudNavLink Href="/beheer/scoutsjaren">Scoutsjaren</MudNavLink>
+                    <MudNavLink Href="@Hrefs.Scoutsjaren">Scoutsjaren</MudNavLink>
                 </AuthorizeView>
                 <AuthorizeView Roles="@($"{Roles.RolesForStraten}")" Context="childContext">
-                    <MudNavLink Href="/beheer/straten">Straten</MudNavLink>
+                    <MudNavLink Href="@Hrefs.Straten">Straten</MudNavLink>
                 </AuthorizeView>
             </MudMenu>
         </Authorized>
@@ -45,11 +47,11 @@
 
     <AuthorizeView>
         <Authorized>
-            <MudIconButton Href="/account/manage"
+            <MudIconButton Href="@Hrefs.Account"
                            Icon="@Icons.Material.Filled.AccountCircle" />
         </Authorized>
         <NotAuthorized>
-            <MudButton Href="/account/login"
+            <MudButton Href="@Hrefs.Login"
                        Variant="Variant.Filled"
                        Color="Color.Primary">
                 Login
@@ -57,3 +59,36 @@
         </NotAuthorized>
     </AuthorizeView>
 </MudAppBar>
+
+@code {
+    [Inject]
+    public NavigationManager NavigationManager { get; set; } = default!;
+
+    protected override void OnInitialized()
+    {
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    private string GetActiveClass(string href)
+    {
+        var current = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split('?')[0].Trim('/');
+        var target = (href ?? string.Empty).Trim('/');
+
+        if (string.Equals(current, target, StringComparison.OrdinalIgnoreCase))
+        {
+            return "mud-chip-text mud-chip-color-primary mx-1 px-3";
+        }
+
+        return string.Empty;
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}

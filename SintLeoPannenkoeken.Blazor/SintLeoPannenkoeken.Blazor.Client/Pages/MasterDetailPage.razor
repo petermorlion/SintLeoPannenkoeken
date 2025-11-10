@@ -26,8 +26,8 @@
                     <MudGrid>
                         @NewItemFormElements
                         <MudItem xs="12">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_isFormValid)" OnClick="@Create">Opslaan</MudButton>
-                            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@OnCancel">Annuleren</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_isFormValid)" OnClick="@Create" Class="me-1 px-3">Opslaan</MudButton>
+                            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@OnCancel" Class="mx-1 px-3">Annuleren</MudButton>
                         </MudItem>
                     </MudGrid>
                 </MudForm>
