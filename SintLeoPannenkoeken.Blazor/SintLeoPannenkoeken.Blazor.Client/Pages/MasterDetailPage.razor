@@ -18,7 +18,7 @@
 <RoleAuthorizedView Roles="@AuthorizedRoles">
     @ContentBeforeData
 
-    @if (CanAdd)
+    @if (CanAdd && !_isScoutsjaarGearchiveerd)
     {
         <MudExpansionPanels>
             <MudExpansionPanel Text="@NewItemTitle" Expanded="@NewItemExpanded">
@@ -34,7 +34,12 @@
             </MudExpansionPanel>
         </MudExpansionPanels>
     }
-    
+
+    @if (CanAdd && _isScoutsjaarGearchiveerd)
+    {
+        <MudAlert Severity="Severity.Info">Er kunnen geen wijzigingen meer gebeuren voor dit scoutsjaar omdat het gearchiveerd is.</MudAlert>
+    }
+
     <MudDataGrid T="@TDto" 
                  Items="@_data" 
                  SortMode="SortMode.Multiple" 
