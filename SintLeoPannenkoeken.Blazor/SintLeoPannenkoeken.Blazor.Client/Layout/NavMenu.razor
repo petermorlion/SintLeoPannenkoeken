@@ -1,40 +1,41 @@
 ﻿@using SintLeoPannenkoeken.Blazor.Client.Auth
 
 <MudAppBar Elevation="10" Color="Color.Info">
-    <img src="zeescouts.svg" style="max-height: 50px;" />
-
+    <NavLink ActiveClass="d-flex align-center me-4" href="/">
+        <img src="zeescouts.svg" style="max-height: 50px;" />
+    </NavLink>
     <AuthorizeView Roles="@($"{Roles.RolesForBestellingen}")" Context="childContext">
-        <MudNavLink Href="/verkoop/bestellingen">Bestellingen</MudNavLink>
+        <MudButton Href="/verkoop/bestellingen" Class="mx-1 px-3">Bestellingen</MudButton>
     </AuthorizeView>
     <AuthorizeView Roles="@($"{Roles.RolesForChauffeurs}")" Context="childContext">
-        <MudNavLink Href="/verdeling/rondes">Rondes</MudNavLink>
+        <MudButton Href="/beheer/chauffeurs" Class="mx-1 px-3">Chauffeurs</MudButton>
     </AuthorizeView>
-    <MudNavGroup Title="Rapporten">
+    <AuthorizeView Roles="@($"{Roles.RolesForChauffeurs}")" Context="childContext">
+        <MudButton Href="/verdeling/rondes" Class="mx-1 px-3">Rondes</MudButton>
+    </AuthorizeView>
+    <AuthorizeView Roles="@($"{Roles.RolesForStreefcijfers}")" Context="childContext">
+        <MudButton Href="/beheer/streefcijfers" Class="mx-1 px-3">Streefcijfers</MudButton>
+    </AuthorizeView>
+    <MudMenu Label="Rapporten" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Class="mx-1 px-3">
         <MudNavLink Href="/rapporten/verkooppertak">Verkoop per tak</MudNavLink>
         <MudNavLink Href="/rapporten/verkoopperlid">Verkoop per lid</MudNavLink>
         <MudNavLink Href="/rapporten/ingavetotalen">Totaal ingegeven</MudNavLink>
-    </MudNavGroup>
+    </MudMenu>
 
     <AuthorizeView Roles="@($"{Roles.RolesForBeheer}")">
         <Authorized>
-            <MudMenu Label="Beheer" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.KeyboardArrowDown">
-                <AuthorizeView Roles="@($"{Roles.RolesForStreefcijfers}")" Context="childContext">
-                    <MudMenuItem Href="/beheer/streefcijfers">Streefcijfers</MudMenuItem>
-                </AuthorizeView>
-                <AuthorizeView Roles="@($"{Roles.RolesForChauffeurs}")" Context="childContext">
-                    <MudMenuItem Href="/beheer/chauffeurs">Chauffeurs</MudMenuItem>
-                </AuthorizeView>
+            <MudMenu Label="Beheer" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Class="mx-1 px-3">
                 <AuthorizeView Roles="@($"{Roles.RolesForGebruikers}")" Context="childContext">
-                    <MudMenuItem Href="/beheer/gebruikers">Gebruikers</MudMenuItem>
+                    <MudNavLink Href="/beheer/gebruikers">Gebruikers</MudNavLink>
                 </AuthorizeView>
                 <AuthorizeView Roles="@($"{Roles.RolesForLeden}")" Context="childContext">
-                    <MudMenuItem Href="/beheer/leden">Leden</MudMenuItem>
+                    <MudNavLink Href="/beheer/leden">Leden</MudNavLink>
                 </AuthorizeView>
                 <AuthorizeView Roles="@($"{Roles.RolesForScoutsjaren}")" Context="childContext">
-                    <MudMenuItem Href="/beheer/scoutsjaren">Scoutsjaren</MudMenuItem>
+                    <MudNavLink Href="/beheer/scoutsjaren">Scoutsjaren</MudNavLink>
                 </AuthorizeView>
                 <AuthorizeView Roles="@($"{Roles.RolesForStraten}")" Context="childContext">
-                    <MudMenuItem Href="/beheer/straten">Straten</MudMenuItem>
+                    <MudNavLink Href="/beheer/straten">Straten</MudNavLink>
                 </AuthorizeView>
             </MudMenu>
         </Authorized>
@@ -44,16 +45,15 @@
 
     <AuthorizeView>
         <Authorized>
-            <MudIconButton Href="/account/manage" 
-                           Icon="@Icons.Material.Filled.AccountCircle"  />
+            <MudIconButton Href="/account/manage"
+                           Icon="@Icons.Material.Filled.AccountCircle" />
         </Authorized>
         <NotAuthorized>
-            <MudButton Href="/account/login" 
-                       Variant="Variant.Filled" 
+            <MudButton Href="/account/login"
+                       Variant="Variant.Filled"
                        Color="Color.Primary">
                 Login
             </MudButton>
         </NotAuthorized>
     </AuthorizeView>
-    
 </MudAppBar>
