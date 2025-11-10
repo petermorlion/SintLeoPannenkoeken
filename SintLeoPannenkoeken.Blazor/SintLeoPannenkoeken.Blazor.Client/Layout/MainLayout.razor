@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using MudBlazor.Utilities
+@inherits LayoutComponentBase
 
 <div class="page">
     <main>
@@ -19,7 +20,7 @@
 </div>
 
 @* Required *@
-<MudThemeProvider />
+<MudThemeProvider Theme="SintLeoTheme" />
 <MudPopoverProvider />
 
 @* Needed for dialogs *@
@@ -27,3 +28,16 @@
 
 @* Needed for snackbars *@
 <MudSnackbarProvider />
+
+@code {
+    MudTheme SintLeoTheme = new MudTheme
+    {
+        PaletteLight = new PaletteLight()
+        {
+            Primary = new MudColor("#004474"),
+            Secondary = new MudColor("#B9D8C2"),
+            Tertiary = new MudColor("#9AC2C9"),
+            HoverOpacity = 50
+        }
+    };
+}

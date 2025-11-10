@@ -2,9 +2,9 @@
 @using SintLeoPannenkoeken.Blazor.Client.Pages
 @using Microsoft.AspNetCore.Components.Routing
 
-<MudAppBar Elevation="10" Color="Color.Info">
+<MudAppBar Elevation="10" Color="Color.Tertiary">
     <NavLink ActiveClass="d-flex align-center me-4" href="/">
-        <img src="zeescouts.svg" style="max-height: 50px;" />
+        <img src="zeescouts.svg" style="max-height: 50px; color:#fff" />
     </NavLink>
     <AuthorizeView Roles="@($"{Roles.RolesForBestellingen}")" Context="childContext">
         <MudButton Href="@Hrefs.Bestellingen" Class="@GetActiveClass(Hrefs.Bestellingen)">Bestellingen</MudButton>
@@ -53,7 +53,7 @@
         <NotAuthorized>
             <MudButton Href="@Hrefs.Login"
                        Variant="Variant.Filled"
-                       Color="Color.Primary">
+                       Color="Color.Secondary">
                 Login
             </MudButton>
         </NotAuthorized>
