@@ -73,7 +73,12 @@
             }
         </Columns>
         <PagerContent>
-            <MudDataGridPager T="TDto" />
+            <MudDataGridPager 
+                T="TDto" 
+                RowsPerPageString="Rijen per pagina" 
+                InfoFormat="{first_item}-{last_item} van {all_items}"
+                AllItemsText="Alle"
+                PageSizeOptions="[50, 100, 250, 500, int.MaxValue]"/>
         </PagerContent>
     </MudDataGrid>
     @ContentAfterData
