@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using SintLeoPannenkoeken.Blazor.Client.Auth;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
-using System.Threading.Tasks;
 
 namespace SintLeoPannenkoeken.Blazor.Controllers
 {

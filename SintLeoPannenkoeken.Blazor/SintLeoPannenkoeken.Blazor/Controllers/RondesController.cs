@@ -7,7 +7,7 @@ using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
 namespace SintLeoPannenkoeken.Blazor.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(Roles = $"{Roles.RolesForChauffeurs}")]
+    [Authorize(Roles = $"{Roles.RolesForRondes}")]
     [ApiController]
     public class RondesController : ControllerBase
     {

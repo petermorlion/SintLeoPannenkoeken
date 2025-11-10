@@ -15,7 +15,8 @@
         public const string RolesForScoutsjaren = $"{Admin},{FinanciePloeg}";
         public const string RolesForStraten= $"{Admin},{FinanciePloeg}";
         public const string RolesForStreefcijfers = $"{Admin},{FinanciePloeg}";
-        public const string RolesForTakken= $"{Admin}";
+        public const string RolesForTakken= $"{Admin},{FinanciePloeg}";
+        public const string RolesForZones = $"{Admin},{FinanciePloeg}";
 
         public static IList<string> AllRoles => new List<string> { Admin, FinanciePloeg };
     }

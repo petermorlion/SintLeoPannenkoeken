@@ -7,7 +7,7 @@ using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
 namespace SintLeoPannenkoeken.Blazor.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(Roles = Roles.RolesForScoutsjaren)]
+    [Authorize(Roles = Roles.RolesForStraten)]
     [ApiController]
     public class StratenController : ControllerBase
     {
