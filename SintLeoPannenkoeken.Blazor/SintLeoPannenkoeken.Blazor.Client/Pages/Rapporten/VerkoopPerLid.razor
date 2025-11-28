@@ -1,0 +1,42 @@
+﻿@page "/rapporten/verkoopperlid"
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Serialization
+@using SintLeoPannenkoeken.Blazor.Client.Auth
+@using SintLeoPannenkoeken.Blazor.Client.Components
+@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+@using System.Linq;
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts.Rapporten
+
+<MasterDetailPage TDto="LidVerkoopDto"
+                  AuthorizedRoles="@($"{Roles.RolesForRapporten}")"
+                  Title="Verkoop per lid"
+                  DataProvider="@GetDetails"
+                  CanEdit="false"
+                  CanAdd="false"
+                  CanDelete="false">
+
+
+    <Columns>
+        <PropertyColumn T="LidVerkoopDto" TProperty="string" Property="x => x.Achternaam" Title="Achternaam" />
+        <PropertyColumn T="LidVerkoopDto" TProperty="string" Property="x => x.Voornaam" Title="Voornaam" />
+        <PropertyColumn T="LidVerkoopDto" TProperty="int" Property="x => x.AantalPakkenVerkocht" Title="Verkocht" InitialDirection="SortDirection.Descending" />
+    </Columns>
+</MasterDetailPage>
+
+@code {
+    private async Task<IList<LidVerkoopDto>> GetDetails(IServerData serverData)
+    {
+        var scoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        var rapport = await serverData.GetVerkoopPerLidRapport(_currentScoutsjaar);
+        return rapport.LidVerkopen;
+    }
+
+    private int _currentScoutsjaar;
+
+    [Inject]
+    private IServerData _serverData { get; set; } = default!;
+
+    [Inject]
+    private CurrentScoutsjaarQuerystringParameterProvider _currentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
+}
