@@ -1071,5 +1071,46 @@ namespace SintLeoPannenkoeken.Blazor.Data
                 return result;
             }
         }
+
+        public async Task<VerkoopPerLidDto> GetVerkoopPerLidRapport(int scoutsjaarBegin)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                Scoutsjaar? sj = dbContext
+                    .Scoutsjaren
+                    .Include(x => x.StreefCijfers)
+                    .ThenInclude(x => x.Tak)
+                    .SingleOrDefault(s => s.Begin == scoutsjaarBegin);
+
+                var bestellingen = dbContext.Scoutsjaren
+                    .Include(scoutsjaar => scoutsjaar.Bestellingen)
+                    .ThenInclude(bestelling => bestelling.Lid)
+                    .ThenInclude(lid => lid.Tak)
+                    .SingleOrDefault(scoutsjaar => scoutsjaar.Id == sj.Id)
+                    ?.Bestellingen
+                    ?.ToList();
+
+                var verkoopPerLid = bestellingen
+                    .GroupBy(x => x.Lid)
+                    .ToDictionary(x => x.Key, x => x.Sum(y => y.AantalPakken));
+
+                var result = new VerkoopPerLidDto
+                {
+                    ScoutsjaarBegin = scoutsjaarBegin,
+                    LidVerkopen = verkoopPerLid.Select(x =>
+                    {
+                        return new LidVerkoopDto
+                        {
+                            Voornaam = x.Key.Voornaam,
+                            Achternaam = x.Key.Achternaam,
+                            TakNaam = x.Key.Tak != null ? x.Key.Tak.Naam : "Onbekend",
+                            AantalPakkenVerkocht = x.Value
+                        };
+                    }).OrderByDescending(x => x.AantalPakkenVerkocht).ToList()
+                };
+
+                return result;
+            }
+        }
     }
 }

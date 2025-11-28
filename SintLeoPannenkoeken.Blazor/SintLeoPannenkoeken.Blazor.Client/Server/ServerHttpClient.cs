@@ -302,5 +302,10 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         {
             return await Get<VerkoopPerTakDto>($"/api/rapporten/{scoutsjaarBegin}/verkooppertak", Roles.RolesForRapporten);
         }
+
+        public async Task<VerkoopPerLidDto> GetVerkoopPerLidRapport(int scoutsjaarBegin)
+        {
+            return await Get<VerkoopPerLidDto>($"/api/rapporten/{scoutsjaarBegin}/verkoopperlid", Roles.RolesForRapporten);
+        }
     }
 }

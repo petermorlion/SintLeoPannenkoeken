@@ -62,5 +62,6 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
 
 
         Task<VerkoopPerTakDto> GetVerkoopPerTakRapport(int scoutsjaarBegin);
+        Task<VerkoopPerLidDto> GetVerkoopPerLidRapport(int scoutsjaarBegin);
     }
 }
