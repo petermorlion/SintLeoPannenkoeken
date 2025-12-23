@@ -23,12 +23,11 @@
                 <h2>Use a local account to log in.</h2>
                 <hr />
                 <ValidationSummary class="text-danger" role="alert" />
-                <div class="form-floating mb-3">
+                <div class="form-floating mb-5">
                     <MudStaticTextField @bind-Value="Input.Email" Label="Email" Required="true" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel Placeholder="name@example.com" />
-                    <label for="email" class="form-label">Email</label>
                     <ValidationMessage For="() => Input.Email" class="text-danger" />
                 </div>
-                <div class="form-floating mb-3">
+                <div class="form-floating mb-5">
                     <MudStaticTextField 
                         @bind-Value="Input.Password" 
                         Label="Paswoord" 
@@ -37,12 +36,10 @@
                         Margin="Margin.Dense" 
                         ShrinkLabel 
                         Placeholder="paswoord"
-                        
                         InputType="@_passwordInputType"/>
-                    <label for="password" class="form-label">Password</label>
                     <ValidationMessage For="() => Input.Password" class="text-danger" />
                 </div>
-                <div class="checkbox mb-3">
+                <div class="checkbox mb-5">
                     <label class="form-label">
                         <MudStaticCheckBox @bind-Value="Input.RememberMe" Label="Aangemeld blijven" />
                     </label>

@@ -1,5 +1,6 @@
 ﻿@page "/beheer/gebruikers"
 @using SintLeoPannenkoeken.Blazor.Client.Auth
+@using SintLeoPannenkoeken.Blazor.Client.Components
 @using SintLeoPannenkoeken.Blazor.Client.Server
 @using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
 @using System.ComponentModel.DataAnnotations
@@ -46,6 +47,14 @@
             </EditTemplate>
         </PropertyColumn>
     </Columns>
+    <ActionColumnContent>
+        <MudTooltip Text="Wachtwoord resetten">
+            <MudIconButton Size="@Size.Small"
+                           Icon="@Icons.Material.Outlined.Password"
+                           Color="Color.Primary"
+                           OnClick="async () => await ShowPasswordResetDialogForRow(context.Item)"/>
+        </MudTooltip>
+    </ActionColumnContent>
 </MasterDetailPage>
 
 @code {
@@ -57,6 +66,9 @@
     [Inject]
     private IServerData _serverData { get; set; } = default!;
 
+    [Inject]
+    public IDialogService DialogService { get; set; } = default!;
+
     private string FormatRoles(IEnumerable<string> roles)
     {
         return string.Join(", ", roles);
@@ -66,6 +78,7 @@
     {
         var newGebruiker = new NewGebruikerDto(_newGebruikerEmail, _newGebruikerRollen.ToList());
         var result = await _serverData.CreateGebruiker(newGebruiker);
+        await ShowPasswordResetDialog(result.ResetPasswordCode, result.Gebruiker.Email);
         return result.Gebruiker;
     }
 
@@ -83,5 +96,22 @@
     async Task OnDelete(GebruikerDto item)
     {
         await _serverData.DeleteGebruiker(item.Email);
+    }
+
+    async Task ShowPasswordResetDialogForRow(GebruikerDto item)
+    {
+        var code = await _serverData.GetPasswordResetCode(item.Email);
+        await ShowPasswordResetDialog(code, item.Email);
+    }
+
+    async Task ShowPasswordResetDialog(string resetPasswordCode, string email)
+    {
+        var parameters = new DialogParameters
+        {
+            { "ResetPasswordCode", resetPasswordCode },
+            { "Email", email}
+        };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall, FullWidth = true };
+        await DialogService.ShowAsync<PasswordResetDialog>("Wachtwoord resetten", parameters, options);
     }
 }

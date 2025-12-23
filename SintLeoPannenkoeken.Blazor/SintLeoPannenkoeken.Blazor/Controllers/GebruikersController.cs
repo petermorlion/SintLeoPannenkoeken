@@ -49,5 +49,13 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
             await _serverData.DeleteGebruiker(email);
             return Ok();
         }
+
+        [HttpGet]
+        [Route("{email}/passwordResetCode")]
+        public async Task<IActionResult> GetPasswordResetCode([FromRoute] string email)
+        {
+            var code = await _serverData.GetPasswordResetCode(email);
+            return Ok(code);
+        }
     }
 }

@@ -660,6 +660,11 @@ namespace SintLeoPannenkoeken.Blazor.Data
             await _usersService.DeleteGebruiker(email);
         }
 
+        public async Task<string> GetPasswordResetCode(string email)
+        {
+            return await _usersService.GetPasswordResetCode(email);
+        }
+
         public async Task DeleteBestelling(int bestellingId)
         {
             using (var dbContext = _dbContextFactory.CreateDbContext())

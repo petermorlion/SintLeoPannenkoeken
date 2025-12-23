@@ -248,6 +248,11 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
             await Delete($"/api/gebruikers/{email}", Roles.RolesForGebruikers);
         }
 
+        public async Task<string> GetPasswordResetCode(string email)
+        {
+            return await Get<string>($"/api/gebruikers/{email}/passwordResetCode", Roles.RolesForGebruikers);
+        }
+
         public async Task<IList<ZoneDto>> GetZones()
         {
             return await GetList<ZoneDto>("/api/zones", Roles.RolesForBeheer);

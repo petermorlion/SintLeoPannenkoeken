@@ -139,5 +139,18 @@ namespace SintLeoPannenkoeken.Blazor.Data
 
             await _userManager.DeleteAsync(user);
         }
+
+        internal async Task<string> GetPasswordResetCode(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                throw new ApplicationException("User not found");
+            }
+
+            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var encodedCode = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            return encodedCode;
+        }
     }
 }

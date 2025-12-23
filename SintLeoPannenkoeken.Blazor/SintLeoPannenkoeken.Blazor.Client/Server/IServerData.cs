@@ -19,6 +19,7 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         Task<GebruikerCreatedDto> CreateGebruiker(NewGebruikerDto gebruiker);
         Task UpdateGebruiker(GebruikerDto gebruiker);
         Task DeleteGebruiker(string email);
+        Task<string> GetPasswordResetCode(string email);
 
 
         Task<StraatDto> CreateStraat(StraatDto straatDto);
