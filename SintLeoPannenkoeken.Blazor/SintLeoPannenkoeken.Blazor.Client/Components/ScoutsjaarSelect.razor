@@ -5,8 +5,7 @@
 
 <MudSelect @bind-Value="Value"
            @bind-Value:after="OnValueChanged"
-           FitContent="true"
-           QuickSearchInterval="@TimeSpan.FromSeconds(1)">
+           FitContent="true">
     @foreach (var scoutsjaar in _scoutsjaren)
     {
         <MudSelectItem Value="@scoutsjaar.Begin">@scoutsjaar.Begin</MudSelectItem>
