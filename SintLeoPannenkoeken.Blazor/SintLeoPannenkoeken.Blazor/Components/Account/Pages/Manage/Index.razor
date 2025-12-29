@@ -2,6 +2,7 @@
 
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Identity
+@using MudBlazor.StaticInput
 @using SintLeoPannenkoeken.Blazor.Data
 
 @inject UserManager<ApplicationUser> UserManager
@@ -9,39 +10,26 @@
 @inject IdentityUserAccessor UserAccessor
 @inject IdentityRedirectManager RedirectManager
 
-<PageTitle>Profile</PageTitle>
+<PageTitle>Profiel</PageTitle>
 
-<h3>Profile</h3>
+<h3>Profiel</h3>
 <StatusMessage />
 
 <p>
-    Your roles: @roles
+    Je rollen: @roles
 </p>
-
-<div class="row">
-    <div class="col-md-6">
-        <EditForm Model="Input" FormName="profile" OnValidSubmit="OnValidSubmitAsync" method="post">
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert" />
-            <div class="form-floating mb-3">
-                <input type="text" value="@username" class="form-control" placeholder="Please choose your username." disabled />
-                <label for="username" class="form-label">Username</label>
-            </div>
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number." />
-                <label for="phone-number" class="form-label">Phone number</label>
-                <ValidationMessage For="() => Input.PhoneNumber" class="text-danger" />
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
-        </EditForm>
-    </div>
-</div>
-
+<p>
+    Je gebruikersnaam: @username
+</p>
 @code {
     private ApplicationUser user = default!;
     private string? username;
     private string? phoneNumber;
     private string? roles = "";
+    private Dictionary<string, object> _submitButtonAttributes = new Dictionary<string, object>
+    {
+        { "type", "submit" }
+    };
 
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;

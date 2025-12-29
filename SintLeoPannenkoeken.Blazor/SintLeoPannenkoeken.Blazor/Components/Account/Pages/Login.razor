@@ -14,6 +14,7 @@
 <PageTitle>Log in</PageTitle>
 
 <h1>Log in</h1>
+<StatusMessage Message="@errorMessage" />
 <div class="row">
     <div class="col-md-4">
         <section>
@@ -35,7 +36,7 @@
                         Variant="Variant.Outlined" 
                         Margin="Margin.Dense" 
                         ShrinkLabel 
-                        Placeholder="paswoord"
+                        Placeholder="Wachtwoord"
                         InputType="@_passwordInputType"/>
                     <ValidationMessage For="() => Input.Password" class="text-danger" />
                 </div>
