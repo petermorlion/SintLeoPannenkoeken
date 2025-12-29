@@ -28,6 +28,11 @@
     private async Task<IList<LidVerkoopDto>> GetDetails(IServerData serverData)
     {
         var scoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        if (scoutsjaar != null)
+        {
+            _currentScoutsjaar = scoutsjaar.Begin;
+        }
+
         var rapport = await serverData.GetVerkoopPerLidRapport(_currentScoutsjaar);
         return rapport.LidVerkopen;
     }

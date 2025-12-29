@@ -1087,6 +1087,14 @@ namespace SintLeoPannenkoeken.Blazor.Data
                     .ThenInclude(x => x.Tak)
                     .SingleOrDefault(s => s.Begin == scoutsjaarBegin);
 
+                if (sj == null)
+                {
+                    return new VerkoopPerLidDto
+                    {
+                        LidVerkopen = new List<LidVerkoopDto>()
+                    };
+                }
+
                 var bestellingen = dbContext.Scoutsjaren
                     .Include(scoutsjaar => scoutsjaar.Bestellingen)
                     .ThenInclude(bestelling => bestelling.Lid)
