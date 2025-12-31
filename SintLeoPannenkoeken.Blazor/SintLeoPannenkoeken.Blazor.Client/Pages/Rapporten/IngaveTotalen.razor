@@ -14,7 +14,9 @@
                   DataProvider="@GetDetails"
                   CanEdit="false"
                   CanAdd="false"
-                  CanDelete="false">
+                  CanDelete="false"
+                  CanSearch="false"
+SortMode="SortMode.None">
     <Columns>
         <PropertyColumn T="IngaveTotalenRowDto" TProperty="DateTime" Property="x => x.IngaveDatum" Title="Datum" />
         @foreach (var tak in _rapport.Takken)
@@ -33,7 +35,7 @@
                     else
                     {
                         <span>0</span>
-                    }                    
+                    }
                 </CellTemplate>
             </TemplateColumn>
         }

@@ -11,7 +11,7 @@
     <h1>@Title</h1>
     @if (IsForScoutsjaar)
     {
-        <ScoutsjaarSelect Value="_selectedScoutsjaarBegin"/>
+        <ScoutsjaarSelect Value="_selectedScoutsjaarBegin" />
     }
 </MudStack>
 
@@ -40,10 +40,10 @@
         <MudAlert Severity="Severity.Info">Er kunnen geen wijzigingen meer gebeuren voor dit scoutsjaar omdat het gearchiveerd is.</MudAlert>
     }
 
-    <MudDataGrid T="@TDto" 
-                 Items="@_data" 
-                 SortMode="SortMode.Multiple" 
-                 Filterable="true" 
+    <MudDataGrid T="@TDto"
+                 Items="@_data"
+                 SortMode="SortMode"
+                 Filterable="true"
                  MultiSelection="false"
                  RowsPerPage="500"
                  ReadOnly="false"
@@ -57,16 +57,20 @@
                  QuickFilter="QuickFilter"
                  @ref="_grid"
                  Class="mt-4">
+
         <ToolBarContent>
-            <div class="d-flex flex-row-reverse flex-grow-1">
-                <MudTextField @bind-Value="_searchString"
-                              Placeholder="Zoeken"
-                              Adornment="Adornment.Start"
-                              Immediate="true"
-                              AdornmentIcon="@Icons.Material.Filled.Search"
-                              IconSize="Size.Medium"
-                              Class="mt-0 flex-grow-0" Style="width: 500px;"></MudTextField>
-            </div>
+            @if (CanSearch)
+            {
+                <div class="d-flex flex-row-reverse flex-grow-1">
+                    <MudTextField @bind-Value="_searchString"
+                                  Placeholder="Zoeken"
+                                  Adornment="Adornment.Start"
+                                  Immediate="true"
+                                  AdornmentIcon="@Icons.Material.Filled.Search"
+                                  IconSize="Size.Medium"
+                                  Class="mt-0 flex-grow-0" Style="width: 500px;"></MudTextField>
+                </div>
+            }
         </ToolBarContent>
         <Columns>
             @Columns
@@ -87,7 +91,7 @@
                                                OnClick="@context.Actions.StartEditingItemAsync"
                                                Disabled="_isScoutsjaarGearchiveerd" />
                             </MudTooltip>
-                        }           
+                        }
                         @if (CanDelete)
                         {
                             <MudTooltip Text="@(_isScoutsjaarGearchiveerd ? "Wijzigingen aan een gearchiveerd scoutsjaar zijn niet mogelijk." : "Verwijderen")">
@@ -103,16 +107,15 @@
             }
         </Columns>
         <PagerContent>
-            <MudDataGridPager 
-                T="TDto" 
-                RowsPerPageString="Rijen per pagina" 
-                InfoFormat="{first_item}-{last_item} van {all_items}"
-                AllItemsText="Alle"
-                PageSizeOptions="[50, 100, 250, 500, int.MaxValue]"/>
+            <MudDataGridPager T="TDto"
+                              RowsPerPageString="Rijen per pagina"
+                              InfoFormat="{first_item}-{last_item} van {all_items}"
+                              AllItemsText="Alle"
+                              PageSizeOptions="[50, 100, 250, 500, int.MaxValue]" />
         </PagerContent>
     </MudDataGrid>
     @ContentAfterData
-    
+
 </RoleAuthorizedView>
 
 @code {
@@ -194,6 +197,12 @@
     [Parameter]
     public bool IsForScoutsjaar { get; set; } = false;
 
+    [Parameter]
+    public SortMode SortMode { get; set; } = SortMode.Multiple;
+
+    [Parameter]
+    public bool CanSearch { get; set; } = true;
+
     [Inject]
     public IServerData ServerData { get; set; } = default!;
 
@@ -217,7 +226,7 @@
         var scoutsjaarParameter = query["scoutsjaar"];
         if (scoutsjaarParameter != null)
         {
-            _selectedScoutsjaarBegin = int.Parse(scoutsjaarParameter); 
+            _selectedScoutsjaarBegin = int.Parse(scoutsjaarParameter);
         }
 
         if (IsForScoutsjaar)
