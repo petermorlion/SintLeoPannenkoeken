@@ -42,5 +42,13 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
             var result = await _serverData.GetVerkoopPerLidRapport(scoutsjaarBegin);
             return Ok(result);
         }
+
+        [HttpGet]
+        [Route("{scoutsjaarBegin:int}/ingavetotalen")]
+        public async Task<IActionResult> GetIngaveTotalen (int scoutsjaarBegin)
+        {
+            var result = await _serverData.GetIngaveTotalen(scoutsjaarBegin);
+            return Ok(result);
+        }
     }
 }

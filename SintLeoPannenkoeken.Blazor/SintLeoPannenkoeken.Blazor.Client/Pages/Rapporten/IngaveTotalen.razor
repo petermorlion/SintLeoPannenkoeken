@@ -1,0 +1,66 @@
+﻿@page "/rapporten/ingavetotalen"
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Serialization
+@using SintLeoPannenkoeken.Blazor.Client.Auth
+@using SintLeoPannenkoeken.Blazor.Client.Components
+@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+@using System.Linq;
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts.Rapporten
+
+<MasterDetailPage TDto="IngaveTotalenRowDto"
+                  AuthorizedRoles="@($"{Roles.RolesForRapporten}")"
+                  Title="Totaal ingegeven"
+                  DataProvider="@GetDetails"
+                  CanEdit="false"
+                  CanAdd="false"
+                  CanDelete="false">
+    <Columns>
+        <PropertyColumn T="IngaveTotalenRowDto" TProperty="DateTime" Property="x => x.IngaveDatum" Title="Datum" />
+        @foreach (var tak in _rapport.Takken)
+        {
+            <TemplateColumn T="IngaveTotalenRowDto">
+                <HeaderTemplate>
+                    <MudTooltip Text="@tak.Value">
+                        <span>@tak.Key</span>
+                    </MudTooltip>
+                </HeaderTemplate>
+                <CellTemplate>
+                    @if (context.Item.AantalPerTak.ContainsKey(tak.Key))
+                    {
+                        <span>@context.Item.AantalPerTak[tak.Key]</span>
+                    }
+                    else
+                    {
+                        <span>0</span>
+                    }                    
+                </CellTemplate>
+            </TemplateColumn>
+        }
+        <PropertyColumn T="IngaveTotalenRowDto" TProperty="int" Property="x => x.Totaal" Title="Totaal" />
+        <PropertyColumn T="IngaveTotalenRowDto" TProperty="int" Property="x => x.OplopendTotaal" Title="Oplopend totaal" />
+    </Columns>
+</MasterDetailPage>
+
+@code {
+    private async Task<IList<IngaveTotalenRowDto>> GetDetails(IServerData serverData)
+    {
+        var scoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        if (scoutsjaar != null)
+        {
+            _currentScoutsjaar = scoutsjaar.Begin;
+        }
+
+        _rapport = await serverData.GetIngaveTotalen(_currentScoutsjaar);
+        return _rapport.IngaveTotalen;
+    }
+
+    private int _currentScoutsjaar;
+    private IngaveTotalenDto _rapport = new IngaveTotalenDto();
+
+    [Inject]
+    private IServerData _serverData { get; set; } = default!;
+
+    [Inject]
+    private CurrentScoutsjaarQuerystringParameterProvider _currentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
+}

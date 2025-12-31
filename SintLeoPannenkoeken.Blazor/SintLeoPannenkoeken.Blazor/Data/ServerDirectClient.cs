@@ -1125,5 +1125,64 @@ namespace SintLeoPannenkoeken.Blazor.Data
                 return result;
             }
         }
+
+        public async Task<IngaveTotalenDto> GetIngaveTotalen(int scoutsjaarBegin)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                Scoutsjaar? sj = await dbContext
+                .Scoutsjaren
+                .Include(x => x.StreefCijfers)
+                .ThenInclude(x => x.Tak)
+                .SingleOrDefaultAsync(s => s.Begin == scoutsjaarBegin);
+
+                var bestellingen = (await dbContext.Scoutsjaren
+                    .Include(scoutsjaar => scoutsjaar.Bestellingen)
+                    .ThenInclude(bestelling => bestelling.Tak)
+                    .SingleOrDefaultAsync(scoutsjaar => scoutsjaar.Id == sj.Id))
+                    ?.Bestellingen
+                    ?.ToList();
+
+                if (bestellingen == null)
+                {
+                    return new IngaveTotalenDto();
+                }
+
+                var bestellingenByDate = bestellingen
+                    .GroupBy(x => x.IngaveDatum)
+                    .OrderBy(x => x.Key);
+
+                var result = new IngaveTotalenDto
+                {
+                    Takken = await dbContext.Takken.OrderBy(x => x.Afkorting).ToDictionaryAsync(x => x.Afkorting, x => x.Naam),
+                    IngaveTotalen = new List<IngaveTotalenRowDto>()
+                };
+
+                foreach (var bestellingenOnDate in bestellingenByDate)
+                {
+                    var ingaveTotalenRowViewModel = new IngaveTotalenRowDto
+                    {
+                        IngaveDatum = bestellingenOnDate.Key.Date,
+                        AantalPerTak = new Dictionary<string, int>()
+                    };
+
+                    foreach (var bestelling in bestellingenOnDate)
+                    {
+                        if (ingaveTotalenRowViewModel.AantalPerTak.ContainsKey(bestelling.Tak.Afkorting))
+                        {
+                            ingaveTotalenRowViewModel.AantalPerTak[bestelling.Tak.Afkorting] += bestelling.AantalPakken;
+                        }
+                        else
+                        {
+                            ingaveTotalenRowViewModel.AantalPerTak.Add(bestelling.Tak.Afkorting, bestelling.AantalPakken);
+                        }
+                    }
+
+                    result.IngaveTotalen.Add(ingaveTotalenRowViewModel);
+                }
+
+                return result;
+            }
+        }
     }
 }

@@ -8,7 +8,7 @@
         public const string Streefcijfers = "beheer/streefcijfers";
         public const string VerkoopPerTak = "rapporten/verkooppertak";
         public const string VerkoopPerLid = "rapporten/verkoopperlid";
-        public const string IngegevenTotalen = "rapporten/ingegeventotalen";
+        public const string IngegevenTotalen = "rapporten/ingavetotalen";
         public const string Gebruikers = "beheer/gebruikers";
         public const string Leden = "beheer/leden";
         public const string Scoutsjaren = "beheer/scoutsjaren";
