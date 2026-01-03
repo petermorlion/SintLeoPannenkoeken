@@ -2,103 +2,21 @@
 @using SintLeoPannenkoeken.Blazor.Client.Pages
 @using Microsoft.AspNetCore.Components.Routing
 
-<MudAppBar Elevation="10" Color="Color.Tertiary">
-    <NavLink ActiveClass="d-flex align-center me-4" href="/">
-        <img src="zeescouts.svg" style="max-height: 50px; color:#fff" />
-    </NavLink>
-    <AuthorizeView Roles="@($"{Roles.RolesForBestellingen}")" Context="childContext">
-        <MudButton Href="@($"{Hrefs.Bestellingen}?scoutsjaar={_currentScoutsjaarQuerystringValue}")" Class="@GetActiveClass(Hrefs.Bestellingen)">Bestellingen</MudButton>
-    </AuthorizeView>
-    <AuthorizeView Roles="@($"{Roles.RolesForChauffeurs}")" Context="childContext">
-        <MudButton Href="@($"{Hrefs.Chauffeurs}?scoutsjaar={_currentScoutsjaarQuerystringValue}")" Class="@GetActiveClass(Hrefs.Chauffeurs)">Chauffeurs</MudButton>
-    </AuthorizeView>
-    <AuthorizeView Roles="@($"{Roles.RolesForChauffeurs}")" Context="childContext">
-        <MudButton Href="@($"{Hrefs.Rondes}?scoutsjaar={_currentScoutsjaarQuerystringValue}")" Class="@GetActiveClass(Hrefs.Rondes)">Rondes</MudButton>
-    </AuthorizeView>
-    <AuthorizeView Roles="@($"{Roles.RolesForStreefcijfers}")" Context="childContext">
-        <MudButton Href="@($"{Hrefs.Streefcijfers}?scoutsjaar={_currentScoutsjaarQuerystringValue}")" Class="@GetActiveClass(Hrefs.Streefcijfers)">Streefcijfers</MudButton>
-    </AuthorizeView>
-    <MudMenu Label="Rapporten" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Class="mx-1 px-3">
-        <MudNavLink Href="@($"{Hrefs.VerkoopPerTak}?scoutsjaar={_currentScoutsjaarQuerystringValue}")">Verkoop per tak</MudNavLink>
-        <MudNavLink Href="@($"{Hrefs.VerkoopPerLid}?scoutsjaar={_currentScoutsjaarQuerystringValue}")">Verkoop per lid</MudNavLink>
-        <MudNavLink Href="@($"{Hrefs.IngegevenTotalen}?scoutsjaar={_currentScoutsjaarQuerystringValue}")">Totaal ingegeven</MudNavLink>
-    </MudMenu>
+<div class="d-flex d-lg-none">
+    <MudIconButton Icon="@Icons.Material.Rounded.Notes"
+                   Color="Color.Inherit"
+                   Edge="Edge.Start"
+                   OnClick="DrawerToggleCallback"
+                   aria-label="Toggle drawer" />
+</div>
+<div class="d-none d-lg-flex">
+    <MudAppBar Elevation="10" Color="Color.Tertiary">
+        <NavMenuItems />
+    </MudAppBar>
+</div>
 
-    <AuthorizeView Roles="@($"{Roles.RolesForBeheer}")">
-        <Authorized>
-            <MudMenu Label="Beheer" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Class="mx-1 px-3">
-                <AuthorizeView Roles="@($"{Roles.RolesForGebruikers}")" Context="childContext">
-                    <MudNavLink Href="@Hrefs.Gebruikers">Gebruikers</MudNavLink>
-                </AuthorizeView>
-                <AuthorizeView Roles="@($"{Roles.RolesForLeden}")" Context="childContext">
-                    <MudNavLink Href="@Hrefs.Leden">Leden</MudNavLink>
-                </AuthorizeView>
-                <AuthorizeView Roles="@($"{Roles.RolesForScoutsjaren}")" Context="childContext">
-                    <MudNavLink Href="@Hrefs.Scoutsjaren">Scoutsjaren</MudNavLink>
-                </AuthorizeView>
-                <AuthorizeView Roles="@($"{Roles.RolesForStraten}")" Context="childContext">
-                    <MudNavLink Href="@Hrefs.Straten">Straten</MudNavLink>
-                </AuthorizeView>
-            </MudMenu>
-        </Authorized>
-    </AuthorizeView>
-
-    <MudSpacer />
-
-    <AuthorizeView>
-        <Authorized>
-            <MudIconButton Href="@Hrefs.Account"
-                           Icon="@Icons.Material.Filled.AccountCircle" />
-        </Authorized>
-        <NotAuthorized>
-            <MudButton Href="@Hrefs.Login"
-                       Variant="Variant.Filled"
-                       Color="Color.Secondary">
-                Login
-            </MudButton>
-        </NotAuthorized>
-    </AuthorizeView>
-</MudAppBar>
 
 @code {
-    private int? _currentScoutsjaarQuerystringValue;
-
-    [Inject]
-    public NavigationManager NavigationManager { get; set; } = default!;
-
-    [Inject]
-    private CurrentScoutsjaarQuerystringParameterProvider _currentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
-
-    protected override async Task OnInitializedAsync()
-    {
-        NavigationManager.LocationChanged += OnLocationChanged;
-        var currentScoutsjaar = await _currentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
-        if (currentScoutsjaar != null)
-        {
-            _currentScoutsjaarQuerystringValue = currentScoutsjaar.Begin;
-        }
-    }
-
-    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
-    {
-        InvokeAsync(StateHasChanged);
-    }
-
-    private string GetActiveClass(string href)
-    {
-        var current = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split('?')[0].Trim('/');
-        var target = (href ?? string.Empty).Trim('/');
-
-        if (string.Equals(current, target, StringComparison.OrdinalIgnoreCase))
-        {
-            return "mud-chip-text mud-chip-color-primary mx-1 px-3";
-        }
-
-        return "mx-1 px-3";
-    }
-
-    public void Dispose()
-    {
-        NavigationManager.LocationChanged -= OnLocationChanged;
-    }
+    [Parameter]
+    public EventCallback<MouseEventArgs> DrawerToggleCallback { get; set; }
 }
