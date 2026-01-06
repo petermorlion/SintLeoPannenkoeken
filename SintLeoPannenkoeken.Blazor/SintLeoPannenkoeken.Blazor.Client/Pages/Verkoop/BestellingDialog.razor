@@ -1,7 +1,7 @@
 ﻿@using SintLeoPannenkoeken.Blazor.Client.Pages.Verkoop
 @using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
 
-<MudDialog>
+<MudDialog Style="min-width: 1000px;">
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3 mb-n1" />
@@ -9,7 +9,9 @@
         </MudText>
     </TitleContent>
     <DialogContent>
-        <BestellingForm Item="Item" />
+        <MudGrid>
+            <BestellingForm Item="Item" />
+        </MudGrid>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Annuleren</MudButton>

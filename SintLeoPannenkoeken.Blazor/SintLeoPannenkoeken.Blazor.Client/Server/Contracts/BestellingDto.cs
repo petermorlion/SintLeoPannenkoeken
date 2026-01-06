@@ -12,14 +12,12 @@
         public bool Geleverd { get; set; }
         public string Nummer { get; set; }
         public string Bus { get; set; }
-        public LidDto? Lid { get; set; }
-        public int StraatId { get; set; }
-        public string StraatNaam { get; set; }
-        public int? StraatNummer { get; set; }
-        public string ZoneNaam { get; set; }
+        public StraatDto? Straat { get; set; } = null;
+        public LidDto? Lid { get; set; } = null;
 
 
         public string TakNaam => Lid?.TakNaam ?? string.Empty;
         public string LidNaam => $"{Lid?.Achternaam} {Lid?.Voornaam}";
+        public string StraatNaam => Straat?.Naam ?? string.Empty;
     }
 }

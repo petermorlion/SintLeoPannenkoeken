@@ -61,6 +61,9 @@
     private IDialogService _dialogService { get; set; } = default!;
 
     [Inject]
+    private ISnackbar _snackbar { get; set; } = default!;
+
+    [Inject]
     public CurrentScoutsjaarQuerystringParameterProvider CurrentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
 
     private BestellingForm bestellingForm = default!;
@@ -71,7 +74,7 @@
         {
             Naam = bestellingForm.Item.Naam ?? "",
             Telefoon = bestellingForm.Item.Telefoon,
-            StraatId = bestellingForm.Item.StraatId,
+            StraatId = bestellingForm.Item.Straat?.Id ?? 0,
             Nummer = bestellingForm.Item.Nummer,
             Bus = bestellingForm.Item.Bus,
             AantalPakken = bestellingForm.Item.AantalPakken,
@@ -91,8 +94,8 @@
     {
         bestellingForm.Item.Naam = "";
         bestellingForm.Item.Telefoon = null;
-        bestellingForm.Item.StraatId = 0;
-        bestellingForm.Straat = null;
+        bestellingForm.Item.Straat = null;
+        bestellingForm.Item.Straat = null;
         bestellingForm.Item.Nummer = "";
         bestellingForm.Item.Bus = "";
         bestellingForm.Item.AantalPakken = 1;
@@ -115,7 +118,7 @@
             Betaald = item.Betaald,
             Geleverd = item.Geleverd,
             LidId = item.Lid?.Id ?? 0,
-            StraatId = item.StraatId,
+            StraatId = item.Straat?.Id ?? 0,
             Nummer = item.Nummer,
             Bus = item.Bus
         };
@@ -129,7 +132,6 @@
         {
             CloseOnEscapeKey = true,
             CloseButton = true,
-            FullWidth = true
         };
 
         var parameters = new DialogParameters<BestellingDialog>
@@ -139,18 +141,18 @@
 
         var dialog = await _dialogService.ShowAsync<BestellingDialog>("Bewerken", parameters, options);
         var result = await dialog.Result;
-        // if (!result.Canceled)
-        // {
-        //     try
-        //     {
-        //         await OnUpdate(context.Item);
-        //         Snackbar.Add("De gegevens werden succesvol bijgewerkt.", Severity.Success);
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         Snackbar.Add($"Er is een fout gebeurd: {e.Message}", Severity.Error);
-        //     }
-        // }
+        if (!result.Canceled)
+        {
+            try
+            {
+                await OnUpdate(item);
+                _snackbar.Add("De gegevens werden succesvol bijgewerkt.", Severity.Success);
+            }
+            catch (Exception e)
+            {
+                _snackbar.Add($"Er is een fout gebeurd: {e.Message}", Severity.Error);
+            }
+        }
     }
 
     async Task OnDelete(BestellingDto item)
@@ -170,6 +172,6 @@
 
     private string FormatCode(BestellingDto bestelling)
     {
-        return $"{bestelling.ZoneNaam} {bestelling.StraatNummer}";
+        return $"{bestelling.Straat?.ZoneNaam} {bestelling.Straat?.Nummer}";
     }
 }

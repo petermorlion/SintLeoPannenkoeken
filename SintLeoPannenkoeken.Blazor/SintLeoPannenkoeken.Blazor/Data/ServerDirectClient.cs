@@ -318,10 +318,17 @@ namespace SintLeoPannenkoeken.Blazor.Data
                             bestelling.Lid.Functie,
                             bestelling.Lid.Tak.Naam
                         ),
-                        StraatId = bestelling.StraatId,
-                        StraatNaam = bestelling.Straat.Naam,
-                        StraatNummer = bestelling.Straat?.Nummer,
-                        ZoneNaam = bestelling?.Straat?.Zone?.Naam ?? "",
+                        Straat = new StraatDto
+                        {
+                            Id = bestelling.Straat.Id,
+                            Naam = bestelling.Straat.Naam,
+                            PostNummer = bestelling.Straat.PostNummer,
+                            Gemeente = bestelling.Straat.Gemeente,
+                            Omschrijving = bestelling.Straat.Omschrijving,
+                            Nummer = bestelling.Straat.Nummer,
+                            ZoneId = bestelling.Straat.ZoneId,
+                            ZoneNaam = bestelling.Straat.Zone?.Naam ?? ""
+                        },
                         Nummer = bestelling.Nummer,
                         Bus = bestelling.Bus
                     }).ToList();
@@ -353,6 +360,8 @@ namespace SintLeoPannenkoeken.Blazor.Data
                 bestelling.StraatId = bestellingDto.StraatId;
                 bestelling.Nummer = bestellingDto.Nummer;
                 bestelling.Bus = bestellingDto.Bus;
+
+                await dbContext.SaveChangesAsync();
             }
         }
 
@@ -482,10 +491,17 @@ namespace SintLeoPannenkoeken.Blazor.Data
                     Betaald = bestelling.Betaald,
                     Geleverd = bestelling.Geleverd,
                     Lid = new LidDto(bestelling.Lid.Achternaam, bestelling.Lid.Voornaam, bestelling.Lid.Functie, bestelling.Lid.Tak?.Naam ?? "Onbekend", bestelling.Lid.Id),
-                    StraatId = bestelling.StraatId,
-                    StraatNaam = bestelling.Straat.Naam,
-                    StraatNummer = bestelling.Straat?.Nummer,
-                    ZoneNaam = bestelling?.Straat?.Zone?.Naam ?? "",
+                    Straat = new StraatDto
+                    {
+                        Id = bestelling.Straat.Id,
+                        Naam = bestelling.Straat.Naam,
+                        PostNummer = bestelling.Straat.PostNummer,
+                        Gemeente = bestelling.Straat.Gemeente,
+                        Omschrijving = bestelling.Straat.Omschrijving,
+                        Nummer = bestelling.Straat.Nummer,
+                        ZoneId = bestelling.Straat.ZoneId,
+                        ZoneNaam = bestelling.Straat.Zone?.Naam ?? ""
+                    },
                     Nummer = bestelling.Nummer,
                     Bus = bestelling.Bus
                 };

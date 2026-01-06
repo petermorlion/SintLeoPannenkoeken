@@ -11,7 +11,7 @@
     <MudCheckBox T="bool" Value="@ZelfAfhalen" Label="Zelf afhalen" ValueChanged="@OnZelfAfhalenChanged" />
 </MudItem>
 <MudItem xs="12" sm="5">
-    <MudAutocomplete @bind-Value="Straat"
+    <MudAutocomplete @bind-Value="Item.Straat"
                      SearchFunc="SearchStreets"
                      ToStringFunc="_straatConverter"
                      Variant="Variant.Outlined"
@@ -27,7 +27,7 @@
 <MudItem xs="12" sm="2">
     <MudTextField T="string"
                   Label="Code"
-                  Value="@($"{Straat?.ZoneNaam} {Straat?.Nummer}")"
+                  Value="@($"{Item.Straat?.ZoneNaam} {Item.Straat?.Nummer}")"
                   Variant="Variant.Outlined"
                   Margin="Margin.Dense"
                   ShrinkLabel
@@ -73,17 +73,6 @@
 </MudItem>
 
 @code {
-    private StraatDto? _straat;
-    public StraatDto? Straat
-    {
-        get => _straat;
-        set
-        {
-            _straat = value;
-            Item.StraatId = value != null ? value.Id : 0;
-        }
-    }
-
     public bool ZelfAfhalen = false;
 
     private IList<LidDto> _leden = [];
@@ -137,6 +126,11 @@
             || x.Voornaam.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
+    protected override void OnInitialized()
+    {
+        ZelfAfhalen = Item?.Straat?.Id == 120;
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender)
@@ -153,7 +147,7 @@
         ZelfAfhalen = value;
         if (value)
         {
-            Straat = _straten.Single(x => x.Id == 120);
+            Item.Straat = _straten.Single(x => x.Id == 120);
             Item.Nummer = "";
             Item.Bus = "";
         }
