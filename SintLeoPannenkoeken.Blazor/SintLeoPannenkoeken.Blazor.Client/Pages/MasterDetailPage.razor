@@ -88,7 +88,7 @@
                                 <MudIconButton Size="@Size.Small"
                                                Icon="@Icons.Material.Outlined.Edit"
                                                Color="Color.Primary"
-                                               OnClick="@context.Actions.StartEditingItemAsync"
+                                               OnClick="async () => await StartEditingItemAsync(context)"
                                                Disabled="_isScoutsjaarGearchiveerd" />
                             </MudTooltip>
                         }
@@ -184,6 +184,9 @@
 
     [Parameter]
     public EventCallback<TDto> OnDelete { get; set; }
+
+    [Parameter]
+    public EventCallback<TDto> OnEdit { get; set; }
 
     [Parameter]
     public bool CanAdd { get; set; } = true;
@@ -322,6 +325,18 @@
             {
                 Snackbar.Add($"Er is een fout gebeurd: {e.Message}", Severity.Error);
             }
+        }
+    }
+
+    async Task StartEditingItemAsync(CellContext<TDto> context)
+    {
+        if (!OnEdit.HasDelegate)
+        {
+            await context.Actions.StartEditingItemAsync();
+        }
+        else
+        {
+            await OnEdit.InvokeAsync(context.Item);
         }
     }
 

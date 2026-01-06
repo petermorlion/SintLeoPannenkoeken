@@ -13,7 +13,8 @@
                   OnCancel="@OnCancel"
                   OnCreate="@OnCreate"
                   OnDelete="@OnDelete"
-                  CanEdit="false"
+                  OnEdit="@OnEdit"
+                  CanEdit="true"
                   CanDelete="true"
                   IsForScoutsjaar="true"
                   NewItemTitle="Nieuwe bestelling"
@@ -57,6 +58,9 @@
     private IServerData _serverData { get; set; } = default!;
 
     [Inject]
+    private IDialogService _dialogService { get; set; } = default!;
+
+    [Inject]
     public CurrentScoutsjaarQuerystringParameterProvider CurrentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
 
     private BestellingForm bestellingForm = default!;
@@ -65,16 +69,16 @@
     {
         var newBestellingDto = new NewBestellingDto
         {
-            Naam = bestellingForm.Naam ?? "",
-            Telefoon = bestellingForm.Telefoon,
-            StraatId = bestellingForm.Straat?.Id ?? 0,
-            Nummer = bestellingForm.Nummer,
-            Bus = bestellingForm.Bus,
-            AantalPakken = bestellingForm.AantalPakken ?? 0,
-            Betaald = bestellingForm.Betaald,
-            Geleverd = bestellingForm.Geleverd,
-            Opmerkingen = bestellingForm.Opmerkingen,
-            LidId = bestellingForm.Lid?.Id ?? 0,
+            Naam = bestellingForm.Item.Naam ?? "",
+            Telefoon = bestellingForm.Item.Telefoon,
+            StraatId = bestellingForm.Item.StraatId,
+            Nummer = bestellingForm.Item.Nummer,
+            Bus = bestellingForm.Item.Bus,
+            AantalPakken = bestellingForm.Item.AantalPakken,
+            Betaald = bestellingForm.Item.Betaald,
+            Geleverd = bestellingForm.Item.Geleverd,
+            Opmerkingen = bestellingForm.Item.Opmerkingen,
+            LidId = bestellingForm.Item.Lid?.Id ?? 0,
             ScoutsjaarId = (await CurrentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar())!.Id!.Value
         };
 
@@ -85,16 +89,17 @@
 
     void OnCancel()
     {
-        bestellingForm.Naam = null;
-        bestellingForm.Telefoon = null;
+        bestellingForm.Item.Naam = "";
+        bestellingForm.Item.Telefoon = null;
+        bestellingForm.Item.StraatId = 0;
         bestellingForm.Straat = null;
-        bestellingForm.Nummer = null;
-        bestellingForm.Bus = null;
-        bestellingForm.AantalPakken = null;
-        bestellingForm.Betaald = true;
-        bestellingForm.Geleverd = false;
-        bestellingForm.Opmerkingen = null;
-        bestellingForm.Lid = null;
+        bestellingForm.Item.Nummer = "";
+        bestellingForm.Item.Bus = "";
+        bestellingForm.Item.AantalPakken = 1;
+        bestellingForm.Item.Betaald = true;
+        bestellingForm.Item.Geleverd = false;
+        bestellingForm.Item.Opmerkingen = null;
+        bestellingForm.Item.Lid = null;
         bestellingForm.ZelfAfhalen = false;
     }
 
@@ -116,6 +121,36 @@
         };
 
         await _serverData.UpdateBestelling(updateBestellingDto);
+    }
+
+    async Task OnEdit(BestellingDto item)
+    {
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            CloseButton = true,
+            FullWidth = true
+        };
+
+        var parameters = new DialogParameters<BestellingDialog>
+        {
+            { x => x.Item, item }
+        };
+
+        var dialog = await _dialogService.ShowAsync<BestellingDialog>("Bewerken", parameters, options);
+        var result = await dialog.Result;
+        // if (!result.Canceled)
+        // {
+        //     try
+        //     {
+        //         await OnUpdate(context.Item);
+        //         Snackbar.Add("De gegevens werden succesvol bijgewerkt.", Severity.Success);
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         Snackbar.Add($"Er is een fout gebeurd: {e.Message}", Severity.Error);
+        //     }
+        // }
     }
 
     async Task OnDelete(BestellingDto item)

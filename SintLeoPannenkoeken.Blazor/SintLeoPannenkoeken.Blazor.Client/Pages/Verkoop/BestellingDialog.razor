@@ -1,0 +1,35 @@
+﻿@using SintLeoPannenkoeken.Blazor.Client.Pages.Verkoop
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3 mb-n1" />
+            Bewerken
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <BestellingForm Item="Item" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Annuleren</MudButton>
+        <MudButton Color="Color.Primary" OnClick="OnSave">Opslaan</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private BestellingForm _bestellingForm = default!;
+
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter]
+    public BestellingDto Item { get; set; } = new BestellingDto();
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private void OnSave()
+    {
+        MudDialog.Close();
+    }
+}
