@@ -1,0 +1,157 @@
+﻿@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+<MudItem xs="12" sm="8">
+    <MudTextField @bind-Value="Naam" T="string" Label="Naam koper" Required="true" RequiredError="Naam koper is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+</MudItem>
+<MudItem xs="12" sm="4">
+    <MudTextField @bind-Value="Telefoon" T="string" Label="Telefoon" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+</MudItem>
+
+<MudItem xs="12" sm="2">
+    <MudCheckBox T="bool" Value="@ZelfAfhalen" Label="Zelf afhalen" ValueChanged="@OnZelfAfhalenChanged" />
+</MudItem>
+<MudItem xs="12" sm="5">
+    <MudAutocomplete @bind-Value="Straat"
+                     SearchFunc="SearchStreets"
+                     ToStringFunc="_straatConverter"
+                     Variant="Variant.Outlined"
+                     Label="Straat"
+                     Margin="Margin.Dense"
+                     MaxItems=100
+                     Clearable="true"
+                     CoerceText="true"
+                     ResetValueOnEmptyText="true"
+                     SelectValueOnTab="true"
+                     Disabled="@ZelfAfhalen" />
+</MudItem>
+<MudItem xs="12" sm="2">
+    <MudTextField T="string"
+                  Label="Code"
+                  Value="@($"{Straat?.ZoneNaam} {Straat?.Nummer}")"
+                  Variant="Variant.Outlined"
+                  Margin="Margin.Dense"
+                  ShrinkLabel
+                  Disabled
+                  Required="true" />
+</MudItem>
+<MudItem xs="12" sm="2">
+    <MudTextField @bind-Value="Nummer" T="string" Label="Nummer" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel
+                  Disabled="@ZelfAfhalen" />
+</MudItem>
+<MudItem xs="12" sm="1">
+    <MudTextField @bind-Value="Bus" T="string" Label="Bus" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel
+                  Disabled="@ZelfAfhalen" />
+</MudItem>
+
+<MudItem xs="12" sm="2">
+    <MudNumericField @bind-Value="AantalPakken" T="int?" Label="Aantal pakken" Min="1" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel Required="true" RequiredError="Het aantal pakken is verplicht" />
+</MudItem>
+<MudItem xs="12" sm="2">
+    <MudCheckBox @bind-Value="Betaald" T="bool" Label="Betaald" />
+</MudItem>
+<MudItem xs="12" sm="2">
+    <MudCheckBox @bind-Value="Geleverd" T="bool" Label="Geleverd" />
+</MudItem>
+<MudItem xs="12" sm="6">
+    <MudTextField @bind-Value="Opmerkingen" T="string" Label="Opmerkingen" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+</MudItem>
+
+<MudItem xs="12">
+    <MudAutocomplete @bind-Value="Lid"
+                     SearchFunc="SearchLeden"
+                     ToStringFunc="_lidConverter"
+                     Variant="Variant.Outlined"
+                     Label="Lid"
+                     Margin="Margin.Dense"
+                     MaxItems=100
+                     Clearable="true"
+                     CoerceText="true"
+                     ResetValueOnEmptyText="true"
+                     SelectValueOnTab="true"
+                     Required="true"
+                     RequiredError="Het lid is verplicht." />
+</MudItem>
+
+@code {
+    public string? Naam = null;
+    public string? Telefoon = null;
+    public StraatDto? Straat = null;
+    public string? Nummer = null;
+    public string? Bus = null;
+    public int? AantalPakken = null;
+    public bool Betaald = true;
+    public bool Geleverd = false;
+    public string? Opmerkingen = null;
+    public LidDto? Lid = null;
+    public bool ZelfAfhalen = false;
+
+    private IList<LidDto> _leden = [];
+    private IList<StraatDto> _straten = [];
+
+    [Inject]
+    private IServerData _serverData { get; set; } = default!;
+
+    private Func<LidDto?, string> _lidConverter = lid =>
+    {
+        if (lid == null)
+        {
+            return "";
+        }
+
+        return $"{lid.Achternaam} {lid.Voornaam} ({lid.TakNaam})";
+    };
+
+    private Func<StraatDto?, string> _straatConverter = straat => 
+    {
+        if (straat == null)
+        {
+            return "";
+        }
+
+        return $"{straat.Naam} ({straat.Gemeente})";
+    };
+
+    private async Task<IEnumerable<StraatDto?>> SearchStreets(string value, CancellationToken token)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return _straten;
+        }
+
+        return _straten.Where(x => x.Naam.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task<IEnumerable<LidDto>> SearchLeden(string value, CancellationToken token)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return _leden;
+        }
+
+        return _leden.Where(x =>
+            x.Achternaam.Contains(value, StringComparison.InvariantCultureIgnoreCase)
+            || x.Voornaam.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        _leden = (await _serverData.GetLeden()).OrderBy(lid => lid.Achternaam).ThenBy(lid => lid.Voornaam).ToList();
+        _straten = (await _serverData.GetStraten()).OrderBy(straat => straat.Naam).ToList();
+    }
+
+    private void OnZelfAfhalenChanged(bool value)
+    {
+        ZelfAfhalen = value;
+        if (value)
+        {
+            Straat = _straten.Single(x => x.Id == 120);
+            Nummer = null;
+            Bus = null;
+        }
+    }
+}

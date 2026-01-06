@@ -19,77 +19,7 @@
                   NewItemTitle="Nieuwe bestelling"
                   NewItemExpanded="true">
     <NewItemFormElements>
-        <MudItem xs="12" sm="8">
-            <MudTextField @bind-Value="_newBestellingNaam" T="string" Label="Naam koper" Required="true" RequiredError="Naam koper is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
-        </MudItem>
-        <MudItem xs="12" sm="4">
-            <MudTextField @bind-Value="_newBestellingTelefoon" T="string" Label="Telefoon" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
-        </MudItem>
-
-        <MudItem xs="12" sm="2">
-            <MudCheckBox T="bool" Value="@_zelfAfhalen" Label="Zelf afhalen" ValueChanged="@OnZelfAfhalenChanged" />
-        </MudItem>
-        <MudItem xs="12" sm="5">
-            <MudAutocomplete @bind-Value="_newBestellingStraat"
-                                     SearchFunc="SearchStreets"
-                                     ToStringFunc="_straatConverter"
-                                     Variant="Variant.Outlined"
-                                     Label="Straat"
-                                     Margin="Margin.Dense"
-                                     MaxItems=100
-                                     Clearable="true"
-                                     CoerceText="true"
-                                     ResetValueOnEmptyText="true"
-                                     SelectValueOnTab="true"
-                                     Disabled="@_zelfAfhalen"/>
-        </MudItem>
-        <MudItem xs="12" sm="2">
-            <MudTextField T="string"
-                            Label="Code"
-                            Value="@($"{_newBestellingStraat?.ZoneNaam} {_newBestellingStraat?.Nummer}")"
-                            Variant="Variant.Outlined"
-                            Margin="Margin.Dense"
-                            ShrinkLabel
-                            Disabled
-                            Required="true"/>
-        </MudItem>
-        <MudItem xs="12" sm="2">
-            <MudTextField @bind-Value="_newBestellingNummer" T="string" Label="Nummer" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel
-                          Disabled="@_zelfAfhalen" />
-        </MudItem>
-        <MudItem xs="12" sm="1">
-            <MudTextField @bind-Value="_newBestellingBus" T="string" Label="Bus" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel
-                          Disabled="@_zelfAfhalen" />
-        </MudItem>
-
-        <MudItem xs="12" sm="2">
-            <MudNumericField @bind-Value="_newBestellingAantalPakken" T="int?" Label="Aantal pakken" Min="1" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel Required="true" RequiredError="Het aantal pakken is verplicht" />
-        </MudItem>
-        <MudItem xs="12" sm="2">
-            <MudCheckBox @bind-Value="_newBestellingBetaald" T="bool" Label="Betaald" />
-        </MudItem>
-        <MudItem xs="12" sm="2">
-            <MudCheckBox @bind-Value="_newBestellingGeleverd" T="bool" Label="Geleverd" />
-        </MudItem>
-        <MudItem xs="12" sm="6">
-            <MudTextField @bind-Value="_newBestellingOpmerkingen" T="string" Label="Opmerkingen" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
-        </MudItem>
-
-        <MudItem xs="12">
-            <MudAutocomplete @bind-Value="_newBestellingLid" 
-                            SearchFunc="SearchLeden"
-                                ToStringFunc="_lidConverter"
-                                Variant="Variant.Outlined"
-                                Label="Lid"
-                                Margin="Margin.Dense"
-                                MaxItems=100
-                                Clearable="true"
-                                CoerceText="true"
-                                ResetValueOnEmptyText="true"
-                                SelectValueOnTab="true"
-                                Required="true"
-                                RequiredError="Het lid is verplicht."/>
-        </MudItem>
+        <BestellingForm @ref="bestellingForm" />
     </NewItemFormElements>
     
     <Columns>
@@ -129,78 +59,22 @@
     [Inject]
     public CurrentScoutsjaarQuerystringParameterProvider CurrentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
 
-    private IList<LidDto> _leden = [];
-    private IList<StraatDto> _straten = [];
-
-    private bool _isFormValid;
-    private string? _newBestellingNaam = null;
-    private string? _newBestellingTelefoon = null;
-    private StraatDto? _newBestellingStraat = null;
-    private string? _newBestellingNummer = null;
-    private string? _newBestellingBus = null;
-    private int? _newBestellingAantalPakken = null;
-    private bool _newBestellingBetaald = true;
-    private bool _newBestellingGeleverd = false;
-    private string? _newBestellingOpmerkingen = null;
-    private LidDto? _newBestellingLid = null;
-    private bool _zelfAfhalen = false;
-
-    private Func<LidDto?, string> _lidConverter = lid =>
-    {
-        if (lid == null)
-        {
-            return "";
-        }
-
-        return $"{lid.Achternaam} {lid.Voornaam} ({lid.TakNaam})";
-    };
-
-    private Func<StraatDto?, string> _straatConverter = straat => 
-    {
-        if (straat == null)
-        {
-            return "";
-        }
-
-        return $"{straat.Naam} ({straat.Gemeente})";
-    };
-
-    private async Task<IEnumerable<StraatDto?>> SearchStreets(string value, CancellationToken token)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return _straten;
-        }
-
-        return _straten.Where(x => x.Naam.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-    }
-
-    private async Task<IEnumerable<LidDto>> SearchLeden(string value, CancellationToken token)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return _leden;
-        }
-
-        return _leden.Where(x => 
-            x.Achternaam.Contains(value, StringComparison.InvariantCultureIgnoreCase)
-            || x.Voornaam.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-    }
+    private BestellingForm bestellingForm = default!;
 
     async Task<BestellingDto> OnCreate()
     {
         var newBestellingDto = new NewBestellingDto
         {
-            Naam = _newBestellingNaam ?? "",
-            Telefoon = _newBestellingTelefoon,
-            StraatId = _newBestellingStraat?.Id ?? 0,
-            Nummer = _newBestellingNummer,
-            Bus = _newBestellingBus,
-            AantalPakken = _newBestellingAantalPakken ?? 0,
-            Betaald = _newBestellingBetaald,
-            Geleverd = _newBestellingGeleverd,
-            Opmerkingen = _newBestellingOpmerkingen,
-            LidId = _newBestellingLid?.Id ?? 0,
+            Naam = bestellingForm.Naam ?? "",
+            Telefoon = bestellingForm.Telefoon,
+            StraatId = bestellingForm.Straat?.Id ?? 0,
+            Nummer = bestellingForm.Nummer,
+            Bus = bestellingForm.Bus,
+            AantalPakken = bestellingForm.AantalPakken ?? 0,
+            Betaald = bestellingForm.Betaald,
+            Geleverd = bestellingForm.Geleverd,
+            Opmerkingen = bestellingForm.Opmerkingen,
+            LidId = bestellingForm.Lid?.Id ?? 0,
             ScoutsjaarId = (await CurrentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar())!.Id!.Value
         };
 
@@ -211,17 +85,17 @@
 
     void OnCancel()
     {
-        _newBestellingNaam = null;
-        _newBestellingTelefoon = null;
-        _newBestellingStraat = null;
-        _newBestellingNummer = null;
-        _newBestellingBus = null;
-        _newBestellingAantalPakken = null;
-        _newBestellingBetaald = true;
-        _newBestellingGeleverd = false;
-        _newBestellingOpmerkingen = null;
-        _newBestellingLid = null;
-        _zelfAfhalen = false;
+        bestellingForm.Naam = null;
+        bestellingForm.Telefoon = null;
+        bestellingForm.Straat = null;
+        bestellingForm.Nummer = null;
+        bestellingForm.Bus = null;
+        bestellingForm.AantalPakken = null;
+        bestellingForm.Betaald = true;
+        bestellingForm.Geleverd = false;
+        bestellingForm.Opmerkingen = null;
+        bestellingForm.Lid = null;
+        bestellingForm.ZelfAfhalen = false;
     }
 
     async Task OnUpdate(BestellingDto item)
@@ -247,28 +121,6 @@
     async Task OnDelete(BestellingDto item)
     {
         await _serverData.DeleteBestelling(item.Id);
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender)
-        {
-            return;
-        }
-
-        _leden = (await _serverData.GetLeden()).OrderBy(lid => lid.Achternaam).ThenBy(lid => lid.Voornaam).ToList();
-        _straten = (await _serverData.GetStraten()).OrderBy(straat => straat.Naam).ToList();
-    }
-
-    private void OnZelfAfhalenChanged(bool value)
-    {
-        _zelfAfhalen = value;
-        if (value)
-        {
-            _newBestellingStraat = _straten.Single(x => x.Id == 120);
-            _newBestellingNummer = null;
-            _newBestellingBus = null;
-        }
     }
 
     private string FormatAdres(BestellingDto bestelling)

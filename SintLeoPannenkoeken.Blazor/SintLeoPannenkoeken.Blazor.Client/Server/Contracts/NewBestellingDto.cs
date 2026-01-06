@@ -2,8 +2,6 @@
 {
     public class NewBestellingDto
     {
-        public int Id { get; set; }
-        public int BestellingNummer { get; set; }
         public string Naam { get; set; }
         public string? Telefoon { get; set; } = "";
         public int AantalPakken { get; set; }
