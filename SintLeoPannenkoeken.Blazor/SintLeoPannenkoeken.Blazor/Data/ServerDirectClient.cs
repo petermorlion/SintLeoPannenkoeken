@@ -316,7 +316,8 @@ namespace SintLeoPannenkoeken.Blazor.Data
                             bestelling.Lid.Achternaam,
                             bestelling.Lid.Voornaam,
                             bestelling.Lid.Functie,
-                            bestelling.Lid.Tak.Naam
+                            bestelling.Lid.Tak.Naam,
+                            bestelling.Lid.Id
                         ),
                         Straat = new StraatDto
                         {
