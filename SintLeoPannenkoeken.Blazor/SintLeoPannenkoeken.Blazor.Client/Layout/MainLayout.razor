@@ -6,7 +6,10 @@
         <div class="top-row px-4">
             <NavMenu DrawerToggleCallback="ToggleDrawer"/>
         </div>
-        <MudDrawer @bind-Open="@_drawerOpen" Elevation="25" Variant="@DrawerVariant.Temporary" aria-label="Navigation Drawer">
+        <MudDrawer Height="100%" @bind-Open="@_drawerOpen" Elevation="25" Variant="@DrawerVariant.Temporary" aria-label="Navigation Drawer">
+            <MudToolBar Dense="true" Gutters="false" Class="px-1">
+                <MudIconButton Icon="@Icons.Material.Rounded.Close" Color="Color.Inherit" OnClick="@ToggleDrawer" aria-label="Toggle drawer" />
+            </MudToolBar>
             <NavMenuItems />
         </MudDrawer>
         <article class="content px-4">

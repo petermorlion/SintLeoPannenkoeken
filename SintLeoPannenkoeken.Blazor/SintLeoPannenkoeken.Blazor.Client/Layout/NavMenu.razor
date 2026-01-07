@@ -2,14 +2,14 @@
 @using SintLeoPannenkoeken.Blazor.Client.Pages
 @using Microsoft.AspNetCore.Components.Routing
 
-<div class="d-flex d-lg-none">
+<div class="d-flex d-md-none">
     <MudIconButton Icon="@Icons.Material.Rounded.Notes"
                    Color="Color.Inherit"
                    Edge="Edge.Start"
                    OnClick="DrawerToggleCallback"
                    aria-label="Toggle drawer" />
 </div>
-<div class="d-none d-lg-flex">
+<div class="d-none d-md-flex">
     <MudAppBar Elevation="10" Color="Color.Tertiary">
         <NavMenuItems />
     </MudAppBar>

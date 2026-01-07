@@ -6,26 +6,32 @@
     <img src="zeescouts.svg" style="max-height: 50px; color:#fff" />
 </NavLink>
 <AuthorizeView Roles="@($"{Roles.RolesForBestellingen}")" Context="childContext">
-    <MudButton Href="@($"{Hrefs.Bestellingen}?scoutsjaar={_currentScoutsjaarQuerystringValue}")" Class="@GetActiveClass(Hrefs.Bestellingen)">Bestellingen</MudButton>
+    <NavMenuItem Href="@($"{Hrefs.Bestellingen}?scoutsjaar={_currentScoutsjaarQuerystringValue}")" Text="Bestellingen" ActiveClass="@GetActiveClass(Hrefs.Bestellingen)" />
 </AuthorizeView>
 <AuthorizeView Roles="@($"{Roles.RolesForChauffeurs}")" Context="childContext">
-    <MudButton Href="@($"{Hrefs.Chauffeurs}?scoutsjaar={_currentScoutsjaarQuerystringValue}")" Class="@GetActiveClass(Hrefs.Chauffeurs)">Chauffeurs</MudButton>
+    <NavMenuItem Href="@($"{Hrefs.Chauffeurs}?scoutsjaar={_currentScoutsjaarQuerystringValue}")" Text="Chauffeurs" ActiveClass="@GetActiveClass(Hrefs.Chauffeurs)" />
 </AuthorizeView>
 <AuthorizeView Roles="@($"{Roles.RolesForChauffeurs}")" Context="childContext">
-    <MudButton Href="@($"{Hrefs.Rondes}?scoutsjaar={_currentScoutsjaarQuerystringValue}")" Class="@GetActiveClass(Hrefs.Rondes)">Rondes</MudButton>
+    <NavMenuItem Href="@($"{Hrefs.Rondes}?scoutsjaar={_currentScoutsjaarQuerystringValue}")" Text="Rondes" ActiveClass="@GetActiveClass(Hrefs.Rondes)" />
 </AuthorizeView>
 <AuthorizeView Roles="@($"{Roles.RolesForStreefcijfers}")" Context="childContext">
-    <MudButton Href="@($"{Hrefs.Streefcijfers}?scoutsjaar={_currentScoutsjaarQuerystringValue}")" Class="@GetActiveClass(Hrefs.Streefcijfers)">Streefcijfers</MudButton>
+    <NavMenuItem Href="@($"{Hrefs.Streefcijfers}?scoutsjaar={_currentScoutsjaarQuerystringValue}")" Text="Streefcijfers" ActiveClass="@GetActiveClass(Hrefs.Streefcijfers)" />
 </AuthorizeView>
-<MudMenu Label="Rapporten" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Class="mx-1 px-3">
+
+<MudMenu Label="Rapporten" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Class="d-none d-md-flex mx-1 px-3">
     <MudNavLink Href="@($"{Hrefs.VerkoopPerTak}?scoutsjaar={_currentScoutsjaarQuerystringValue}")">Verkoop per tak</MudNavLink>
     <MudNavLink Href="@($"{Hrefs.VerkoopPerLid}?scoutsjaar={_currentScoutsjaarQuerystringValue}")">Verkoop per lid</MudNavLink>
     <MudNavLink Href="@($"{Hrefs.IngegevenTotalen}?scoutsjaar={_currentScoutsjaarQuerystringValue}")">Totaal ingegeven</MudNavLink>
 </MudMenu>
+<MudNavGroup Title="Rapporten" Class="d-flex d-md-none">
+    <MudNavLink Href="@($"{Hrefs.VerkoopPerTak}?scoutsjaar={_currentScoutsjaarQuerystringValue}")">Verkoop per tak</MudNavLink>
+    <MudNavLink Href="@($"{Hrefs.VerkoopPerLid}?scoutsjaar={_currentScoutsjaarQuerystringValue}")">Verkoop per lid</MudNavLink>
+    <MudNavLink Href="@($"{Hrefs.IngegevenTotalen}?scoutsjaar={_currentScoutsjaarQuerystringValue}")">Totaal ingegeven</MudNavLink>
+</MudNavGroup>
 
 <AuthorizeView Roles="@($"{Roles.RolesForBeheer}")">
     <Authorized>
-        <MudMenu Label="Beheer" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Class="mx-1 px-3">
+        <MudMenu Label="Beheer" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Class="d-none d-md-flex mx-1 px-3">
             <AuthorizeView Roles="@($"{Roles.RolesForGebruikers}")" Context="childContext">
                 <MudNavLink Href="@Hrefs.Gebruikers">Gebruikers</MudNavLink>
             </AuthorizeView>
@@ -39,6 +45,20 @@
                 <MudNavLink Href="@Hrefs.Straten">Straten</MudNavLink>
             </AuthorizeView>
         </MudMenu>
+        <MudNavGroup Title="Beheer" Class="d-flex d-md-none">
+            <AuthorizeView Roles="@($"{Roles.RolesForGebruikers}")" Context="childContext">
+                <MudNavLink Href="@Hrefs.Gebruikers">Gebruikers</MudNavLink>
+            </AuthorizeView>
+            <AuthorizeView Roles="@($"{Roles.RolesForLeden}")" Context="childContext">
+                <MudNavLink Href="@Hrefs.Leden">Leden</MudNavLink>
+            </AuthorizeView>
+            <AuthorizeView Roles="@($"{Roles.RolesForScoutsjaren}")" Context="childContext">
+                <MudNavLink Href="@Hrefs.Scoutsjaren">Scoutsjaren</MudNavLink>
+            </AuthorizeView>
+            <AuthorizeView Roles="@($"{Roles.RolesForStraten}")" Context="childContext">
+                <MudNavLink Href="@Hrefs.Straten">Straten</MudNavLink>
+            </AuthorizeView>
+        </MudNavGroup>
     </Authorized>
 </AuthorizeView>
 

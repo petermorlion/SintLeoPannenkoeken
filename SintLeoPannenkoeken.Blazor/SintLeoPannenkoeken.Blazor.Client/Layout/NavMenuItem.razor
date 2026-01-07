@@ -1,0 +1,16 @@
+﻿<MudNavLink Href="@Href" Class="@($"d-flex d-md-none {ActiveClass}")">@Text</MudNavLink>
+<MudButton Href="@Href" Class="@($"d-none d-md-flex {ActiveClass}")">@Text</MudButton>
+
+@code {
+    private int? _currentScoutsjaarQuerystringValue;
+    private bool _drawerOpen = false;
+
+    [Parameter]
+    public string Href { get; set; } = string.Empty;
+
+    [Parameter]
+    public string ActiveClass { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Text { get; set; } = string.Empty;
+}
