@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Blazor.Client.Pages.Beheer;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
@@ -1200,6 +1201,11 @@ namespace SintLeoPannenkoeken.Blazor.Data
 
                 return result;
             }
+        }
+
+        public Task<BestellingenImportResultDto> ImportBestellingen(int scoutsjaarBegin, IBrowserFile fileContent)
+        {
+            throw new NotImplementedException();
         }
     }
 }

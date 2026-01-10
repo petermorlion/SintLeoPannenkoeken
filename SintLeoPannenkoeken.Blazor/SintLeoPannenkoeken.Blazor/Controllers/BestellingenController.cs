@@ -58,5 +58,14 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
 
             return NoContent();
         }
+
+        [HttpPost()]
+
+        [Route("{scoutsjaar:int}/import")]
+        public async Task<IActionResult> Import([FromForm] IFormFile file)
+        {
+            var result = new BestellingenImportResultDto();
+            return Ok(result);
+        }
     }
 }

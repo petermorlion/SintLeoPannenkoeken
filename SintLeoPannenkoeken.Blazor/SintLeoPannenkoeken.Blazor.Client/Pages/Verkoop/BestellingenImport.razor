@@ -16,13 +16,17 @@
     <MudAlert Severity="Severity.Info">Er kunnen geen wijzigingen meer gebeuren voor dit scoutsjaar omdat het gearchiveerd is.</MudAlert>
 }
 
-<MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
+<div class="mt-5">
+Selecteer een Excel-bestand (.xlsx) met bestellingen om te importeren.
+</div>
+
+<MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Class="mt-5" MaximumFileCount="1">
     <ActivatorContent>
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
                    StartIcon="@Icons.Material.Filled.CloudUpload"
                    Disabled="_isScoutsjaarGearchiveerd">
-            Upload Files
+            Bestand importeren
         </MudButton>
     </ActivatorContent>
 </MudFileUpload>
@@ -64,9 +68,10 @@
         _isScoutsjaarGearchiveerd = selectedScoutsjaar.Status == ScoutsjaarStatusDto.Gearchiveerd;
     }
 
-    private void UploadFiles(IBrowserFile file)
+    private async Task UploadFiles(IBrowserFile file)
     {
         _files.Add(file);
+        await ServerData.ImportBestellingen(_selectedScoutsjaarBegin, file);
         //TODO upload the files to the server
     }
 }
