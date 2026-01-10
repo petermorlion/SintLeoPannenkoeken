@@ -1,0 +1,72 @@
+﻿@page "/verkoop/bestellingenimport"
+@using SintLeoPannenkoeken.Blazor.Client.Components
+@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Auth
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+
+<PageTitle>Bestellingen Importeren</PageTitle>
+
+<MudStack Row="true" Breakpoint="Breakpoint.Xs">
+    <h1>Bestellingen Importeren</h1>
+    <ScoutsjaarSelect Value="_selectedScoutsjaarBegin" />
+</MudStack>
+
+@if (_isScoutsjaarGearchiveerd)
+{
+    <MudAlert Severity="Severity.Info">Er kunnen geen wijzigingen meer gebeuren voor dit scoutsjaar omdat het gearchiveerd is.</MudAlert>
+}
+
+<MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
+    <ActivatorContent>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                   Disabled="_isScoutsjaarGearchiveerd">
+            Upload Files
+        </MudButton>
+    </ActivatorContent>
+</MudFileUpload>
+
+@code {
+    private IEnumerable<ScoutsjaarDto> _scoutsjaren = new List<ScoutsjaarDto>();
+    private int _selectedScoutsjaarBegin;
+    private bool _isScoutsjaarGearchiveerd = false;
+    IList<IBrowserFile> _files = new List<IBrowserFile>();
+
+    [Inject]
+    public IServerData ServerData { get; set; } = default!;
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; } = default!;
+
+    [Inject]
+    public CurrentScoutsjaarQuerystringParameterProvider CurrentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var uriBuilder = new UriBuilder(NavigationManager.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
+        var scoutsjaarParameter = query["scoutsjaar"];
+        if (scoutsjaarParameter != null)
+        {
+            _selectedScoutsjaarBegin = int.Parse(scoutsjaarParameter);
+        }
+
+        _scoutsjaren = await ServerData.GetScoutsjaren();
+        var selectedScoutsjaar = await CurrentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        if (selectedScoutsjaar == null)
+        {
+            selectedScoutsjaar = _scoutsjaren.FirstOrDefault();
+            NavigationManager.NavigateTo($"{NavigationManager.Uri}?scoutsjaar={selectedScoutsjaar!.Begin}");
+        }
+
+        _selectedScoutsjaarBegin = selectedScoutsjaar.Begin;
+        _isScoutsjaarGearchiveerd = selectedScoutsjaar.Status == ScoutsjaarStatusDto.Gearchiveerd;
+    }
+
+    private void UploadFiles(IBrowserFile file)
+    {
+        _files.Add(file);
+        //TODO upload the files to the server
+    }
+}
