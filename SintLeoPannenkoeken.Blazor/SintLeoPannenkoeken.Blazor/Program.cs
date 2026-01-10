@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor.Translations;
 using SintLeoPannenkoeken.Blazor.Client;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Components;
@@ -123,6 +124,10 @@ builder.Services.AddHttpClient<HereTourPlanningService>((serviceProvider, client
     client.BaseAddress = new Uri("https://tourplanning.hereapi.com");
 });
 
+builder.Services.AddLocalization();
+builder.Services.AddMudTranslations();
+
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -163,6 +168,7 @@ app.MapFallbackToFile("index.html");
 app.UseAuthorization();
 app.UseAntiforgery();
 
+app.UseRequestLocalization("nl-BE");
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddAdditionalAssemblies(typeof(SintLeoPannenkoeken.Blazor.Client._Imports).Assembly);
