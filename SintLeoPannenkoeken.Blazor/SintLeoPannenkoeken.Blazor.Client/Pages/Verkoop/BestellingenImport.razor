@@ -11,31 +11,63 @@
     <ScoutsjaarSelect Value="_selectedScoutsjaarBegin" />
 </MudStack>
 
-@if (_isScoutsjaarGearchiveerd)
-{
-    <MudAlert Severity="Severity.Info">Er kunnen geen wijzigingen meer gebeuren voor dit scoutsjaar omdat het gearchiveerd is.</MudAlert>
-}
+<div class="mt-4">
 
-<div class="mt-5">
-Selecteer een Excel-bestand (.xlsx) met bestellingen om te importeren.
+    @if (_isScoutsjaarGearchiveerd)
+    {
+        <MudAlert Severity="Severity.Info">Er kunnen geen wijzigingen meer gebeuren voor dit scoutsjaar omdat het gearchiveerd is.</MudAlert>
+    }
+
+    <MudButton Variant="Variant.Filled"
+               Color="Color.Primary"
+               StartIcon="@Icons.Material.Filled.CloudDownload"
+               Disabled="_isScoutsjaarGearchiveerd"
+               OnClick="GetData"
+               Class="mb-4">
+        Data ophalen
+    </MudButton>
+
+    @if (_importData == null)
+    {
+        <MudAlert Severity="Severity.Info">Er is nog geen data opgehaald. Klik op de knop hierboven om de online bestellingen op te halen.</MudAlert>
+    }
+    else if (_importData.Count == 0)
+    {
+        <MudAlert Severity="Severity.Info">Er zijn nog geen online bestellingen.</MudAlert>
+    }
+    else
+    {
+        <MudAlert Severity="Severity.Success">Er werden @_importData.Count bestellingen opgehaald.</MudAlert>
+    }
+
+    @if (_errorMessage != null)
+    {
+        <MudAlert Severity="Severity.Error">Er is een fout opgetreden bij het ophalen van de data: @_errorMessage</MudAlert>
+    }
+
+    @if (_importData != null && _importData.Count > 0)
+    {
+        <MudDataGrid Items="_importData">
+            <Columns>
+                <PropertyColumn T="PendingOnlineBestellingDto" TProperty="int" Property="x => x.Id" Title="Id" />
+                <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Naam" Title="Naam" />
+                <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Telefoon" Title="Telefoon" />
+                <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Straat" Title="Straat" />
+                <PropertyColumn T="PendingOnlineBestellingDto" TProperty="int" Property="x => x.AantalPakken" Title="Aantal pakken" />
+                <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Opmerkingen" Title="Opmerkingen" />
+                <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Lid" Title="Lid" />
+            </Columns>
+        </MudDataGrid>
+    }
+
 </div>
-
-<MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Class="mt-5" MaximumFileCount="1">
-    <ActivatorContent>
-        <MudButton Variant="Variant.Filled"
-                   Color="Color.Primary"
-                   StartIcon="@Icons.Material.Filled.CloudUpload"
-                   Disabled="_isScoutsjaarGearchiveerd">
-            Bestand importeren
-        </MudButton>
-    </ActivatorContent>
-</MudFileUpload>
 
 @code {
     private IEnumerable<ScoutsjaarDto> _scoutsjaren = new List<ScoutsjaarDto>();
     private int _selectedScoutsjaarBegin;
     private bool _isScoutsjaarGearchiveerd = false;
-    IList<IBrowserFile> _files = new List<IBrowserFile>();
+    private IList<PendingOnlineBestellingDto>? _importData = null;
+    private string? _errorMessage = null;
 
     [Inject]
     public IServerData ServerData { get; set; } = default!;
@@ -68,10 +100,16 @@ Selecteer een Excel-bestand (.xlsx) met bestellingen om te importeren.
         _isScoutsjaarGearchiveerd = selectedScoutsjaar.Status == ScoutsjaarStatusDto.Gearchiveerd;
     }
 
-    private async Task UploadFiles(IBrowserFile file)
+    private async Task GetData()
     {
-        _files.Add(file);
-        await ServerData.ImportBestellingen(_selectedScoutsjaarBegin, file);
-        //TODO upload the files to the server
+        _errorMessage = null;
+        try
+        {
+            _importData = await ServerData.GetPendingOnlineBestellingen(_selectedScoutsjaarBegin);
+        }
+        catch (Exception e)
+        {
+            _errorMessage = e.Message;
+        }
     }
 }

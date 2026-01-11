@@ -10,6 +10,7 @@ using SintLeoPannenkoeken.Blazor.Components;
 using SintLeoPannenkoeken.Blazor.Components.Account;
 using SintLeoPannenkoeken.Blazor.Data;
 using SintLeoPannenkoeken.Blazor.External.Geocoding;
+using SintLeoPannenkoeken.Blazor.External.SintLeoWebsite;
 using SintLeoPannenkoeken.Blazor.External.TourPlanning;
 using SintLeoPannenkoeken.Blazor.Startup;
 
@@ -122,6 +123,11 @@ builder.Services.AddHttpClient<HereGeocodingService>((serviceProvider, client) =
 builder.Services.AddHttpClient<HereTourPlanningService>((serviceProvider, client) =>
 {
     client.BaseAddress = new Uri("https://tourplanning.hereapi.com");
+});
+
+builder.Services.AddHttpClient<SintLeoWebsiteService>((serviceProvider, client) =>
+{
+    client.BaseAddress = new Uri("https://www.events-sintleo.be");
 });
 
 builder.Services.AddLocalization();

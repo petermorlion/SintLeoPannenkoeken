@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
-using SintLeoPannenkoeken.Blazor.Client.Pages.Beheer;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts.Rapporten;
 using SintLeoPannenkoeken.Blazor.External.Geocoding;
+using SintLeoPannenkoeken.Blazor.External.SintLeoWebsite;
 using SintLeoPannenkoeken.Blazor.External.TourPlanning;
 using SintLeoPannenkoeken.Blazor.Models;
 
@@ -21,12 +21,14 @@ namespace SintLeoPannenkoeken.Blazor.Data
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HereGeocodingService _hereGeoCodingService;
         private readonly HereTourPlanningService _hereTourPlanningService;
+        private readonly SintLeoWebsiteService _sintLeoWebsiteService;
 
         public ServerDirectClient(ILogger<ServerDirectClient> logger,
             IDbContextFactory<ApplicationDbContext> dbContextFactory,
             UsersService usersService, IHttpContextAccessor httpContextAccessor,
             HereGeocodingService hereGeoCodingService,
-            HereTourPlanningService hereTourPlanningService)
+            HereTourPlanningService hereTourPlanningService,
+            SintLeoWebsiteService sintLeoWebsiteService)
         {
             _logger = logger;
             _dbContextFactory = dbContextFactory;
@@ -34,6 +36,7 @@ namespace SintLeoPannenkoeken.Blazor.Data
             _httpContextAccessor = httpContextAccessor;
             _hereGeoCodingService = hereGeoCodingService;
             _hereTourPlanningService = hereTourPlanningService;
+            _sintLeoWebsiteService = sintLeoWebsiteService;
         }
 
         public async Task<IList<GebruikerDto>> GetGebruikers()
@@ -1203,9 +1206,37 @@ namespace SintLeoPannenkoeken.Blazor.Data
             }
         }
 
-        public Task<BestellingenImportResultDto> ImportBestellingen(int scoutsjaarBegin, IBrowserFile fileContent)
+        public async Task<IList<PendingOnlineBestellingDto>> GetPendingOnlineBestellingen(int scoutsjaarBegin)
         {
-            throw new NotImplementedException();
+            var onlineBestellingen = await _sintLeoWebsiteService.GetOnlineBestelingen();
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                var scoutsjaar = await dbContext.Scoutsjaren.SingleOrDefaultAsync(sj => sj.Begin == scoutsjaarBegin);
+                if (scoutsjaar == null)
+                {
+                    return new List<PendingOnlineBestellingDto>();
+                }
+
+                var straten = await dbContext.Straten.ToListAsync();
+                var leden = await dbContext.Leden.ToListAsync();
+
+                var pendingOnlineBestellingen = new List<PendingOnlineBestellingDto>();
+                foreach (var onlineBestelling in onlineBestellingen)
+                {
+                    var existingBestelling = await dbContext.Bestellingen
+                        .SingleOrDefaultAsync(b => b.OnlineBestellingId == onlineBestelling.Id && b.ScoutsjaarId == scoutsjaar.Id);
+                    
+                    if (existingBestelling == null)
+                    {
+                        onlineBestelling.ProposedLidId = leden.FirstOrDefault(leden => $"{leden.Voornaam} {leden.Achternaam}" == onlineBestelling.Naam)?.Id;
+                        onlineBestelling.ProposedStraatId = straten.FirstOrDefault(straten => straten.Naam == onlineBestelling.Straat)?.Id;
+
+                        pendingOnlineBestellingen.Add(onlineBestelling);
+                    }
+                }
+
+                return pendingOnlineBestellingen;
+            }
         }
     }
 }

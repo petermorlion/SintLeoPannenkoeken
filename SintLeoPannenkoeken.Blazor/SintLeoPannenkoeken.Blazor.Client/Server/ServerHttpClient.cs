@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
 using SintLeoPannenkoeken.Blazor.Client.Auth;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts.Rapporten;
@@ -321,34 +320,9 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
             return await Get<IngaveTotalenDto>($"/api/rapporten/{scoutsjaarBegin}/ingavetotalen", Roles.RolesForRapporten);
         }
 
-        public async Task<BestellingenImportResultDto> ImportBestellingen(int scoutsjaarBegin, IBrowserFile file)
+        public async Task<IList<PendingOnlineBestellingDto>> GetPendingOnlineBestellingen(int scoutsjaarBegin)
         {
-            using var requestContent = new MultipartFormDataContent();
-
-
-            var fileContent = new StreamContent(file.OpenReadStream());
-
-            requestContent.Add(
-                        content: fileContent,
-                        name: "\"file\"",
-                        fileName: file.Name);
-
-            if (!await IsUserAuthorized(Roles.RolesForBestellingen))
-            {
-                throw new UnauthorizedException();
-            }
-
-            var result = await _httpClient.PostAsync($"/api/bestellingen/{scoutsjaarBegin}/import", requestContent);
-            
-            if (result.IsSuccessStatusCode)
-            {
-                return await result.Content.ReadAsAsync<BestellingenImportResultDto>();
-            }
-            else
-            {
-                var error = await result.Content.ReadAsStringAsync();
-                throw new ApplicationException(error);
-            }
+            return await Get<IList<PendingOnlineBestellingDto>>($"/api/bestellingen/{scoutsjaarBegin}/importdata", Roles.RolesForBestellingen);
         }
     }
 }

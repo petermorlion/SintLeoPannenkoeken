@@ -8,9 +8,14 @@ Deployment happens by GitHub actions after pushing master to GitHub.
 
 ### Add a migration
 
+Modify the ApplicationDbContextFactory to get the connection string from the `ConnectionStrings__DefaultConnection`
+environment variable instead of `ConnectionStrings__database`.
+
 ```
 dotnet ef migrations add <MigrationName> --project .\SintLeoPannenkoeken
 ```
+
+Put back the original environment variable in the ApplicationDbContextFactory.
 
 ### Update Azure database
 
