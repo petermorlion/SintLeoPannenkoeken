@@ -345,6 +345,7 @@
         try
         {
             await OnUpdate.InvokeAsync(item);
+            await OnCancel.InvokeAsync();
         }
         catch (Exception e)
         {
