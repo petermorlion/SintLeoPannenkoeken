@@ -13,6 +13,7 @@
     {
         <ScoutsjaarSelect Value="_selectedScoutsjaarBegin" />
     }
+    @TitleBarContent
 </MudStack>
 
 <RoleAuthorizedView Roles="@AuthorizedRoles">
@@ -168,6 +169,9 @@
 
     [Parameter]
     public RenderFragment ContentAfterData { get; set; } = builder => { };
+
+    [Parameter]
+    public RenderFragment TitleBarContent { get; set; } = builder => { };
 
     [Parameter]
     [EditorRequired]

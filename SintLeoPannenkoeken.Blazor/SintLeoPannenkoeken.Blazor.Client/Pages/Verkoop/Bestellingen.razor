@@ -19,6 +19,19 @@
                   IsForScoutsjaar="true"
                   NewItemTitle="Nieuwe bestelling"
                   NewItemExpanded="true">
+    <TitleBarContent>
+        @{
+            if (_scoutsjaar != null)
+            {
+                <div class="pt-3 ml-20">
+                    <span class="mr-10">Bestellingen: @_bestellingen.Count()</span>
+                    <span class="mr-10">Pakken: @_bestellingen.Sum(x => x.AantalPakken) </span>
+                    <span class="mr-10">Pannenkoeken: @_bestellingen.Sum(x => x.AantalPakken * _scoutsjaar.PannenkoekenPerPak)</span>
+                </div>
+            }
+        }
+        
+    </TitleBarContent>
     <NewItemFormElements>
         <BestellingForm @ref="bestellingForm" />
     </NewItemFormElements>
@@ -47,11 +60,14 @@
 </MasterDetailPage>
 
 @code {
+    private ScoutsjaarDto? _scoutsjaar = default!;
+    private IList<BestellingDto> _bestellingen = new List<BestellingDto>();
+
     private async Task<IList<BestellingDto>> GetBestellingen(IServerData serverData)
     {
-        var scoutsjaar = await CurrentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
-        var result = await serverData.GetBestellingen(scoutsjaar.Begin);
-        return result;
+        _scoutsjaar = await CurrentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        _bestellingen = await serverData.GetBestellingen(_scoutsjaar.Begin);
+        return _bestellingen;
     }
 
     [Inject]
