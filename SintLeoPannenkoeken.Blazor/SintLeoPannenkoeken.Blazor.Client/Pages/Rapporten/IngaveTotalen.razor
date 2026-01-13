@@ -18,7 +18,7 @@
                   CanSearch="false"
                   SortMode="SortMode.None">
     <Columns>
-        <PropertyColumn T="IngaveTotalenRowDto" TProperty="DateTime" Property="x => x.IngaveDatum" Title="Datum" />
+        <PropertyColumn T="IngaveTotalenRowDto" TProperty="DateTime" Format="dd/MM/yyyy" Property="x => x.IngaveDatum" Title="Datum" />
         @foreach (var tak in _rapport.Takken)
         {
             <TemplateColumn T="IngaveTotalenRowDto">

@@ -18,7 +18,6 @@
 <HeadContent>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
-    @* <script src="/takverkopen.js"></script> *@
     <script type="text/javascript">
         function loadTakverkopenChart(data) {
             const rapport = document.getElementById('chart');
@@ -31,8 +30,9 @@
                         datasets: [
                             {
                                 label: 'Verkoop',
-                                data: data.takVerkopen.map(row => row.aantalPakkenVerkocht)
-                            }
+                                data: data.takVerkopen.map(row => row.aantalPakkenVerkocht),
+                                backgroundColor: '#9dc3ca'
+                            },
                         ]
                     },
                     options: {
