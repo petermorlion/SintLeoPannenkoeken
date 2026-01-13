@@ -84,6 +84,12 @@
     [Parameter]
     public BestellingDto Item { get; set; } = new BestellingDto { Betaald = true };
 
+    public void Reset()
+    {
+        Item = new BestellingDto { Betaald = true };
+        StateHasChanged();
+    }
+
     private Func<LidDto?, string> _lidConverter = lid =>
     {
         if (lid == null)

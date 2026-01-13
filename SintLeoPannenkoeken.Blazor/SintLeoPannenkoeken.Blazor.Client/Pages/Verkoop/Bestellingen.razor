@@ -92,18 +92,7 @@
 
     void OnCancel()
     {
-        bestellingForm.Item.Naam = "";
-        bestellingForm.Item.Telefoon = null;
-        bestellingForm.Item.Straat = null;
-        bestellingForm.Item.Straat = null;
-        bestellingForm.Item.Nummer = "";
-        bestellingForm.Item.Bus = "";
-        bestellingForm.Item.AantalPakken = 1;
-        bestellingForm.Item.Betaald = true;
-        bestellingForm.Item.Geleverd = false;
-        bestellingForm.Item.Opmerkingen = null;
-        bestellingForm.Item.Lid = null;
-        bestellingForm.ZelfAfhalen = false;
+        bestellingForm.Reset();
     }
 
     async Task OnUpdate(BestellingDto item)
