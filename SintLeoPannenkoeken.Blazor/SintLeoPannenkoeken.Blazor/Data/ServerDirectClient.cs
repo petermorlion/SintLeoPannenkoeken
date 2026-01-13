@@ -476,13 +476,16 @@ namespace SintLeoPannenkoeken.Blazor.Data
                     .ThenInclude(s => s.Zone)
                     .SingleAsync(b => b.Id == bestelling.Id);
 
-                var geocodes = await _hereGeoCodingService.GetGeocode(bestelling.Straat.Naam, bestelling.Nummer, bestelling.Straat.Zone?.PostNummer.ToString() ?? "", bestelling.Straat.Zone.Gemeente);
-                var geocode = geocodes.Items.FirstOrDefault();
-                if (geocode != null)
+                if (bestelling.StraatId != 120)
                 {
-                    bestelling.Latitude = geocode.Position.Lat;
-                    bestelling.Longitude = geocode.Position.Lng;
-                    await dbContext.SaveChangesAsync();
+                    var geocodes = await _hereGeoCodingService.GetGeocode(bestelling.Straat.Naam, bestelling.Nummer, bestelling.Straat.Zone?.PostNummer.ToString() ?? "", bestelling.Straat.Zone.Gemeente);
+                    var geocode = geocodes.Items.FirstOrDefault();
+                    if (geocode != null)
+                    {
+                        bestelling.Latitude = geocode.Position.Lat;
+                        bestelling.Longitude = geocode.Position.Lng;
+                        await dbContext.SaveChangesAsync();
+                    }
                 }
 
                 return new BestellingDto
