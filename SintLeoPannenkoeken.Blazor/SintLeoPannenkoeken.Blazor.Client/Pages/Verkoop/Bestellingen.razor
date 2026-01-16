@@ -23,10 +23,10 @@
         @{
             if (_scoutsjaar != null)
             {
-                <div class="pt-3 ml-20">
-                    <span class="mr-10">Bestellingen: @_bestellingen.Count()</span>
-                    <span class="mr-10">Pakken: @_bestellingen.Sum(x => x.AantalPakken) </span>
-                    <span class="mr-10">Pannenkoeken: @_bestellingen.Sum(x => x.AantalPakken * _scoutsjaar.PannenkoekenPerPak)</span>
+                <div class="ml-20">
+                    <MudChip T="string" Color="Color.Primary">Bestellingen: @_bestellingen.Count()</MudChip>
+                    <MudChip T="string" Color="Color.Primary">Pakken: @_bestellingen.Sum(x => x.AantalPakken)</MudChip>
+                    <MudChip T="string" Color="Color.Primary">Pannenkoeken: @_bestellingen.Sum(x => x.AantalPakken * _scoutsjaar.PannenkoekenPerPak)</MudChip>
                 </div>
             }
         }
