@@ -167,14 +167,4 @@
         _verkoopPerLid = await ServerData.GetVerkoopPerLidRapport(_scoutsjaar.Begin);
         await JSRuntime.InvokeVoidAsync("loadIngaveTotalen", _ingaveTotalen);
     }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender)
-        {
-            return;
-        }
-
-
-    }
 }

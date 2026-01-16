@@ -8,6 +8,16 @@
 <PageTitle>Ronde voorstel</PageTitle>
 <h1>Ronde voorstel</h1>
 
+<HeadContent>
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.2/mapsjs-ui.css" />
+    <script type="text/javascript" src='https://heremaps.github.io/maps-api-for-javascript-examples/test-credentials.js'></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.2/mapsjs-core.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.2/mapsjs-service.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.2/mapsjs-ui.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.2/mapsjs-mapevents.js"></script>
+    <script type="text/javascript" src='/chauffeurRondeDetailsMap.js'></script>
+</HeadContent>
+
 <RoleAuthorizedView Roles="@($"{Roles.RolesForRondes}")">
     @foreach (var d in Details?.Details ?? Enumerable.Empty<ChauffeurRondeDetailDto>())
     {
@@ -15,6 +25,8 @@
             @d.Straat @d.Nummer - @d.AantalPakken pak(ken) - Lat: @d.Position?.Latitude, Lng: @d.Position?.Longitude
         </div>
     }
+
+    <div id="map" style="width: 95%; height: 450px; background: grey;"></div>
 </RoleAuthorizedView>
 
 @code {
@@ -25,6 +37,9 @@
 
     [Parameter]
     public string ChauffeurId { get; set; } = string.Empty;
+
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; } = default!;
 
     [Inject]
     private IServerData _serverData { get; set; } = default!;
@@ -44,5 +59,49 @@
 
         Details = await _serverData.GetChauffeurRondeDetailsRoute(_currentScoutsjaar, int.Parse(ChauffeurId));
         StateHasChanged();
+        await JSRuntime.InvokeVoidAsync("initHereMap");
+
+        foreach (var detail in Details.Details)
+        {
+            if (detail.Position == null)
+            {
+                continue;
+            }
+
+            // await JSRuntime.InvokeVoidAsync("addDomMarker", detail.Position?.Latitude, detail.Position?.Longitude);
+        }
     }
+
+    // private DotNetObjectReference<ChauffeurRondeDetailsMap>? objRef;
+    // private bool scriptLoaded = false;
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     if (firstRender)
+    //     {
+    //         objRef = DotNetObjectReference.Create(this);
+    //         await LoadExternalScript("https://heremaps.github.io/maps-api-for-javascript-examples/test-credentials.js");
+    //         await LoadExternalScript("https://js.api.here.com/v3/3.2/mapsjs-core.js");
+    //         await LoadExternalScript("https://js.api.here.com/v3/3.2/mapsjs-service.js");
+    //         await LoadExternalScript("https://js.api.here.com/v3/3.2/mapsjs-ui.js");
+    //         await LoadExternalScript("https://js.api.here.com/v3/3.2/mapsjs-mapevents.js");
+    //     }
+    // }
+
+    // private async Task LoadExternalScript(string src)
+    // {
+    //     await JSRuntime.InvokeVoidAsync("eval", $@"
+    //         (function() {{
+    //             if (!document.querySelector('script[src=""{src}""]')) {{
+    //                 const script = document.createElement('script');
+    //                 script.src = '{src}';
+    //                 script.onload = () => console.log('Script loaded');
+    //                 document.head.appendChild(script);
+    //             }}
+    //         }})();
+    //     ");
+
+    //     // Wait a bit for script to load
+    //     await Task.Delay(500);
+    //     scriptLoaded = true;
+    // }
 }

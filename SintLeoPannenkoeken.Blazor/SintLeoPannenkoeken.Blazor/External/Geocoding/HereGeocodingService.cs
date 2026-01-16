@@ -14,7 +14,7 @@
         public async Task<HereGeocodingResponse> GetGeocode(string straat, string nummer, string postNummer, string gemeente)
         {
             var qualifiedQuery = $"street={straat};houseNumber={nummer};postalCode={postNummer};city={gemeente}";
-            var requestUri = $"v1/geocode?apiKey={_hereApiKey}&qq={qualifiedQuery}";
+            var requestUri = $"v1/geocode?apiKey={_hereApiKey}&q={qualifiedQuery}";
             var response = await _httpClient.GetFromJsonAsync<HereGeocodingResponse>(requestUri);
 
             return response ?? new HereGeocodingResponse();
