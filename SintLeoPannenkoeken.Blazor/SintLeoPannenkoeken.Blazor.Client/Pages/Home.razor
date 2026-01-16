@@ -1,7 +1,180 @@
 ﻿@page "/"
+@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts.Rapporten
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Pannenkoeken</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Zeescouts Sint-Leo Pannenkoeken</h1>
 
-Welcome to your new app.
+<HeadContent>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+    <script type="text/javascript">
+        function loadIngaveTotalen(data) {
+            const ingaveTotalenChart = document.getElementById('ingaveTotalenChart');
+            new Chart(
+                ingaveTotalenChart,
+                {
+                    type: 'line',
+                    data: {
+                        labels: data.ingaveTotalen.map((row) => ''),
+                        datasets: [
+                            {
+                                label: 'Verkoop',
+                                data: data.ingaveTotalen.map(row => row.oplopendTotaal),
+                                backgroundColor: '#9dc3ca'
+                            },
+                        ]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                min: 0,
+                                max: data.ingaveTotalen.at(-1)?.oplopendTotaal + 20 ?? 100
+                            }
+                        }
+                    }
+                }
+            );
+        }
+    </script>
+</HeadContent>
+
+<AuthorizeView>
+    <Authorized>
+        <MudGrid Spacing="6" Justify="Justify.Center">
+            <MudItem xs="12" md="6">
+                <MudCard Class="d-flex align-center justify-center mud-width-full" Style="height: 100%">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">Totalen</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        @if (_bestellingen == null)
+                        {
+                            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+                        }
+                        else
+                        {
+                            <div class="d-flex flex-column gap-4">
+                                <MudChip T="string" Color="Color.Primary">Bestellingen: @_bestellingen.Count()</MudChip>
+                                <MudChip T="string" Color="Color.Primary">Pakken: @_bestellingen.Sum(x => x.AantalPakken)</MudChip>
+                                <MudChip T="string" Color="Color.Primary">Pannenkoeken: @_bestellingen.Sum(x => x.AantalPakken * _scoutsjaar.PannenkoekenPerPak)</MudChip>
+                            </div>
+                        }
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudCard Class="d-flex align-center justify-center mud-width-full py-8" Style="height: 100%">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">Evolutie</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        @if (_ingaveTotalen == null)
+                        {
+                            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+                        }
+
+                        <canvas id="ingaveTotalenChart" style="@(_ingaveTotalen == null ? "visibility: hidden" : "")"></canvas>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudCard Class="d-flex align-center justify-center mud-width-full py-8" Style="height: 100%">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">Top verkopende takken</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        @if (_verkoopPerTak == null)
+                        {
+                            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+                        }
+                        else
+                        {
+                            <MudTable Context="row" Items="@_verkoopPerTak?.TakVerkopen.OrderByDescending(x => x.AantalPakkenVerkocht).Take(5)">
+                                <HeaderContent>
+                                    <MudTh>Tak</MudTh>
+                                    <MudTh>Pannenkoeken</MudTh>
+                                </HeaderContent>
+                                <RowTemplate>
+                                    <MudTd DataLabel="Tak">@row.Naam</MudTd>
+                                    <MudTd DataLabel="Pannenkoeken">@row.AantalPakkenVerkocht</MudTd>
+                                </RowTemplate>
+                            </MudTable>
+                        }
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudCard Class="d-flex align-center justify-center mud-width-full py-8" Style="height: 100%">
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">Top verkopende leden</MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        @if (_verkoopPerLid == null)
+                        {
+                            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+                        }
+                        else
+                        {
+                            <MudTable Context="row" Items="@_verkoopPerLid?.LidVerkopen.OrderByDescending(x => x.AantalPakkenVerkocht).Take(5)">
+                                <HeaderContent>
+                                    <MudTh>Lid</MudTh>
+                                    <MudTh>Pannenkoeken</MudTh>
+                                </HeaderContent>
+                                <RowTemplate>
+                                    <MudTd DataLabel="Tak">@row.Voornaam</MudTd>
+                                    <MudTd DataLabel="Pannenkoeken">@row.AantalPakkenVerkocht</MudTd>
+                                </RowTemplate>
+                            </MudTable>
+                        }
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+    </Authorized>
+    <NotAuthorized>
+        <MudText Typo="Typo.body1">
+            <!-- TODO: redirect to login -->
+            Welkom op de Pannenkoeken actie van Sint-Leo. Gelieven in te loggen.
+        </MudText>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private ScoutsjaarDto? _scoutsjaar = default!;
+    private IList<BestellingDto> _bestellingen;
+    private IngaveTotalenDto _ingaveTotalen;
+    private VerkoopPerLidDto _verkoopPerLid;
+    private VerkoopPerTakDto _verkoopPerTak;
+
+    [Inject]
+    public IServerData ServerData { get; set; } = default!;
+
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; } = default!;
+
+    [Inject]
+    public CurrentScoutsjaarQuerystringParameterProvider CurrentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _scoutsjaar = await CurrentScoutsjaarQuerystringParameterProvider.GetCurrentScoutsjaar();
+        _bestellingen = await ServerData.GetBestellingen(_scoutsjaar.Begin);
+        _ingaveTotalen = await ServerData.GetIngaveTotalen(_scoutsjaar.Begin);
+        _verkoopPerTak = await ServerData.GetVerkoopPerTakRapport(_scoutsjaar.Begin);
+        _verkoopPerLid = await ServerData.GetVerkoopPerLidRapport(_scoutsjaar.Begin);
+        await JSRuntime.InvokeVoidAsync("loadIngaveTotalen", _ingaveTotalen);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+
+    }
+}

@@ -13,7 +13,7 @@
 
 <PageTitle>Log in</PageTitle>
 
-<h1>Log in</h1>
+<h1>Inloggen</h1>
 <StatusMessage Message="@errorMessage" />
 <div class="row">
     <div class="col-md-4">
@@ -21,7 +21,6 @@
             <StatusMessage Message="@errorMessage" />
             <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
                 <DataAnnotationsValidator />
-                <h2>Use a local account to log in.</h2>
                 <hr />
                 <ValidationSummary class="text-danger" role="alert" />
                 <div class="form-floating mb-5">

@@ -15,6 +15,10 @@ namespace SintLeoPannenkoeken.Blazor.Client
             _serverData = serverData;
         }
 
+        /// <summary>
+        /// Gets the current scoutsjaar. Either from the query string or the most recent if no value is found.
+        /// </summary>
+        /// <returns></returns>
         public async Task<ScoutsjaarDto?> GetCurrentScoutsjaar()
         {
             var uriBuilder = new UriBuilder(_navigationManager.Uri);
