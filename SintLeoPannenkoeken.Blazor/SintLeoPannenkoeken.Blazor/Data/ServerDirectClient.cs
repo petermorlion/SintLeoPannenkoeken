@@ -1176,6 +1176,8 @@ namespace SintLeoPannenkoeken.Blazor.Data
                     .GroupBy(x => x.IngaveDatum)
                     .OrderBy(x => x.Key);
 
+                var oplopendTotaal = 0;
+
                 var result = new IngaveTotalenDto
                 {
                     Takken = await dbContext.Takken.OrderBy(x => x.Afkorting).ToDictionaryAsync(x => x.Afkorting, x => x.Naam),
@@ -1192,6 +1194,7 @@ namespace SintLeoPannenkoeken.Blazor.Data
 
                     foreach (var bestelling in bestellingenOnDate)
                     {
+                        oplopendTotaal += bestelling.AantalPakken;
                         if (ingaveTotalenRowViewModel.AantalPerTak.ContainsKey(bestelling.Tak.Afkorting))
                         {
                             ingaveTotalenRowViewModel.AantalPerTak[bestelling.Tak.Afkorting] += bestelling.AantalPakken;
@@ -1201,6 +1204,8 @@ namespace SintLeoPannenkoeken.Blazor.Data
                             ingaveTotalenRowViewModel.AantalPerTak.Add(bestelling.Tak.Afkorting, bestelling.AantalPakken);
                         }
                     }
+
+                    ingaveTotalenRowViewModel.OplopendTotaal = oplopendTotaal;
 
                     result.IngaveTotalen.Add(ingaveTotalenRowViewModel);
                 }
