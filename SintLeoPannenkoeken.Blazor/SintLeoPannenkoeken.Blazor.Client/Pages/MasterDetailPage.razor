@@ -24,7 +24,7 @@
         <MudExpansionPanels>
             <MudExpansionPanel Text="@NewItemTitle" Expanded="@NewItemExpanded">
                 <MudForm @bind-IsValid="_isFormValid" @ref="_form">
-                    <MudGrid>
+                    <MudGrid Style="max-width: 95vw;">
                         @NewItemFormElements
                         <MudItem xs="12">
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_isFormValid)" OnClick="@Create" Class="me-1 px-3">Opslaan</MudButton>

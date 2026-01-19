@@ -33,15 +33,8 @@
                      SelectValueOnTab="true"
                      Disabled="@ZelfAfhalen" />
 </MudItem>
-<MudItem xs="12" sm="2">
-    <MudTextField T="string"
-                  Label="Code"
-                  Value="@($"{Item.Straat?.ZoneNaam} {Item.Straat?.Nummer}")"
-                  Variant="Variant.Outlined"
-                  Margin="Margin.Dense"
-                  ShrinkLabel
-                  Disabled
-                  Required="true" />
+<MudItem xs="12" sm="2" Class="d-flex align-center">
+    Code: <MudChip T="string">@($"{Item.Straat?.ZoneNaam} {Item.Straat?.Nummer}")</MudChip>
 </MudItem>
 <MudItem xs="12" sm="2">
     <MudTextField @bind-Value="Item.Nummer" T="string" Label="Nummer" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel
