@@ -102,13 +102,13 @@
         };
 
         var result = await _serverData.CreateBestelling(newBestellingDto);
-        OnCancel();
+        await OnCancel();
         return result;
     }
 
-    void OnCancel()
+    async Task OnCancel()
     {
-        bestellingForm.Reset();
+        await bestellingForm.Reset();
     }
 
     async Task OnUpdate(BestellingDto item)

@@ -2,7 +2,15 @@
 @using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
 
 <MudItem xs="12" sm="8">
-    <MudTextField @bind-Value="Item.Naam" T="string" Label="Naam koper" Required="true" RequiredError="Naam koper is verplicht." Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+    <MudTextField @bind-Value="Item.Naam" 
+    T="string" 
+    Label="Naam koper" 
+    Required="true" 
+    RequiredError="Naam koper is verplicht." 
+    Variant="Variant.Outlined" 
+    Margin="Margin.Dense" 
+    ShrinkLabel
+    @ref="_naamField"/>
 </MudItem>
 <MudItem xs="12" sm="4">
     <MudTextField @bind-Value="Item.Telefoon" T="string" Label="Telefoon" Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
@@ -78,6 +86,7 @@
 
     private IList<LidDto> _leden = [];
     private IList<StraatDto> _straten = [];
+    private MudTextField<string> _naamField = default!;
 
     [Inject]
     private IServerData _serverData { get; set; } = default!;
@@ -85,11 +94,12 @@
     [Parameter]
     public BestellingDto Item { get; set; } = new BestellingDto { Betaald = true };
 
-    public void Reset()
+    public async Task Reset()
     {
         Item = new BestellingDto { Betaald = true };
         ZelfAfhalen = false;
         StateHasChanged();
+        await _naamField.FocusAsync();
     }
 
     private Func<LidDto?, string> _lidConverter = lid =>
