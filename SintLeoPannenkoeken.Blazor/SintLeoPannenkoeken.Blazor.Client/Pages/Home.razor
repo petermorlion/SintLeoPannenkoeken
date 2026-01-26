@@ -10,35 +10,7 @@
 <HeadContent>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
-    <script type="text/javascript">
-        function loadIngaveTotalen(data) {
-            const ingaveTotalenChart = document.getElementById('ingaveTotalenChart');
-            new Chart(
-                ingaveTotalenChart,
-                {
-                    type: 'line',
-                    data: {
-                        labels: data.ingaveTotalen.map((row) => ''),
-                        datasets: [
-                            {
-                                label: 'Verkoop',
-                                data: data.ingaveTotalen.map(row => row.oplopendTotaal),
-                                backgroundColor: '#9dc3ca'
-                            },
-                        ]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                min: 0,
-                                max: data.ingaveTotalen.at(-1)?.oplopendTotaal + 20 ?? 100
-                            }
-                        }
-                    }
-                }
-            );
-        }
-    </script>
+    <script src="/homeCharts.js"></script>
 </HeadContent>
 
 <AuthorizeView>
@@ -49,7 +21,7 @@
                     <MudCardHeader>
                         <MudText Typo="Typo.h6">Totalen</MudText>
                     </MudCardHeader>
-                    <MudCardContent>
+                    <MudCardContent Class="@(_bestellingen == null ? "d-flex justify-center" : "")">
                         @if (_bestellingen == null)
                         {
                             <MudProgressCircular Color="Color.Default" Indeterminate="true" />
@@ -66,14 +38,16 @@
                 </MudCard>
             </MudItem>
             <MudItem xs="12" md="6">
-                <MudCard Class="d-flex align-center justify-center mud-width-full py-8" Style="height: 100%">
+                <MudCard Class="d-flex align-center justify-center mud-width-full" Style="height: 100%">
                     <MudCardHeader>
                         <MudText Typo="Typo.h6">Evolutie</MudText>
                     </MudCardHeader>
-                    <MudCardContent>
+                    <MudCardContent Class="@(_ingaveTotalen == null ? "d-flex flex-column justify-center" : "mud-width-full")">
                         @if (_ingaveTotalen == null)
                         {
-                            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+                            <div class="d-flex mud-width-full justify-center">
+                                <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+                            </div>
                         }
 
                         <canvas id="ingaveTotalenChart" style="@(_ingaveTotalen == null ? "visibility: hidden" : "")"></canvas>
@@ -85,7 +59,7 @@
                     <MudCardHeader>
                         <MudText Typo="Typo.h6">Top verkopende takken</MudText>
                     </MudCardHeader>
-                    <MudCardContent>
+                    <MudCardContent Class="@(_verkoopPerTak == null ? "d-flex justify-center" : "mud-width-full")">
                         @if (_verkoopPerTak == null)
                         {
                             <MudProgressCircular Color="Color.Default" Indeterminate="true" />
@@ -111,7 +85,7 @@
                     <MudCardHeader>
                         <MudText Typo="Typo.h6">Top verkopende leden</MudText>
                     </MudCardHeader>
-                    <MudCardContent>
+                    <MudCardContent Class="@(_verkoopPerLid == null ? "d-flex justify-center" : "mud-width-full")">
                         @if (_verkoopPerLid == null)
                         {
                             <MudProgressCircular Color="Color.Default" Indeterminate="true" />
@@ -165,6 +139,6 @@
         _ingaveTotalen = await ServerData.GetIngaveTotalen(_scoutsjaar.Begin);
         _verkoopPerTak = await ServerData.GetVerkoopPerTakRapport(_scoutsjaar.Begin);
         _verkoopPerLid = await ServerData.GetVerkoopPerLidRapport(_scoutsjaar.Begin);
-        await JSRuntime.InvokeVoidAsync("loadIngaveTotalen", _ingaveTotalen);
+        await JSRuntime.InvokeVoidAsync("homeCharts.loadIngaveTotalen", _ingaveTotalen);
     }
 }
