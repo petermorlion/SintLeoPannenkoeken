@@ -27,14 +27,25 @@
         }
     }
 
-    <div id="map" style="width: 95%; height: 450px; background: grey;">
-        <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
+    @if (_isLoading) {
+        <MudGrid Justify="Justify.Center" Class="mt-10">
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
+        </MudGrid>
+    }
+
+    @if (!_isLoading && (!Details?.Details?.Any() ?? true))
+    {
+        <p>Deze chauffeur heeft nog geen rondes toegewezen gekregen, of de rondes bevatten nog geen bestellingen.</p>
+    }
+    
+    <div id="map" class="mt-4" style="width: 95%; height: 450px; background: grey; display: none;">
     </div>
 </RoleAuthorizedView>
 
 @code {
     private int _currentScoutsjaar;
     private IJSObjectReference? _mapModule;
+    private bool _isLoading = true;
 
 
     [Parameter]
@@ -62,6 +73,7 @@
 
         _currentScoutsjaar = currentScoutsjaar.Begin;
 
+        _isLoading = true;
         Details = await _serverData.GetChauffeurRondeDetailsRoute(_currentScoutsjaar, int.Parse(ChauffeurId));
         StateHasChanged();
     }
@@ -72,6 +84,8 @@
         {
             await InitializeMap();
         }
+
+        _isLoading = false;
     }
 
     private async Task InitializeMap()

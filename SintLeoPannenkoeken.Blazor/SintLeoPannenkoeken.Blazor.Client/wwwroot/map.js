@@ -7,6 +7,8 @@
             this.map.remove();
         }
 
+        document.getElementById(elementId).style.display = '';
+
         this.map = L.map(elementId).setView([centerLat, centerLng], zoom);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
