@@ -39,15 +39,10 @@
         </MudTooltip>
         <MudTooltip Text="Detaillijst voor verdeling">
             <MudIconButton Size="@Size.Small"
-                           Icon="@Icons.Material.Outlined.Print"
-                           Color="Color.Primary"
-                           Href="@($"verdeling/chauffeurteverdelen/{context.Item.Id}?scoutsjaar={_currentScoutsjaar}")" />
-        </MudTooltip>
-        <MudTooltip Text="Route voorstel">
-            <MudIconButton Size="@Size.Small"
+
                            Icon="@Icons.Material.Outlined.Map"
                            Color="Color.Primary"
-                           Href="@($"verdeling/chauffeurteverdelen/{context.Item.Id}/map?scoutsjaar={_currentScoutsjaar}")" />
+                           Href="@($"verdeling/chauffeurteverdelen/{context.Item.Id}?scoutsjaar={_currentScoutsjaar}")" />
         </MudTooltip>
     </ActionColumnContent>
 </MasterDetailPage>
