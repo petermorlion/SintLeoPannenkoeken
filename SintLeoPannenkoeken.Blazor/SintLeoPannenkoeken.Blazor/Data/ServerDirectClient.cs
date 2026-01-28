@@ -1214,6 +1214,37 @@ namespace SintLeoPannenkoeken.Blazor.Data
             }
         }
 
+        public async Task<IDictionary<string, double>> GetVerkoopVerdelingPerPostcode(int scoutsjaarBegin)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                Scoutsjaar? sj = await dbContext
+                .Scoutsjaren
+                .Include(x => x.StreefCijfers)
+                .ThenInclude(x => x.Tak)
+                .SingleOrDefaultAsync(s => s.Begin == scoutsjaarBegin);
+
+                var bestellingen = (await dbContext.Scoutsjaren
+                    .Include(scoutsjaar => scoutsjaar.Bestellingen)
+                    .ThenInclude(bestelling => bestelling.Straat)
+                    .SingleOrDefaultAsync(scoutsjaar => scoutsjaar.Id == sj.Id))
+                    ?.Bestellingen
+                    ?.ToList();
+
+                if (bestellingen == null)
+                {
+                    return new Dictionary<string, double>();
+                }
+
+                var bestellingenByPostcode = bestellingen
+                    .GroupBy(x => x.Straat.PostNummer.ToString())
+                    .OrderBy(x => x.Key)
+                    .ToDictionary(x => x.Key, x => x.Sum(b => (double)b.AantalPakken));
+
+                return bestellingenByPostcode;
+            }
+        }
+
         public async Task<IList<PendingOnlineBestellingDto>> GetPendingOnlineBestellingen(int scoutsjaarBegin)
         {
             var onlineBestellingen = await _sintLeoWebsiteService.GetOnlineBestelingen();

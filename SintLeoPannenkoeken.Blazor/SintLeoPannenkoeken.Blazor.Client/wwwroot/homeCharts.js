@@ -1,7 +1,6 @@
 ﻿window.homeCharts = {
     loadIngaveTotalen: (data) => {
         const ingaveTotalenChart = document.getElementById('ingaveTotalenChart');
-        console.log('chart', ingaveTotalenChart);
         new Chart(
             ingaveTotalenChart,
             {
@@ -32,6 +31,25 @@
                         }
                     }
                 }
+            }
+        );
+    },
+    loadVerkoopPerPostcode: (data) => {
+        const verkoopPerPostcodeChart = document.getElementById('verkoopPerPostcodeChart');
+        new Chart(
+            verkoopPerPostcodeChart,
+            {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(data),
+                    datasets: [
+                        {
+                            label: 'Aantal pakken',
+                            data: Object.values(data),
+                            backgroundColor: Object.keys(data).map((value, index) => index % 2 === 0 ? '#9dc3ca' : '#004474'),
+                        },
+                    ]
+                },
             }
         );
     }
