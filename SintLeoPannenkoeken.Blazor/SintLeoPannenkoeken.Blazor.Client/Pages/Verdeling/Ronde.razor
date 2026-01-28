@@ -20,6 +20,11 @@
         <MudChip T="string" Color="Color.Info">Geleverd: @RondeDetails?.AantalGeleverd</MudChip>
         <MudChip T="string" Color="Color.Info">Niet geleverd: @RondeDetails?.AantalNietGeleverd</MudChip>
         <MudChip T="string" Color="Color.Info">Totaal: @RondeDetails?.TotaalAantal</MudChip>
+
+        @if (_isScoutsjaarGearchiveerd)
+        {
+            <MudAlert Severity="Severity.Info">Er kunnen geen wijzigingen meer gebeuren voor dit scoutsjaar omdat het gearchiveerd is.</MudAlert>
+        }
     </ContentBeforeData>
     <Columns>
         <PropertyColumn T="RondeDetailsBestellingDto" TProperty="string" Property="x => x.Straat" Title="Straat" InitialDirection="SortDirection.Ascending" />
@@ -31,18 +36,20 @@
             <CellTemplate>
                 @if (context.Item.Geleverd)
                 {
-                    <MudTooltip Text="Bestelling is geleverd. Klik om te markeren als niet geleverd.">
+                    <MudTooltip Text="@(_isScoutsjaarGearchiveerd ? "Bestelling is geleverd." : "Bestelling is geleverd. Klik om te markeren als niet geleverd.")">
                         <MudChip T="string"
                                  Color="Color.Success"
+                                 Disabled="_isScoutsjaarGearchiveerd"
                                  OnClick="@(async () => await OnGeleverdClicked(context.Item))"
                                  Icon="@Icons.Material.Filled.Check" ²>Ja</MudChip>
                     </MudTooltip>
                 }
                 else
                 {
-                    <MudTooltip Text="Bestelling is niet geleverd. Klik om te markeren als geleverd.">
+                    <MudTooltip Text="@(_isScoutsjaarGearchiveerd ? "Bestelling is niet geleverd." : "Bestelling is niet geleverd. Klik om te markeren als geleverd.")">
                         <MudChip T="string"
                                  Color="Color.Dark"
+                                 Disabled="_isScoutsjaarGearchiveerd"
                                  OnClick="@(async () => await OnGeleverdClicked(context.Item))">Nee</MudChip>
                     </MudTooltip>
                 }
@@ -61,6 +68,7 @@
     }
 
     private int _currentScoutsjaar;
+    private bool _isScoutsjaarGearchiveerd = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,6 +79,7 @@
         }
 
         _currentScoutsjaar = currentScoutsjaar.Begin;
+        _isScoutsjaarGearchiveerd = currentScoutsjaar.Status == ScoutsjaarStatusDto.Gearchiveerd;
     }
 
     [Parameter]
