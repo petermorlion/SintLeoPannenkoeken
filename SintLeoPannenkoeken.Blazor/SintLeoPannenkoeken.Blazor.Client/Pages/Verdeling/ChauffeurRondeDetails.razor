@@ -26,24 +26,34 @@
                   CanDelete="false"
                   IsForScoutsjaar="true">
     <ContentBeforeData>
-        @foreach (var d in Details?.Details ?? Enumerable.Empty<ChauffeurRondeDetailDto>())
-        {
-            if (d.Position == null)
+        @{
+            var messages = new List<string>();
+
+            foreach (var d in Details?.Details ?? Enumerable.Empty<ChauffeurRondeDetailDto>())
             {
-                <p>Adres @d.Straat @d.Nummer heeft geen locatiegegevens.</p>
+                if (d.Position == null)
+                {
+                    var message = $"Adres {d.Straat} {d.Nummer} heeft geen locatiegegevens.";
+                    if (!messages.Contains(message))
+                    {
+                        <p>@message</p>
+                        messages.Add(message);
+                    }
+                }
             }
-        }
 
-        @if (_isLoading)
-        {
-            <MudGrid Justify="Justify.Center" Class="mt-10">
-                <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
-            </MudGrid>
-        }
 
-        @if (!_isLoading && (!Details?.Details?.Any() ?? true))
-        {
-            <p>Deze chauffeur heeft nog geen rondes toegewezen gekregen, of de rondes bevatten nog geen bestellingen.</p>
+            if (_isLoading)
+            {
+                <MudGrid Justify="Justify.Center" Class="mt-10">
+                    <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
+                </MudGrid>
+            }
+
+            if (!_isLoading && (!Details?.Details?.Any() ?? true))
+            {
+                <p>Deze chauffeur heeft nog geen rondes toegewezen gekregen, of de rondes bevatten nog geen bestellingen.</p>
+            }
         }
 
         <div id="map" class="mt-4" style="width: 95%; height: 450px; background: grey; display: none;">
