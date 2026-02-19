@@ -154,24 +154,23 @@ namespace SintLeoPannenkoeken.Blazor.Data
             using (var dbContext = _dbContextFactory.CreateDbContext())
             {
                 var chauffeurs = await dbContext
-                .Bestuurders
-                .OrderBy(straat => straat.Achternaam)
-                .ToListAsync();
+                    .Bestuurders
+                    .OrderBy(bestuurder => bestuurder.Achternaam)
+                    .ToListAsync();
 
-                var data = await dbContext
-                    .Scoutsjaren
+                var scoutsjaarModel = dbContext.Scoutsjaren.Single(sj => sj.Begin == scoutsjaar);
+
+                var bestellingenPerZone = dbContext.Scoutsjaren
                     .Include(sj => sj.Bestellingen)
                     .ThenInclude(b => b.Straat)
-                    .Include(sj => sj.Rondes)
-                    .SingleOrDefaultAsync(sj => sj.Begin == scoutsjaar);
-
-                var bestellingenPerZone = data
+                    .Single(sj => sj.Begin == scoutsjaar)
                     .Bestellingen
                     .GroupBy(b => b.Straat.ZoneId)
                     .ToDictionary(group => group.Key, group => group.ToList());
 
-                var zonesPerChauffeur = data
-                    .Rondes
+                var zonesPerChauffeur = dbContext.Rondes
+                    .Where(r => r.ScoutsjaarId == scoutsjaarModel.Id)
+                    .ToList()
                     .GroupBy(r => r.BestuurderId, r => r.ZoneId)
                     .ToDictionary(group => group.Key, group => group.ToList());
 
@@ -1086,7 +1085,8 @@ namespace SintLeoPannenkoeken.Blazor.Data
                 var result = new VerkoopPerTakDto
                 {
                     ScoutsjaarBegin = scoutsjaarBegin,
-                    TakVerkopen = takken.Select(x => {
+                    TakVerkopen = takken.Select(x =>
+                    {
                         return new TakVerkoopDto
                         {
                             Naam = x.Naam,
@@ -1264,7 +1264,7 @@ namespace SintLeoPannenkoeken.Blazor.Data
                 {
                     var existingBestelling = await dbContext.Bestellingen
                         .SingleOrDefaultAsync(b => b.OnlineBestellingId == onlineBestelling.Id && b.ScoutsjaarId == scoutsjaar.Id);
-                    
+
                     if (existingBestelling == null)
                     {
                         onlineBestelling.ProposedLidId = leden.FirstOrDefault(leden => $"{leden.Voornaam} {leden.Achternaam}" == onlineBestelling.Naam)?.Id;
