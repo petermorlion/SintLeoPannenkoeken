@@ -28,6 +28,14 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
         }
 
         [HttpGet]
+        [Route("{scoutsjaarBegin:int}/chaffeurrondedetails/{chauffeurId:int}/route")]
+        public async Task<IActionResult> GetChauffeurRondeDetailsRoute(int scoutsjaarBegin, int chauffeurId)
+        {
+            var result = await _serverData.GetChauffeurRondeDetailsRoute(scoutsjaarBegin, chauffeurId);
+            return Ok(result);
+        }
+
+        [HttpGet]
         [Route("{scoutsjaarBegin:int}/verkooppertak")]
         public async Task<IActionResult> GetVerkoopPerTakRapport(int scoutsjaarBegin)
         {

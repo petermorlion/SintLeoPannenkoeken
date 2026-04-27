@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Blazor.Client.Server;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts;
 using SintLeoPannenkoeken.Blazor.Client.Server.Contracts.Rapporten;
 using SintLeoPannenkoeken.Blazor.External.Geocoding;
+using SintLeoPannenkoeken.Blazor.External.RouteXL;
 using SintLeoPannenkoeken.Blazor.External.SintLeoWebsite;
-using SintLeoPannenkoeken.Blazor.External.TourPlanning;
 using SintLeoPannenkoeken.Blazor.Models;
 
 namespace SintLeoPannenkoeken.Blazor.Data
@@ -20,14 +20,14 @@ namespace SintLeoPannenkoeken.Blazor.Data
         private readonly UsersService _usersService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HereGeocodingService _hereGeoCodingService;
-        private readonly HereTourPlanningService _hereTourPlanningService;
+        private readonly RouteXLService _routeXLService;
         private readonly SintLeoWebsiteService _sintLeoWebsiteService;
 
         public ServerDirectClient(ILogger<ServerDirectClient> logger,
             IDbContextFactory<ApplicationDbContext> dbContextFactory,
             UsersService usersService, IHttpContextAccessor httpContextAccessor,
             HereGeocodingService hereGeoCodingService,
-            HereTourPlanningService hereTourPlanningService,
+            RouteXLService routeXLService,
             SintLeoWebsiteService sintLeoWebsiteService)
         {
             _logger = logger;
@@ -35,7 +35,7 @@ namespace SintLeoPannenkoeken.Blazor.Data
             _usersService = usersService;
             _httpContextAccessor = httpContextAccessor;
             _hereGeoCodingService = hereGeoCodingService;
-            _hereTourPlanningService = hereTourPlanningService;
+            _routeXLService = routeXLService;
             _sintLeoWebsiteService = sintLeoWebsiteService;
         }
 
@@ -1005,8 +1005,50 @@ namespace SintLeoPannenkoeken.Blazor.Data
         public async Task<ChauffeurRondeDetailsDto> GetChauffeurRondeDetailsRoute(int scoutsjaarBegin, int chauffeurId)
         {
             var result = await GetChauffeurRondeDetails(scoutsjaarBegin, chauffeurId);
+            await EnsurePositionsAsync(result.Details);
 
-            foreach (var detail in result.Details)
+            var routableDetails = result.Details
+                .Where(detail => detail.Position != null)
+                .ToList();
+
+            if (routableDetails.Count < 2)
+            {
+                result.RouteWaypoints = routableDetails
+                    .Select(detail => detail.Position!)
+                    .ToList();
+
+                return result;
+            }
+
+            if (!_routeXLService.HasCredentials)
+            {
+                result.RouteMessage = "RouteXL is nog niet geconfigureerd. Voeg een gebruikersnaam en wachtwoord toe in de RouteXL-instellingen om een geoptimaliseerde route op te halen.";
+                return result;
+            }
+
+            var optimizableDetails = RouteXLRoutePlanner.SelectStopsForOptimization(routableDetails, _routeXLService.Options);
+            var optimizedStopIds = await _routeXLService.GetOptimizedStopIds(optimizableDetails);
+
+            if (optimizedStopIds.Count == 0)
+            {
+                result.RouteMessage = "RouteXL gaf geen geoptimaliseerde route terug voor deze chauffeur.";
+                return result;
+            }
+
+            result.Details = RouteXLRoutePlanner.OrderDetails(result.Details, optimizedStopIds);
+            result.RouteWaypoints = RouteXLRoutePlanner.BuildRouteWaypoints(optimizableDetails, optimizedStopIds);
+
+            if (routableDetails.Count > optimizableDetails.Count)
+            {
+                result.RouteMessage = $"Alleen de eerste {optimizableDetails.Count} stop(s) werden geoptimaliseerd omdat er geen RouteXL key is ingesteld.";
+            }
+
+            return result;
+        }
+
+        private async Task EnsurePositionsAsync(IList<ChauffeurRondeDetailDto> details)
+        {
+            foreach (var detail in details)
             {
                 if (detail.Position != null)
                 {
@@ -1016,36 +1058,28 @@ namespace SintLeoPannenkoeken.Blazor.Data
                 var response = await _hereGeoCodingService.GetGeocode(detail.Straat, detail.Nummer, detail.PostNummer, detail.Gemeente);
 
                 var firstItem = response.Items.FirstOrDefault();
-                if (firstItem != null)
+                if (firstItem == null)
                 {
-                    detail.Position = new PositionDto
-                    {
-                        Latitude = firstItem.Position.Lat,
-                        Longitude = firstItem.Position.Lng
-                    };
+                    continue;
+                }
 
-                    using (var dbContext = _dbContextFactory.CreateDbContext())
+                detail.Position = new PositionDto
+                {
+                    Latitude = firstItem.Position.Lat,
+                    Longitude = firstItem.Position.Lng
+                };
+
+                using (var dbContext = _dbContextFactory.CreateDbContext())
+                {
+                    var bestelling = await dbContext.Bestellingen.SingleOrDefaultAsync(b => b.Id == detail.BestellingId);
+                    if (bestelling != null)
                     {
-                        var bestelling = await dbContext.Bestellingen.SingleOrDefaultAsync(b => b.Id == detail.BestellingId);
-                        if (bestelling != null)
-                        {
-                            bestelling.Latitude = firstItem.Position.Lat;
-                            bestelling.Longitude = firstItem.Position.Lng;
-                            await dbContext.SaveChangesAsync();
-                        }
+                        bestelling.Latitude = firstItem.Position.Lat;
+                        bestelling.Longitude = firstItem.Position.Lng;
+                        await dbContext.SaveChangesAsync();
                     }
                 }
             }
-
-            var tour = await _hereTourPlanningService.GetRoute(
-                result.Details
-                .Where(d => d.Position != null)
-                .Select(d => d)
-                .ToList());
-
-            result.Details = result.Details.OrderBy(d => tour.Tours.First().Stops.ToList().FindIndex(s => s.Activities.First().JobTag == d.BestellingId.ToString())).ToList();
-
-            return result;
         }
 
         public async Task<VerkoopPerTakDto> GetVerkoopPerTakRapport(int scoutsjaarBegin)

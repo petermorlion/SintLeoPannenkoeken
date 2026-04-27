@@ -1,6 +1,7 @@
-﻿window.mapHelper = {
+window.mapHelper = {
     map: null,
     markers: [],
+    routeControl: null,
 
     initMap: function (elementId, centerLat, centerLng, zoom) {
         if (this.map) {
@@ -17,6 +18,7 @@
         }).addTo(this.map);
 
         this.markers = [];
+        this.routeControl = null;
     },
 
     addMarker: function (lat, lng, popupContent) {
@@ -34,6 +36,32 @@
 
         var group = L.featureGroup(this.markers);
         this.map.fitBounds(group.getBounds().pad(0.1));
+    },
+
+    setRoute: function (waypoints) {
+        if (!this.map || !waypoints || waypoints.length < 2 || !L.Routing) return;
+
+        if (this.routeControl) {
+            this.map.removeControl(this.routeControl);
+        }
+
+        this.routeControl = L.Routing.control({
+            waypoints: waypoints.map(point => L.latLng(point.latitude, point.longitude)),
+            addWaypoints: false,
+            draggableWaypoints: false,
+            fitSelectedRoutes: false,
+            lineOptions: {
+                styles: [{ color: '#1976d2', opacity: 0.85, weight: 6 }]
+            },
+            createMarker: function () {
+                return null;
+            }
+        }).addTo(this.map);
+
+        var routingContainer = this.routeControl.getContainer();
+        if (routingContainer) {
+            routingContainer.style.display = 'none';
+        }
     },
 
     clearMarkers: function () {

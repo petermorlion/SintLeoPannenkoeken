@@ -10,8 +10,10 @@ using SintLeoPannenkoeken.Blazor.Components;
 using SintLeoPannenkoeken.Blazor.Components.Account;
 using SintLeoPannenkoeken.Blazor.Data;
 using SintLeoPannenkoeken.Blazor.External.Geocoding;
+using SintLeoPannenkoeken.Blazor.External.RouteXL;
 using SintLeoPannenkoeken.Blazor.External.SintLeoWebsite;
 using SintLeoPannenkoeken.Blazor.External.TourPlanning;
+using SintLeoPannenkoeken.Blazor.Options;
 using SintLeoPannenkoeken.Blazor.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -63,6 +65,7 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 builder.Services.AddScoped<IServerData, ServerDirectClient>();
 builder.Services.AddScoped<UsersService>();
 builder.Services.AddSharedServices();
+builder.Services.Configure<RouteXLOptions>(builder.Configuration.GetSection(RouteXLOptions.SectionName));
 
 builder.Services.AddControllers();
 
@@ -123,6 +126,11 @@ builder.Services.AddHttpClient<HereGeocodingService>((serviceProvider, client) =
 builder.Services.AddHttpClient<HereTourPlanningService>((serviceProvider, client) =>
 {
     client.BaseAddress = new Uri("https://tourplanning.hereapi.com");
+});
+
+builder.Services.AddHttpClient<RouteXLService>((serviceProvider, client) =>
+{
+    client.BaseAddress = new Uri("https://api.routexl.com/");
 });
 
 builder.Services.AddHttpClient<SintLeoWebsiteService>((serviceProvider, client) =>

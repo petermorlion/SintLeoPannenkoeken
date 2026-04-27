@@ -11,10 +11,17 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
             crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
     <script src="/map.js"></script>
+    <style>
+        .leaflet-routing-container {
+            display: none;
+        }
+    </style>
 </HeadContent>
 
 <MasterDetailPage TDto="ChauffeurRondeDetailDto"
@@ -54,6 +61,11 @@
             {
                 <p>Deze chauffeur heeft nog geen rondes toegewezen gekregen, of de rondes bevatten nog geen bestellingen.</p>
             }
+
+            if (!string.IsNullOrWhiteSpace(Details?.RouteMessage))
+            {
+                <MudAlert Severity="Severity.Info" Dense="true" Class="mt-4 mb-2">@Details.RouteMessage</MudAlert>
+            }
         }
 
         <div id="map" class="mt-4" style="width: 95%; height: 450px; background: grey; display: none;">
@@ -71,7 +83,6 @@
 
 @code {
     private int _currentScoutsjaar;
-    private IJSObjectReference? _mapModule;
     private bool _isLoading = true;
 
 
@@ -83,9 +94,6 @@
 
     [Inject]
     public IJSRuntime JSRuntime { get; set; } = default!;
-
-    [Inject]
-    private IServerData _serverData { get; set; } = default!;
 
     [Inject]
     private CurrentScoutsjaarQuerystringParameterProvider _currentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
@@ -100,7 +108,7 @@
 
         _currentScoutsjaar = scoutsjaar.Begin;
         _isLoading = true;
-        Details = await serverData.GetChauffeurRondeDetails(_currentScoutsjaar, int.Parse(ChauffeurId));
+        Details = await serverData.GetChauffeurRondeDetailsRoute(_currentScoutsjaar, int.Parse(ChauffeurId));
         _isLoading = false;
         StateHasChanged();
         return Details.Details;
@@ -140,15 +148,12 @@
                 popupContent);
         }
 
+        if (Details.RouteWaypoints.Count >= 2)
+        {
+            await JSRuntime.InvokeVoidAsync("mapHelper.setRoute", Details.RouteWaypoints);
+        }
+
         // Fit map bounds to show all markers
         await JSRuntime.InvokeVoidAsync("mapHelper.fitBounds");
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_mapModule != null)
-        {
-            await _mapModule.DisposeAsync();
-        }
     }
 }
