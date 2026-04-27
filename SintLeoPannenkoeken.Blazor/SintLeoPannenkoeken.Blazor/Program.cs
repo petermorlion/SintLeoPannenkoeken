@@ -16,9 +16,9 @@ using SintLeoPannenkoeken.Blazor.External.TourPlanning;
 using SintLeoPannenkoeken.Blazor.Options;
 using SintLeoPannenkoeken.Blazor.Startup;
 
-var builder = WebApplication.CreateBuilder(args);
-
 Env.Load();
+
+var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
