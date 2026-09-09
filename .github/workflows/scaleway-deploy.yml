@@ -26,11 +26,11 @@ jobs:
     - name: Test
       run: dotnet test "${{ env.SERVER_WORKING_DIRECTORY }}" --no-build --configuration ${{ env.CONFIGURATION }}
     - name: Log in to Scaleway Container Registry
-      run: echo "${{ secrets.SCW_SECRET_KEY }}" | docker login rg.${{ secrets.SCW_DEFAULT_REGION }}.scw.cloud/${{ secrets.SCW_REGISTRY_NAMESPACE }} -u nologin --password-stdin
+      run: echo "${{ secrets.SCW_SECRET_KEY }}" | docker login rg.${{ vars.SCW_DEFAULT_REGION }}.scw.cloud/${{ vars.SCW_REGISTRY_NAMESPACE }} -u nologin --password-stdin
     - name: Build image
-      run: docker build -f "${{ env.DOCKERFILE_PATH }}" -t rg.${{ secrets.SCW_DEFAULT_REGION }}.scw.cloud/${{ secrets.SCW_REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ github.sha }} -t rg.${{ secrets.SCW_DEFAULT_REGION }}.scw.cloud/${{ secrets.SCW_REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:latest .
+      run: docker build -f "${{ env.DOCKERFILE_PATH }}" -t rg.${{ vars.SCW_DEFAULT_REGION }}.scw.cloud/${{ vars.SCW_REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ github.sha }} -t rg.${{ vars.SCW_DEFAULT_REGION }}.scw.cloud/${{ vars.SCW_REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:latest .
     - name: Push image
-      run: docker push rg.${{ secrets.SCW_DEFAULT_REGION }}.scw.cloud/${{ secrets.SCW_REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }} --all-tags
+      run: docker push rg.${{ vars.SCW_DEFAULT_REGION }}.scw.cloud/${{ vars.SCW_REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }} --all-tags
 
   deploy_container:
     runs-on: ubuntu-latest
@@ -50,7 +50,7 @@ jobs:
         default-project-id: ${{ secrets.SCW_DEFAULT_PROJECT_ID }}
         export-config: true
         args: >-
-          container container update ${{ secrets.SCW_CONTAINER_NAME }}
-          namespace-id=${{ secrets.SCW_CONTAINER_NAMESPACE }}
-          registry-image=rg.${{ secrets.SCW_DEFAULT_REGION }}.scw.cloud/${{ secrets.SCW_REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          container container update ${{ vars.SCW_CONTAINER_NAME }}
+          namespace-id=${{ vars.SCW_CONTAINER_NAMESPACE }}
+          registry-image=rg.${{ vars.SCW_DEFAULT_REGION }}.scw.cloud/${{ vars.SCW_REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           redeploy=true
