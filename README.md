@@ -52,6 +52,7 @@ Decisions for this phase:
 | `SCW_ACCESS_KEY` | Scaleway API access key |
 | `SCW_SECRET_KEY` | Scaleway API secret key |
 | `SCW_DEFAULT_PROJECT_ID` | Scaleway Project ID |
+| `SCW_DEFAULT_ORGANIZATION_ID` | Scaleway Organization ID (required by the `scw` CLI in addition to the Project ID — found in the Scaleway console under Organization settings) |
 
 **GitHub Actions repository variables** (non-sensitive IDs/names; Settings → Secrets and variables → Actions → Variables):
 
