@@ -49,4 +49,5 @@ jobs:
         args: >-
           container container update ${{ vars.SCW_CONTAINER_ID }}
           region=${{ vars.SCW_DEFAULT_REGION }}
-          image=rg.${{ vars.SCW_DEFAULT_REGION }}.scw.cloud/${{ vars.SCW_REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          registry-image=rg.${{ vars.SCW_DEFAULT_REGION }}.scw.cloud/${{ vars.SCW_REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          redeploy=true
