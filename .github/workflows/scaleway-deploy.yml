@@ -1,0 +1,56 @@
+name: Build and deploy Blazor backend to Scaleway (pilot)
+on:
+  push:
+    branches:
+    - feature/scaleway-hosting-step1
+env:
+  SERVER_WORKING_DIRECTORY: SintLeoPannenkoeken.Blazor/SintLeoPannenkoeken.Blazor
+  DOCKERFILE_PATH: SintLeoPannenkoeken.Blazor/SintLeoPannenkoeken.Blazor/Dockerfile
+  IMAGE_NAME: sintleopannenkoeken-blazor
+  CONFIGURATION: Release
+
+jobs:
+  build_and_push_image:
+    runs-on: ubuntu-latest
+    name: Build, test and push image to Scaleway Container Registry
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore
+      run: dotnet restore "${{ env.SERVER_WORKING_DIRECTORY }}"
+    - name: Build
+      run: dotnet build "${{ env.SERVER_WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
+    - name: Test
+      run: dotnet test "${{ env.SERVER_WORKING_DIRECTORY }}" --no-build --configuration ${{ env.CONFIGURATION }}
+    - name: Log in to Scaleway Container Registry
+      run: echo "${{ secrets.SCW_SECRET_KEY }}" | docker login rg.${{ secrets.SCW_DEFAULT_REGION }}.scw.cloud/${{ secrets.SCW_REGISTRY_NAMESPACE }} -u nologin --password-stdin
+    - name: Build image
+      run: docker build -f "${{ env.DOCKERFILE_PATH }}" -t rg.${{ secrets.SCW_DEFAULT_REGION }}.scw.cloud/${{ secrets.SCW_REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ github.sha }} -t rg.${{ secrets.SCW_DEFAULT_REGION }}.scw.cloud/${{ secrets.SCW_REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:latest .
+    - name: Push image
+      run: docker push rg.${{ secrets.SCW_DEFAULT_REGION }}.scw.cloud/${{ secrets.SCW_REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }} --all-tags
+
+  deploy_container:
+    runs-on: ubuntu-latest
+    name: Deploy image to Scaleway Serverless Container
+    needs: build_and_push_image
+    # Requires SCW_CONTAINER_NAMESPACE and SCW_CONTAINER_NAME secrets, which are not yet
+    # created (the Serverless Container resource itself still needs to be provisioned).
+    # This job is a no-op until those secrets are added; remove this guard once ready.
+    if: false
+    steps:
+    - name: Use Scaleway CLI
+      uses: scaleway/action-scw@v0
+      with:
+        version: v2.24.0
+        access-key: ${{ secrets.SCW_ACCESS_KEY }}
+        secret-key: ${{ secrets.SCW_SECRET_KEY }}
+        default-project-id: ${{ secrets.SCW_DEFAULT_PROJECT_ID }}
+        export-config: true
+        args: >-
+          container container update ${{ secrets.SCW_CONTAINER_NAME }}
+          namespace-id=${{ secrets.SCW_CONTAINER_NAMESPACE }}
+          registry-image=rg.${{ secrets.SCW_DEFAULT_REGION }}.scw.cloud/${{ secrets.SCW_REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          redeploy=true
