@@ -31,8 +31,8 @@ Scaleway runtime inputs (confirmed so far):
 - Scaleway Project ID: `da914e59-fe3d-4b7d-a9fc-0f6bec6a7fec`
 - Scaleway Region: `fr-par`
 - Scaleway Container Registry namespace: `sintleozeescouts`
-- Scaleway Container Namespace: not yet created
-- Scaleway Container Name: not yet created
+- Scaleway Container Namespace ID: `242838a4-f8ed-4840-8351-e4c31e88641e`
+- Scaleway Container: name `pannenkoeken`, ID `5e3bbf99-6f0b-4018-8c26-1fa77c5c4312`
 - Test domain and TLS certificate source: not yet decided
 - SQL Server firewall/allowlist for Scaleway egress: not yet validated
 
@@ -45,17 +45,21 @@ Decisions for this phase:
 
 **Prerequisite (manual, one-time, done by a human, not automatable here):** create a Scaleway account, a Project, and an API key (access key + secret key) with Container Registry and Serverless Containers permissions, and create a Container Registry namespace for this app.
 
-**GitHub Actions repository secrets to create** (used by the future deploy workflow, not yet wired up):
+**GitHub Actions repository secrets** (sensitive; Settings → Secrets and variables → Actions → Secrets):
 
 | Secret name | Purpose |
 | --- | --- |
 | `SCW_ACCESS_KEY` | Scaleway API access key |
 | `SCW_SECRET_KEY` | Scaleway API secret key |
 | `SCW_DEFAULT_PROJECT_ID` | Scaleway Project ID |
-| `SCW_DEFAULT_REGION` | Scaleway region (e.g. `fr-par`) |
-| `SCW_REGISTRY_NAMESPACE` | Container Registry namespace name/ID for this app |
-| `SCW_CONTAINER_NAMESPACE` | Serverless Containers namespace ID |
-| `SCW_CONTAINER_NAME` | Serverless Container name/ID for the backend |
+
+**GitHub Actions repository variables** (non-sensitive IDs/names; Settings → Secrets and variables → Actions → Variables):
+
+| Variable name | Value |
+| --- | --- |
+| `SCW_DEFAULT_REGION` | `fr-par` |
+| `SCW_REGISTRY_NAMESPACE` | `sintleozeescouts` |
+| `SCW_CONTAINER_ID` | `5e3bbf99-6f0b-4018-8c26-1fa77c5c4312` (container `pannenkoeken`, in namespace `242838a4-f8ed-4840-8351-e4c31e88641e`) |
 
 **Production runtime environment variables required on the Scaleway container** (set directly on the container, not baked into the image):
 
@@ -77,13 +81,15 @@ docker tag sintleopannenkoeken-blazor:scaleway-step1 rg.fr-par.scw.cloud/sintleo
 docker push rg.fr-par.scw.cloud/sintleozeescouts/sintleopannenkoeken-blazor:scaleway-step1
 ```
 
-### Scaleway hosting pilot (step 3): CI/CD build and push
+### Scaleway hosting pilot (step 3): CI/CD build, push and deploy
 
-A dedicated workflow, `.github/workflows/scaleway-deploy.yml`, builds, tests, and pushes the backend image to the Scaleway Container Registry whenever `feature/scaleway-hosting-step1` is pushed. This is fully separate from `.github/workflows/SintLeoPannenkoeken.yml`, which still deploys `master` to Azure unchanged.
+A dedicated workflow, `.github/workflows/scaleway-deploy.yml`, builds, tests, pushes the backend image to the Scaleway Container Registry, and deploys it to the `pannenkoeken` Serverless Container whenever `feature/scaleway-hosting-step1` is pushed. This is fully separate from `.github/workflows/SintLeoPannenkoeken.yml`, which still deploys `master` to Azure unchanged.
 
 Status:
-- `build_and_push_image` job: **ready to use** now that `SCW_ACCESS_KEY`, `SCW_SECRET_KEY`, `SCW_DEFAULT_PROJECT_ID`, `SCW_DEFAULT_REGION`, and `SCW_REGISTRY_NAMESPACE` repository secrets are set.
-- `deploy_container` job: **disabled (`if: false`)** until a Scaleway Serverless Container resource exists and `SCW_CONTAINER_NAMESPACE`/`SCW_CONTAINER_NAME` secrets are added. Remove the `if: false` guard once those are created.
+- `build_and_push_image` job: builds, tests, and pushes `sintleopannenkoeken-blazor:<git-sha>` and `:latest` to `rg.fr-par.scw.cloud/sintleozeescouts`.
+- `deploy_container` job: updates the `pannenkoeken` container (`SCW_CONTAINER_ID`) with the new image tag via the Scaleway CLI (`scaleway/action-scw@v0`); updating the image triggers an automatic redeploy.
+- Required repository secrets/variables (see table above) must all be set before this workflow will succeed end to end.
+- Not yet configured on the container itself: the production environment variables listed above (connection string, RouteXL/HERE keys) — set these once via the Scaleway console or CLI on the `pannenkoeken` container before the first real smoke test.
 
 ### Add a migration
 

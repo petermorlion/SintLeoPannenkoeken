@@ -36,12 +36,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy image to Scaleway Serverless Container
     needs: build_and_push_image
-    # Requires SCW_CONTAINER_NAMESPACE and SCW_CONTAINER_NAME secrets, which are not yet
-    # created (the Serverless Container resource itself still needs to be provisioned).
-    # This job is a no-op until those secrets are added; remove this guard once ready.
-    if: false
     steps:
-    - name: Use Scaleway CLI
+    - name: Update container image (triggers redeploy)
       uses: scaleway/action-scw@v0
       with:
         version: v2.24.0
@@ -50,7 +46,6 @@ jobs:
         default-project-id: ${{ secrets.SCW_DEFAULT_PROJECT_ID }}
         export-config: true
         args: >-
-          container container update ${{ vars.SCW_CONTAINER_NAME }}
-          namespace-id=${{ vars.SCW_CONTAINER_NAMESPACE }}
-          registry-image=rg.${{ vars.SCW_DEFAULT_REGION }}.scw.cloud/${{ vars.SCW_REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          redeploy=true
+          container container update ${{ vars.SCW_CONTAINER_ID }}
+          region=${{ vars.SCW_DEFAULT_REGION }}
+          image=rg.${{ vars.SCW_DEFAULT_REGION }}.scw.cloud/${{ vars.SCW_REGISTRY_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
