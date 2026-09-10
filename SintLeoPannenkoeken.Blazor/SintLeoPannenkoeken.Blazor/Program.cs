@@ -1,6 +1,7 @@
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Translations;
@@ -52,7 +53,20 @@ if (builder.Environment.IsDevelopment())
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
+// Also register ApplicationDbContext directly (not just the factory) so DataProtection's
+// PersistKeysToDbContext can resolve it via normal DI.
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString),
+    optionsLifetime: ServiceLifetime.Singleton);
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+// Persist DataProtection keys to the database instead of local container disk.
+// Serverless container instances are ephemeral: without this, antiforgery tokens and
+// Blazor Server circuit tokens issued by one instance can't be decrypted after a
+// redeploy/restart/scale event, causing "Rejoining the server" disconnects.
+builder.Services.AddDataProtection()
+    .PersistKeysToDbContext<ApplicationDbContext>()
+    .SetApplicationName("SintLeoPannenkoeken");
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()

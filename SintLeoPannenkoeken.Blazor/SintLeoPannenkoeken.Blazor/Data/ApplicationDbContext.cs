@@ -1,10 +1,11 @@
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SintLeoPannenkoeken.Blazor.Models;
 
 namespace SintLeoPannenkoeken.Blazor.Data;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options), IDataProtectionKeyContext
 {
     public DbSet<Scoutsjaar> Scoutsjaren { get; set; }
     public DbSet<Lid> Leden { get; set; }
@@ -15,4 +16,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<StreefCijfer> StreefCijfers { get; set; }
     public DbSet<Bestuurder> Bestuurders { get; set; }
     public DbSet<Ronde> Rondes { get; set; }
+    public DbSet<Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey> DataProtectionKeys { get; set; }
 }
