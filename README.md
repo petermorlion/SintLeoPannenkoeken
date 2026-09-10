@@ -109,10 +109,31 @@ dotnet ef database update --connection "<same Azure SQL connection string as Con
 
 Then redeploy the container (push to this branch, or trigger the `deploy_container` workflow job again) and re-test the app URL.
 
-Still to validate once the app loads correctly:
-- Confirm CORS/`AllowedHosts` config works given the new public domain (current `Program.cs` CORS policy `AllowBlazorWasm` hardcodes `https://localhost:64389` for non-dev).
-- Confirm `/health` and `/alive` endpoints are reachable (today gated behind `IsDevelopment()` in `MapDefaultEndpoints`).
-- Not yet configured on the container itself: the production environment variables listed above (connection string, RouteXL/HERE keys) — set these once via the Scaleway console or CLI on the `pannenkoeken` container before the first real smoke test.
+**Follow-up issue found: container OOM at startup.** After deploying the DataProtection fix, new revisions intermittently failed with Scaleway reporting "Container is unable to start OR is not listening on port 8080". App logs showed a `DataProtectionKeys` query succeed, then stopped with no exception — a classic OOM-kill signature. The container's resources were originally 128MB memory / 100mVCPU, too low once the EF Core DataProtection provider and its DB calls run at startup. **Fix:** increased container resources to 512MB memory / 250mVCPU. Monitor via Scaleway's container metrics (memory/CPU graphs) under real usage; increase further (e.g. 512MB / 500mVCPU) if usage is consistently near the limit or cold starts feel slow.
+
+**Step 4 result: DONE — verified live.** Both remaining checklist items turned out to be non-issues for this architecture:
+- **CORS**: the `AllowBlazorWasm` policy hardcoding `https://localhost:64389` doesn't need to change. CORS only applies to cross-origin requests, and this app serves its UI and API from the same Scaleway origin (same-origin), so the browser never triggers a CORS check.
+- **Health endpoints**: Scaleway Serverless Containers determine readiness purely by whether the container is listening on its configured port — no HTTP health-check path is required ([Scaleway docs](https://www.scaleway.com/en/docs/serverless-containers/concepts/#cold-start)). Keeping `/health`/`/alive` gated behind `IsDevelopment()` is fine as-is.
+
+### Scaleway hosting pilot (step 5): operational readiness
+
+Decision: for this pilot, the Scaleway console's built-in **Logs** and **Metrics** tabs are sufficient (no external OTLP export set up). Revisit if/when this becomes a production deployment.
+
+**Runbook: rollback**
+1. Find the previous known-good image tag (git SHA) — either from a prior successful `build_and_push_image` run, or by listing tags in the Scaleway Container Registry.
+2. Redeploy that tag manually:
+   ```
+   scw container container update <SCW_CONTAINER_ID> region=fr-par registry-image=rg.fr-par.scw.cloud/sintleozeescouts/sintleopannenkoeken-blazor:<previous-sha> redeploy=true
+   ```
+   (or set the same value in the Scaleway console under the container's configuration and redeploy).
+3. Confirm the container's Logs tab shows the rolled-back instance starting cleanly and the app loads correctly.
+
+**Runbook: incident triage checklist**
+- Check the container's **status** in the Scaleway console (e.g. stuck on "Updating" can mean the new revision failed to start and the previous revision is still serving traffic).
+- Check the **Logs** tab for the failing instance's ID specifically — a normal boot logs `Now listening on: http://[::]:8080` and `Application started`; if logs stop abruptly with no exception right after a DB query, suspect an **OOM kill** (increase memory/CPU limits).
+- Check **memory/CPU usage graphs** in Metrics if scaling limits are suspected.
+- If antiforgery/`CryptographicException`/"Rejoining the server" errors reappear, confirm the `DataProtectionKeys` table still exists and the app can reach Azure SQL (firewall rules, connection string env var).
+- As a last resort, redeploy the previous image tag per the rollback steps above.
 
 ### Add a migration
 
