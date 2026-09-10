@@ -56,7 +56,8 @@ builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
 // Also register ApplicationDbContext directly (not just the factory) so DataProtection's
 // PersistKeysToDbContext can resolve it via normal DI.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString),
+    optionsLifetime: ServiceLifetime.Singleton);
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Persist DataProtection keys to the database instead of local container disk.
