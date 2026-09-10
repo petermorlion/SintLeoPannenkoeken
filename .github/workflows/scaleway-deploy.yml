@@ -1,8 +1,8 @@
-name: Build and deploy Blazor backend to Scaleway (pilot)
+name: Build and deploy Blazor backend to Scaleway
 on:
   push:
     branches:
-    - feature/scaleway-hosting-step1
+    - master
 env:
   SERVER_WORKING_DIRECTORY: SintLeoPannenkoeken.Blazor/SintLeoPannenkoeken.Blazor
   DOCKERFILE_PATH: SintLeoPannenkoeken.Blazor/SintLeoPannenkoeken.Blazor/Dockerfile
