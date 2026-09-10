@@ -83,7 +83,23 @@ A dedicated workflow, `.github/workflows/scaleway-deploy.yml`, builds, tests, pu
 
 - `build_and_push_image` job: builds, tests, and pushes `sintleopannenkoeken-blazor:<git-sha>` and `:latest` to `rg.fr-par.scw.cloud/sintleozeescouts`.
 - `deploy_container` job: updates the `pannenkoeken` container (`SCW_CONTAINER_ID`) with the new image tag via the Scaleway CLI (`scaleway/action-scw@v0`); updating the image triggers an automatic redeploy.
+- The deploy step sets `http-option=redirected`, so Scaleway redirects public HTTP requests to HTTPS at the edge.
 - Required repository secrets/variables (see tables above) must all be set for this workflow to succeed end to end.
+
+#### Custom domain and HTTPS
+
+HTTPS enforcement for the Scaleway deployment happens at the Scaleway gateway, not only inside ASP.NET Core. The container listens on plain HTTP (`8080`) behind Scaleway's TLS-terminating gateway, and the GitHub Actions deploy step configures the container with `http-option=redirected` so public HTTP traffic is redirected to HTTPS.
+
+To put the app behind a real domain:
+1. Register the domain with a registrar/DNS provider.
+2. Add a DNS record pointing the desired hostname to the default Scaleway container endpoint:
+   - For a subdomain such as `app.example.com`: create a `CNAME` to `sintleozeescouts242838a4-pannenkoeken.functions.fnc.fr-par.scw.cloud`.
+   - For a root/apex domain such as `example.com`: use CNAME flattening or an `ALIAS`/`ANAME` record if the DNS provider supports it.
+3. In Scaleway, open the `pannenkoeken` container, go to **Endpoints**, and add the custom domain.
+4. Wait until Scaleway marks the endpoint as ready; Scaleway provisions the TLS certificate automatically via HTTP-01 challenge.
+5. Test both `http://<domain>` and `https://<domain>`; HTTP should redirect to HTTPS.
+
+ASP.NET Core `UseHttpsRedirection()`/HSTS can remain as secondary safeguards, but the primary HTTPS enforcement for Scaleway is the gateway-level `http-option=redirected` setting.
 
 #### DataProtection keys (why they're stored in the database)
 
@@ -129,13 +145,6 @@ Telemetry: the Scaleway console's built-in **Logs** and **Metrics** tabs are use
 #### Known backlog / deferred items
 
 - **Database migration**: SQL Server (Azure SQL) → a Scaleway-hosted database is planned as a separate, later phase. The Azure SQL firewall is deliberately left open to all IPs until then; it will be replaced by Scaleway-native networking once the database itself moves.
-
-**Runbook: incident triage checklist**
-- Check the container's **status** in the Scaleway console (e.g. stuck on "Updating" can mean the new revision failed to start and the previous revision is still serving traffic).
-- Check the **Logs** tab for the failing instance's ID specifically — a normal boot logs `Now listening on: http://[::]:8080` and `Application started`; if logs stop abruptly with no exception right after a DB query, suspect an **OOM kill** (increase memory/CPU limits).
-- Check **memory/CPU usage graphs** in Metrics if scaling limits are suspected.
-- If antiforgery/`CryptographicException`/"Rejoining the server" errors reappear, confirm the `DataProtectionKeys` table still exists and the app can reach Azure SQL (firewall rules, connection string env var).
-- As a last resort, redeploy the previous image tag per the rollback steps above.
 
 ### Add a migration
 
