@@ -90,6 +90,28 @@ Status:
 - `build_and_push_image` job: builds, tests, and pushes `sintleopannenkoeken-blazor:<git-sha>` and `:latest` to `rg.fr-par.scw.cloud/sintleozeescouts`.
 - `deploy_container` job: updates the `pannenkoeken` container (`SCW_CONTAINER_ID`) with the new image tag via the Scaleway CLI (`scaleway/action-scw@v0`); updating the image triggers an automatic redeploy.
 - Required repository secrets/variables (see table above) must all be set before this workflow will succeed end to end.
+
+### Scaleway hosting pilot (step 4): networking and connectivity validation
+
+**Root cause found for the "Rejoining the server" browser disconnect and the antiforgery `CryptographicException` in the logs:** ASP.NET Core's DataProtection key ring was being stored on local container disk (the default). On Azure App Service this worked transparently because `%HOME%` is persistent, shared storage across restarts/instances. Scaleway Serverless Container instances have **ephemeral, per-instance local disk** — every redeploy/restart/scale event wipes the key ring, so antiforgery tokens and Blazor Server circuit tokens issued by a previous instance can no longer be decrypted, breaking reconnection.
+
+**Fix applied** (this branch only):
+- `ApplicationDbContext` now also implements `IDataProtectionKeyContext` and exposes a `DataProtectionKeys` `DbSet`.
+- `Program.cs` registers `AddDataProtection().PersistKeysToDbContext<ApplicationDbContext>()`, so keys are stored in the same Azure SQL database the app already uses, shared and durable across all container instances.
+- Added package reference `Microsoft.AspNetCore.DataProtection.EntityFrameworkCore`.
+- Added EF Core migration `AddDataProtectionKeys` to create the new table.
+
+**Required before this fix takes effect in Scaleway:** apply the new migration to the Azure SQL database, e.g.:
+
+```
+dotnet ef database update --connection "<same Azure SQL connection string as ConnectionStrings__DefaultConnection>" --project .\SintLeoPannenkoeken.Blazor\SintLeoPannenkoeken.Blazor\SintLeoPannenkoeken.Blazor.csproj
+```
+
+Then redeploy the container (push to this branch, or trigger the `deploy_container` workflow job again) and re-test the app URL.
+
+Still to validate once the app loads correctly:
+- Confirm CORS/`AllowedHosts` config works given the new public domain (current `Program.cs` CORS policy `AllowBlazorWasm` hardcodes `https://localhost:64389` for non-dev).
+- Confirm `/health` and `/alive` endpoints are reachable (today gated behind `IsDevelopment()` in `MapDefaultEndpoints`).
 - Not yet configured on the container itself: the production environment variables listed above (connection string, RouteXL/HERE keys) — set these once via the Scaleway console or CLI on the `pannenkoeken` container before the first real smoke test.
 
 ### Add a migration
