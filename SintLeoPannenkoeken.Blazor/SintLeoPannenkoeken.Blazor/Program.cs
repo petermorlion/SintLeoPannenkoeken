@@ -78,6 +78,7 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 
 builder.Services.AddScoped<IServerData, ServerDirectClient>();
 builder.Services.AddScoped<UsersService>();
+builder.Services.AddHttpClient<IClientLogger, ClientLogger>();
 builder.Services.AddSharedServices();
 builder.Services.Configure<RouteXLOptions>(builder.Configuration.GetSection(RouteXLOptions.SectionName));
 
