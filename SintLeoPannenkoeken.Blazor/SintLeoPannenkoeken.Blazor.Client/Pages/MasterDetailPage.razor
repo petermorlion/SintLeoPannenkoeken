@@ -225,6 +225,9 @@
     public ISnackbar Snackbar { get; set; } = default!;
 
     [Inject]
+    public ILogger Logger { get; set; } = default!;
+
+    [Inject]
     public CurrentScoutsjaarQuerystringParameterProvider CurrentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
@@ -275,6 +278,7 @@
         }
         catch (Exception e)
         {
+            Logger.LogError(e, "Error in {Component}", "MasterDetailPage");
             Snackbar.Add($"Er is een fout gebeurd: {e.Message}", Severity.Error);
             return new List<TDto>();
         }
@@ -300,6 +304,7 @@
         }
         catch (Exception e)
         {
+            Logger.LogError(e, "Error in {Component}", "MasterDetailPage");
             Snackbar.Add($"Er is een fout gebeurd: {e.Message}", Severity.Error);
         }
     }
@@ -329,6 +334,7 @@
             }
             catch (Exception e)
             {
+                Logger.LogError(e, "Error in {Component}", "MasterDetailPage");
                 Snackbar.Add($"Er is een fout gebeurd: {e.Message}", Severity.Error);
             }
         }
@@ -354,6 +360,7 @@
         }
         catch (Exception e)
         {
+            Logger.LogError(e, "Error in {Component}", "MasterDetailPage");
             Snackbar.Add($"Er is een fout gebeurd: {e.Message}", Severity.Error);
         }
     }
