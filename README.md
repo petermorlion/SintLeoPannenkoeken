@@ -19,7 +19,7 @@ Local container build:
 docker build -f ./SintLeoPannenkoeken.Blazor/SintLeoPannenkoeken.Blazor/Dockerfile -t sintleopannenkoeken-blazor:local .
 ```
 
-Local container run:
+Local container run (be sure you have applied the latest migrations):
 
 ```
 docker run --rm -p 8080:8080 -e ConnectionStrings__DefaultConnection="<existing sql server connection string>" sintleopannenkoeken-blazor:local
@@ -146,19 +146,12 @@ Telemetry: the Scaleway console's built-in **Logs** and **Metrics** tabs are use
 
 - **Database migration**: SQL Server (Azure SQL) → a Scaleway-hosted database is planned as a separate, later phase. The Azure SQL firewall is deliberately left open to all IPs until then; it will be replaced by Scaleway-native networking once the database itself moves.
 
-### Add a migration
+### Migrations
 
-Modify the ApplicationDbContextFactory to get the connection string from the `ConnectionStrings__DefaultConnection`
-environment variable instead of `ConnectionStrings__database`.
-
-```
-dotnet ef migrations add <MigrationName> --project .\SintLeoPannenkoeken
-```
-
-Put back the original environment variable in the ApplicationDbContextFactory.
+Migrations are run automatically on startup through Aspire.
 
 ### Update Azure database
 
 ```
-dotnet ef database update --connection "Server=tcp:sintleo.database.windows.net,1433;Initial Catalog=SintLeoPannenkoeken;Persist Security Info=False;User ID=<user id>;Password=<password>;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" --project .\SintLeoPannenkoeken\SintLeoPannenkoeken.csproj
+dotnet ef database update --connection "Server=tcp:sintleo.database.windows.net,1433;Initial Catalog=SintLeoPannenkoeken;Persist Security Info=False;User ID=<user id>;Password=<password>;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" --project .\SintLeoPannenkoeken.Blazor\SintLeoPannenkoeken.Blazor\SintLeoPannenkoeken.Blazor.csproj
 ```

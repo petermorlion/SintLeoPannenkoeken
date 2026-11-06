@@ -7,8 +7,13 @@ var sql = builder.AddSqlServer("sqlserver")
 
 var db = sql.AddDatabase("database");
 
-builder.AddProject<Projects.SintLeoPannenkoeken_Blazor>("sintleopannenkoeken-blazor")
+var app = builder.AddProject<Projects.SintLeoPannenkoeken_Blazor>("sintleopannenkoeken-blazor")
        .WithReference(db)
        .WaitFor(db);
+
+var migrations = app.AddEFMigrations("app-migrations")
+    .RunDatabaseUpdateOnStart();
+
+app.WaitForCompletion(migrations);
 
 builder.Build().Run();
