@@ -12,7 +12,8 @@ var app = builder.AddProject<Projects.SintLeoPannenkoeken_Blazor>("sintleopannen
        .WaitFor(db);
 
 var migrations = app.AddEFMigrations("app-migrations")
-    .RunDatabaseUpdateOnStart();
+    .RunDatabaseUpdateOnStart()
+    .WaitFor(db);
 
 app.WaitForCompletion(migrations);
 

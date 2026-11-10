@@ -27,37 +27,61 @@
         Data ophalen
     </MudButton>
 
-    @if (_importData == null)
+    @if (_importData == null && _hangendeBestellingen == null)
     {
         <MudAlert Severity="Severity.Info">Er is nog geen data opgehaald. Klik op de knop hierboven om de online bestellingen op te halen.</MudAlert>
     }
-    else if (_importData.Count == 0)
-    {
-        <MudAlert Severity="Severity.Info">Er zijn nog geen online bestellingen.</MudAlert>
-    }
     else
     {
-        <MudAlert Severity="Severity.Success">Er werden @_importData.Count bestellingen opgehaald.</MudAlert>
+        @if (_importData != null && _importData.Count > 0)
+        {
+            <MudAlert Severity="Severity.Success">Er werden @_importData.Count bestellingen samengebracht met matches.</MudAlert>
+            
+            <h3>Bestellingen met matches (@_importData.Count)</h3>
+            <MudDataGrid Items="_importData" Class="mb-8">
+                <Columns>
+                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="int" Property="x => x.Id" Title="Id" />
+                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Naam" Title="Naam" />
+                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Telefoon" Title="Telefoon" />
+                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Straat" Title="Straat" />
+                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Postcode" Title="Postcode" />
+                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="int" Property="x => x.AantalPakken" Title="Aantal pakken" />
+                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Lid" Title="Lid" />
+                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Tak" Title="Tak" />
+                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Opmerkingen" Title="Opmerkingen" />
+                </Columns>
+            </MudDataGrid>
+        }
+        
+        @if (_hangendeBestellingen != null && _hangendeBestellingen.Count > 0)
+        {
+            <MudAlert Severity="Severity.Warning">Er zijn @_hangendeBestellingen.Count bestellingen die handmatig moeten worden gematcht.</MudAlert>
+            
+            <h3>Hangende bestellingen (@_hangendeBestellingen.Count)</h3>
+            <MudDataGrid Items="_hangendeBestellingen" Class="mb-8">
+                <Columns>
+                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="int" Property="x => x.Id" Title="Id" />
+                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Naam" Title="Naam" />
+                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Telefoon" Title="Telefoon" />
+                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Straat" Title="Straat" />
+                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Postcode" Title="Postcode" />
+                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="int" Property="x => x.AantalPakken" Title="Aantal pakken" />
+                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Lid" Title="Lid" />
+                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Tak" Title="Tak" />
+                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Opmerkingen" Title="Opmerkingen" />
+                </Columns>
+            </MudDataGrid>
+        }
+        
+        @if (_importData != null && _importData.Count == 0 && (_hangendeBestellingen == null || _hangendeBestellingen.Count == 0))
+        {
+            <MudAlert Severity="Severity.Info">Er zijn geen online bestellingen gevonden voor dit scoutsjaar.</MudAlert>
+        }
     }
 
     @if (_errorMessage != null)
     {
         <MudAlert Severity="Severity.Error">Er is een fout opgetreden bij het ophalen van de data: @_errorMessage</MudAlert>
-    }
-
-    @if (_importData != null && _importData.Count > 0)
-    {
-        <MudDataGrid Items="_importData">
-            <Columns>
-                <PropertyColumn T="PendingOnlineBestellingDto" TProperty="int" Property="x => x.Id" Title="Id" />
-                <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Naam" Title="Naam" />
-                <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Telefoon" Title="Telefoon" />
-                <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Straat" Title="Straat" />
-                <PropertyColumn T="PendingOnlineBestellingDto" TProperty="int" Property="x => x.AantalPakken" Title="Aantal pakken" />
-                <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Opmerkingen" Title="Opmerkingen" />
-                <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Lid" Title="Lid" />
-            </Columns>
-        </MudDataGrid>
     }
 
 </div>
@@ -67,6 +91,7 @@
     private int _selectedScoutsjaarBegin;
     private bool _isScoutsjaarGearchiveerd = false;
     private IList<PendingOnlineBestellingDto>? _importData = null;
+    private IList<PendingOnlineBestellingDto>? _hangendeBestellingen = null;
     private string? _errorMessage = null;
 
     [Inject]
@@ -98,6 +123,16 @@
 
         _selectedScoutsjaarBegin = selectedScoutsjaar.Begin;
         _isScoutsjaarGearchiveerd = selectedScoutsjaar.Status == ScoutsjaarStatusDto.Gearchiveerd;
+        
+        // Load hangende bestellingen on page load
+        try
+        {
+            _hangendeBestellingen = await ServerData.GetHangendeBestellingen(_selectedScoutsjaarBegin);
+        }
+        catch (Exception e)
+        {
+            _errorMessage = "Fout bij laden hangende bestellingen: " + e.Message;
+        }
     }
 
     private async Task GetData()
@@ -106,6 +141,8 @@
         try
         {
             _importData = await ServerData.GetPendingOnlineBestellingen(_selectedScoutsjaarBegin);
+            // Reload hangende bestellingen after import
+            _hangendeBestellingen = await ServerData.GetHangendeBestellingen(_selectedScoutsjaarBegin);
         }
         catch (Exception e)
         {

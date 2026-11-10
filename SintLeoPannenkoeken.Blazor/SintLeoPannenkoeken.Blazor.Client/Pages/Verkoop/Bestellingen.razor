@@ -30,7 +30,13 @@
                 </div>
             }
         }
-        
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Info"
+                   StartIcon="@Icons.Material.Filled.CloudDownload"
+                   OnClick="ImportOrders"
+                   Class="ml-auto">
+            Importeren
+        </MudButton>
     </TitleBarContent>
     <NewItemFormElements>
         <BestellingForm @ref="bestellingForm" />
@@ -81,6 +87,9 @@
 
     [Inject]
     public CurrentScoutsjaarQuerystringParameterProvider CurrentScoutsjaarQuerystringParameterProvider { get; set; } = default!;
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = default!;
 
     private BestellingForm bestellingForm = default!;
 
@@ -178,5 +187,13 @@
     private string FormatCode(BestellingDto bestelling)
     {
         return $"{bestelling.Straat?.ZoneNaam} {bestelling.Straat?.Nummer}";
+    }
+
+    private void ImportOrders()
+    {
+        if (_scoutsjaar != null)
+        {
+            NavigationManager.NavigateTo($"/verkoop/bestellingenimport?scoutsjaar={_scoutsjaar.Begin}");
+        }
     }
 }

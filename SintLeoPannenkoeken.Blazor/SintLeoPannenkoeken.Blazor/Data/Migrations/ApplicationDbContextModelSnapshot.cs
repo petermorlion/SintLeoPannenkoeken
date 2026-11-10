@@ -343,6 +343,100 @@ namespace SintLeoPannenkoeken.Blazor.Migrations
                     b.ToTable("Bestuurders");
                 });
 
+            modelBuilder.Entity("SintLeoPannenkoeken.Blazor.Models.HangendeBestelling", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AantalPakken")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Betaald")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Bus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DatumAangemaakt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Geleverd")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Gemeente")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Levering")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LidNaam")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Naam")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nummer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OnlineBestellingId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Opmerkingen")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Postcode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ProposedLidId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProposedStraatId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProposedTakId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RawData")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ScoutsjaarId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Straat")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Tak")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Telefoon")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Verwerkt")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HangendeBestellingen");
+                });
+
             modelBuilder.Entity("SintLeoPannenkoeken.Blazor.Models.Lid", b =>
                 {
                     b.Property<int>("Id")

@@ -81,6 +81,7 @@ builder.Services.AddScoped<UsersService>();
 builder.Services.AddHttpClient<IClientLogger, ClientLogger>();
 builder.Services.AddSharedServices();
 builder.Services.Configure<RouteXLOptions>(builder.Configuration.GetSection(RouteXLOptions.SectionName));
+builder.Services.Configure<SintLeoWebsiteSettings>(builder.Configuration.GetSection("SintLeoWebsite"));
 
 builder.Services.AddControllers();
 
@@ -152,6 +153,8 @@ builder.Services.AddHttpClient<SintLeoWebsiteService>((serviceProvider, client) 
 {
     client.BaseAddress = new Uri("https://www.events-sintleo.be");
 });
+
+builder.Services.AddScoped<OnlineOrderImporter>();
 
 builder.Services.AddLocalization();
 builder.Services.AddMudTranslations();

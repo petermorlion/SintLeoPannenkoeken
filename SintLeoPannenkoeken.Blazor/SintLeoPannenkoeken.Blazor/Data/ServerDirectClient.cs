@@ -22,13 +22,15 @@ namespace SintLeoPannenkoeken.Blazor.Data
         private readonly HereGeocodingService _hereGeoCodingService;
         private readonly RouteXLService _routeXLService;
         private readonly SintLeoWebsiteService _sintLeoWebsiteService;
+        private readonly OnlineOrderImporter _onlineOrderImporter;
 
         public ServerDirectClient(ILogger<ServerDirectClient> logger,
             IDbContextFactory<ApplicationDbContext> dbContextFactory,
             UsersService usersService, IHttpContextAccessor httpContextAccessor,
             HereGeocodingService hereGeoCodingService,
             RouteXLService routeXLService,
-            SintLeoWebsiteService sintLeoWebsiteService)
+            SintLeoWebsiteService sintLeoWebsiteService,
+            OnlineOrderImporter onlineOrderImporter)
         {
             _logger = logger;
             _dbContextFactory = dbContextFactory;
@@ -37,6 +39,7 @@ namespace SintLeoPannenkoeken.Blazor.Data
             _hereGeoCodingService = hereGeoCodingService;
             _routeXLService = routeXLService;
             _sintLeoWebsiteService = sintLeoWebsiteService;
+            _onlineOrderImporter = onlineOrderImporter;
         }
 
         public async Task<IList<GebruikerDto>> GetGebruikers()
@@ -1281,35 +1284,12 @@ namespace SintLeoPannenkoeken.Blazor.Data
 
         public async Task<IList<PendingOnlineBestellingDto>> GetPendingOnlineBestellingen(int scoutsjaarBegin)
         {
-            var onlineBestellingen = await _sintLeoWebsiteService.GetOnlineBestelingen();
-            using (var dbContext = _dbContextFactory.CreateDbContext())
-            {
-                var scoutsjaar = await dbContext.Scoutsjaren.SingleOrDefaultAsync(sj => sj.Begin == scoutsjaarBegin);
-                if (scoutsjaar == null)
-                {
-                    return new List<PendingOnlineBestellingDto>();
-                }
+            return await _onlineOrderImporter.GetPendingOnlineBestellingen(scoutsjaarBegin);
+        }
 
-                var straten = await dbContext.Straten.ToListAsync();
-                var leden = await dbContext.Leden.ToListAsync();
-
-                var pendingOnlineBestellingen = new List<PendingOnlineBestellingDto>();
-                foreach (var onlineBestelling in onlineBestellingen)
-                {
-                    var existingBestelling = await dbContext.Bestellingen
-                        .SingleOrDefaultAsync(b => b.OnlineBestellingId == onlineBestelling.Id && b.ScoutsjaarId == scoutsjaar.Id);
-
-                    if (existingBestelling == null)
-                    {
-                        onlineBestelling.ProposedLidId = leden.FirstOrDefault(leden => $"{leden.Voornaam} {leden.Achternaam}" == onlineBestelling.Naam)?.Id;
-                        onlineBestelling.ProposedStraatId = straten.FirstOrDefault(straten => straten.Naam == onlineBestelling.Straat)?.Id;
-
-                        pendingOnlineBestellingen.Add(onlineBestelling);
-                    }
-                }
-
-                return pendingOnlineBestellingen;
-            }
+        public async Task<IList<PendingOnlineBestellingDto>> GetHangendeBestellingen(int scoutsjaarBegin)
+        {
+            return await _onlineOrderImporter.GetHangendeBestellingen(scoutsjaarBegin);
         }
     }
 }

@@ -11,6 +11,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Lid> Leden { get; set; }
     public DbSet<Tak> Takken { get; set; }
     public DbSet<Bestelling> Bestellingen { get; set; }
+    public DbSet<HangendeBestelling> HangendeBestellingen { get; set; }
     public DbSet<Zone> Zones { get; set; }
     public DbSet<Straat> Straten { get; set; }
     public DbSet<StreefCijfer> StreefCijfers { get; set; }
