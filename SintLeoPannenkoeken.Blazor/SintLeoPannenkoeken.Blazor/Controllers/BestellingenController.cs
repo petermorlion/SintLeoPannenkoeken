@@ -63,7 +63,7 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
         [Route("{scoutsjaar:int}/importdata")]
         public async Task<IActionResult> ImportData(int scoutsjaar)
         {
-            var result = await _serverData.GetPendingOnlineBestellingen(scoutsjaar);
+            var result = await _serverData.ImportOnlineBestellingen(scoutsjaar);
             return Ok(result);
         }
     }

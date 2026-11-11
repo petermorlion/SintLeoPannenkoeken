@@ -35,7 +35,7 @@
     {
         @if (_importData != null && _importData.Count > 0)
         {
-            <MudAlert Severity="Severity.Success">Er werden @_importData.Count bestellingen samengebracht met matches.</MudAlert>
+            <MudAlert Severity="Severity.Success">Er werden @_importData.Count bestellingen geïmporteerd.</MudAlert>
             
             <h3>Bestellingen met matches (@_importData.Count)</h3>
             <MudDataGrid Items="_importData" Class="mb-8">
@@ -140,7 +140,7 @@
         _errorMessage = null;
         try
         {
-            _importData = await ServerData.GetPendingOnlineBestellingen(_selectedScoutsjaarBegin);
+            _importData = await ServerData.ImportOnlineBestellingen(_selectedScoutsjaarBegin);
             // Reload hangende bestellingen after import
             _hangendeBestellingen = await ServerData.GetHangendeBestellingen(_selectedScoutsjaarBegin);
         }

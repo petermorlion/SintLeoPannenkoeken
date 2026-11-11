@@ -1282,9 +1282,9 @@ namespace SintLeoPannenkoeken.Blazor.Data
             }
         }
 
-        public async Task<IList<PendingOnlineBestellingDto>> GetPendingOnlineBestellingen(int scoutsjaarBegin)
+        public async Task<IList<PendingOnlineBestellingDto>> ImportOnlineBestellingen(int scoutsjaarBegin)
         {
-            return await _onlineOrderImporter.GetPendingOnlineBestellingen(scoutsjaarBegin);
+            return await _onlineOrderImporter.ImportOnlineBestellingen(scoutsjaarBegin);
         }
 
         public async Task<IList<PendingOnlineBestellingDto>> GetHangendeBestellingen(int scoutsjaarBegin)

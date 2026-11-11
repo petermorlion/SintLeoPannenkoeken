@@ -21,7 +21,7 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
             _logger = logger;
         }
 
-        public async Task<IList<PendingOnlineBestellingDto>> GetPendingOnlineBestellingen(int scoutsjaarBegin)
+        public async Task<IList<PendingOnlineBestellingDto>> ImportOnlineBestellingen(int scoutsjaarBegin)
         {
             var onlineBestellingen = await _sintLeoWebsiteService.GetOnlineBestelingen(scoutsjaarBegin);
             
@@ -54,15 +54,8 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
 
                     if (straatMatch != null && lidMatch != null && takMatch != null)
                     {
-                        // Full match - add to pending with proposed IDs
-                        onlineBestelling.ProposedLidId = lidMatch.Id;
-                        onlineBestelling.ProposedStraatId = straatMatch.Id;
-                        onlineBestelling.ProposedTakId = takMatch.Id;
-                        
-                        // Save to Bestellingen table
+                        // Full match - save to Bestellingen table
                         await SaveMatchedBestelling(dbContext, onlineBestelling, scoutsjaar.Id, straatMatch.Id, lidMatch.Id, takMatch.Id);
-                        
-                        pendingOnlineBestellingen.Add(onlineBestelling);
                     }
                     else
                     {
@@ -70,6 +63,12 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
                         var hangendeBestelling = CreateHangendeBestelling(
                             onlineBestelling, scoutsjaar.Id, straatMatch?.Id, lidMatch?.Id, takMatch?.Id);
                         hangendeBestellingen.Add(hangendeBestelling);
+                        
+                        // Also add to return list as PendingOnlineBestellingDto
+                        onlineBestelling.ProposedLidId = lidMatch?.Id;
+                        onlineBestelling.ProposedStraatId = straatMatch?.Id;
+                        onlineBestelling.ProposedTakId = takMatch?.Id;
+                        pendingOnlineBestellingen.Add(onlineBestelling);
                     }
                 }
 
