@@ -69,7 +69,7 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         Task<IDictionary<string, double>> GetVerkoopVerdelingPerPostcode(int scoutsjaarBegin);
 
 
-        Task<IList<PendingOnlineBestellingDto>> ImportOnlineBestellingen(int scoutsjaarBegin);
+        Task<int> ImportOnlineBestellingen(int scoutsjaarBegin);
         
         Task<IList<PendingOnlineBestellingDto>> GetHangendeBestellingen(int scoutsjaarBegin);
     }

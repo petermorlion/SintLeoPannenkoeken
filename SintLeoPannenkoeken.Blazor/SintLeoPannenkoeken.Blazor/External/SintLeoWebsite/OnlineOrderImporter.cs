@@ -21,7 +21,7 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
             _logger = logger;
         }
 
-        public async Task<IList<PendingOnlineBestellingDto>> ImportOnlineBestellingen(int scoutsjaarBegin)
+        public async Task<int> GetPendingOnlineBestellingen(int scoutsjaarBegin)
         {
             var onlineBestellingen = await _sintLeoWebsiteService.GetOnlineBestelingen(scoutsjaarBegin);
             
@@ -31,7 +31,7 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
                 if (scoutsjaar == null)
                 {
                     _logger.LogWarning("Scoutsjaar {ScoutsjaarBegin} not found", scoutsjaarBegin);
-                    return new List<PendingOnlineBestellingDto>();
+                    return 0;
                 }
 
                 // Load reference data once
@@ -39,8 +39,8 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
                 var leden = await dbContext.Leden.Include(l => l.Tak).ToListAsync();
                 var takken = await dbContext.Takken.ToListAsync();
 
-                var pendingOnlineBestellingen = new List<PendingOnlineBestellingDto>();
                 var hangendeBestellingen = new List<HangendeBestelling>();
+                int successfullyImportedCount = 0;
 
                 foreach (var onlineBestelling in onlineBestellingen)
                 {
@@ -56,6 +56,7 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
                     {
                         // Full match - save to Bestellingen table
                         await SaveMatchedBestelling(dbContext, onlineBestelling, scoutsjaar.Id, straatMatch.Id, lidMatch.Id, takMatch.Id);
+                        successfullyImportedCount++;
                     }
                     else
                     {
@@ -63,18 +64,12 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
                         var hangendeBestelling = CreateHangendeBestelling(
                             onlineBestelling, scoutsjaar.Id, straatMatch?.Id, lidMatch?.Id, takMatch?.Id);
                         hangendeBestellingen.Add(hangendeBestelling);
-                        
-                        // Also add to return list as PendingOnlineBestellingDto
-                        onlineBestelling.ProposedLidId = lidMatch?.Id;
-                        onlineBestelling.ProposedStraatId = straatMatch?.Id;
-                        onlineBestelling.ProposedTakId = takMatch?.Id;
-                        pendingOnlineBestellingen.Add(onlineBestelling);
                     }
                 }
 
                 await SaveHangendeBestellingen(dbContext, hangendeBestellingen, scoutsjaar.Id);
 
-                return pendingOnlineBestellingen;
+                return successfullyImportedCount;
             }
         }
 
@@ -118,7 +113,7 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
                 (s.Naam?.ToLower().Trim() ?? "") == straatNaam && s.PostNummer.ToString() == postcode);
 
             // Try to match member (firstname + lastname lowercase + trimmed + Tak)
-            var lidNaamParts = onlineBestelling.Naam?.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries) ?? new string[0];
+            var lidNaamParts = onlineBestelling.Lid?.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries) ?? new string[0];
             var lidVoornaam = lidNaamParts.Length > 0 ? lidNaamParts[0].ToLower().Trim() : "";
             var lidAchternaam = lidNaamParts.Length > 1 ? string.Join(" ", lidNaamParts.Skip(1)).ToLower().Trim() : "";
             var takNaam = onlineBestelling.Tak?.Trim() ?? "";

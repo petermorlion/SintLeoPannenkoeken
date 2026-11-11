@@ -27,30 +27,15 @@
         Data ophalen
     </MudButton>
 
-    @if (_importData == null && _hangendeBestellingen == null)
+    @if (_importData == 0 && (_hangendeBestellingen == null || _hangendeBestellingen.Count == 0))
     {
         <MudAlert Severity="Severity.Info">Er is nog geen data opgehaald. Klik op de knop hierboven om de online bestellingen op te halen.</MudAlert>
     }
     else
     {
-        @if (_importData != null && _importData.Count > 0)
+        @if (_importData > 0)
         {
-            <MudAlert Severity="Severity.Success">Er werden @_importData.Count bestellingen geïmporteerd.</MudAlert>
-            
-            <h3>Bestellingen met matches (@_importData.Count)</h3>
-            <MudDataGrid Items="_importData" Class="mb-8">
-                <Columns>
-                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="int" Property="x => x.Id" Title="Id" />
-                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Naam" Title="Naam" />
-                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Telefoon" Title="Telefoon" />
-                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Straat" Title="Straat" />
-                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Postcode" Title="Postcode" />
-                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="int" Property="x => x.AantalPakken" Title="Aantal pakken" />
-                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Lid" Title="Lid" />
-                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Tak" Title="Tak" />
-                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Opmerkingen" Title="Opmerkingen" />
-                </Columns>
-            </MudDataGrid>
+            <MudAlert Severity="Severity.Success">Er werden @_importData bestellingen geïmporteerd.</MudAlert>
         }
         
         @if (_hangendeBestellingen != null && _hangendeBestellingen.Count > 0)
@@ -73,7 +58,7 @@
             </MudDataGrid>
         }
         
-        @if (_importData != null && _importData.Count == 0 && (_hangendeBestellingen == null || _hangendeBestellingen.Count == 0))
+        @if (_importData == 0 && (_hangendeBestellingen == null || _hangendeBestellingen.Count == 0))
         {
             <MudAlert Severity="Severity.Info">Er zijn geen online bestellingen gevonden voor dit scoutsjaar.</MudAlert>
         }
@@ -90,7 +75,7 @@
     private IEnumerable<ScoutsjaarDto> _scoutsjaren = new List<ScoutsjaarDto>();
     private int _selectedScoutsjaarBegin;
     private bool _isScoutsjaarGearchiveerd = false;
-    private IList<PendingOnlineBestellingDto>? _importData = null;
+    private int _importData = 0;
     private IList<PendingOnlineBestellingDto>? _hangendeBestellingen = null;
     private string? _errorMessage = null;
 
