@@ -52,12 +52,16 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
                     var (straatMatch, lidMatch) = MatchOrder(onlineBestelling, straten, leden);
                     var takMatch = MatchTak(onlineBestelling.Tak, takken);
 
-                    if (straatMatch != null && lidMatch != null)
+                    if (straatMatch != null && lidMatch != null && takMatch != null)
                     {
                         // Full match - add to pending with proposed IDs
                         onlineBestelling.ProposedLidId = lidMatch.Id;
                         onlineBestelling.ProposedStraatId = straatMatch.Id;
-                        onlineBestelling.ProposedTakId = takMatch?.Id;
+                        onlineBestelling.ProposedTakId = takMatch.Id;
+                        
+                        // Save to Bestellingen table
+                        await SaveMatchedBestelling(dbContext, onlineBestelling, scoutsjaar.Id, straatMatch.Id, lidMatch.Id, takMatch.Id);
+                        
                         pendingOnlineBestellingen.Add(onlineBestelling);
                     }
                     else
@@ -75,6 +79,31 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
             }
         }
 
+        private async Task SaveMatchedBestelling(ApplicationDbContext dbContext, PendingOnlineBestellingDto onlineBestelling, int scoutsjaarId, int straatId, int lidId, int takId)
+        {
+            var bestelling = new Bestelling(onlineBestelling.Naam, onlineBestelling.AantalPakken)
+            {
+                OnlineBestellingId = onlineBestelling.Id,
+                Telefoon = onlineBestelling.Telefoon ?? "",
+                Opmerkingen = onlineBestelling.Opmerkingen ?? "",
+                Betaald = onlineBestelling.Betaald,
+                Geleverd = onlineBestelling.Geleverd,
+                LidId = lidId,
+                StraatId = straatId,
+                TakId = takId,
+                Nummer = onlineBestelling.Nummer ?? "",
+                Bus = onlineBestelling.Bus ?? "",
+                IngaveDatum = onlineBestelling.DatumAangemaakt ?? DateTime.Now,
+                ScoutsjaarId = scoutsjaarId
+            };
+
+            dbContext.Bestellingen.Add(bestelling);
+            await dbContext.SaveChangesAsync();
+            
+            _logger.LogInformation("Saved matched bestelling: OnlineBestellingId={OnlineBestellingId}, Naam={Naam}, Straat={Straat}, AantalPakken={AantalPakken}",
+                onlineBestelling.Id, onlineBestelling.Naam, onlineBestelling.Straat, onlineBestelling.AantalPakken);
+        }
+
         private async Task<bool> IsAlreadyImported(ApplicationDbContext dbContext, int onlineBestellingId, int scoutsjaarId)
         {
             return await dbContext.Bestellingen
@@ -87,7 +116,7 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
             var straatNaam = onlineBestelling.Straat?.ToLower().Trim() ?? "";
             var postcode = onlineBestelling.Postcode?.Trim() ?? "";
             var straatMatch = straten.FirstOrDefault(s => 
-                s.Naam.ToLower().Trim() == straatNaam && s.PostNummer.ToString() == postcode);
+                (s.Naam?.ToLower().Trim() ?? "") == straatNaam && s.PostNummer.ToString() == postcode);
 
             // Try to match member (firstname + lastname lowercase + trimmed + Tak)
             var lidNaamParts = onlineBestelling.Naam?.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries) ?? new string[0];
@@ -99,9 +128,9 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
             if (!string.IsNullOrEmpty(lidVoornaam) && !string.IsNullOrEmpty(lidAchternaam))
             {
                 lidMatch = leden.FirstOrDefault(l => 
-                    l.Voornaam.ToLower().Trim() == lidVoornaam && 
-                    l.Achternaam.ToLower().Trim() == lidAchternaam &&
-                    l.Tak.Naam.Trim() == takNaam);
+                    (l.Voornaam?.ToLower().Trim() ?? "") == lidVoornaam && 
+                    (l.Achternaam?.ToLower().Trim() ?? "") == lidAchternaam &&
+                    (l.Tak?.Naam?.Trim() ?? "") == takNaam);
             }
 
             return (straatMatch, lidMatch);
@@ -113,7 +142,7 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
             {
                 return null;
             }
-            return takken.FirstOrDefault(t => t.Naam.Trim() == takName.Trim());
+            return takken.FirstOrDefault(t => (t.Naam?.Trim() ?? "") == takName.Trim());
         }
 
         private HangendeBestelling CreateHangendeBestelling(
