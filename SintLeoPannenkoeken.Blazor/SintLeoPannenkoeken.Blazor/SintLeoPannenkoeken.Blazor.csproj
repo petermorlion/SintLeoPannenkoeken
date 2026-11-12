@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="SintLeoPannenkoeken.Blazor.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\SintLeoPannenkoeken.ServiceDefaults\SintLeoPannenkoeken.ServiceDefaults.csproj" />
     <ProjectReference Include="..\SintLeoPannenkoeken.Blazor.Client\SintLeoPannenkoeken.Blazor.Client.csproj" />
     <PackageReference Include="ClosedXML" Version="0.105.0" />

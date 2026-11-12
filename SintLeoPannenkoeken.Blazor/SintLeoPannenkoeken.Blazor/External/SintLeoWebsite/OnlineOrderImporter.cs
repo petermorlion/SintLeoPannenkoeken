@@ -104,7 +104,7 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
                 .AnyAsync(b => b.OnlineBestellingId == onlineBestellingId && b.ScoutsjaarId == scoutsjaarId);
         }
 
-        private (Straat?, Lid?) MatchOrder(PendingOnlineBestellingDto onlineBestelling, List<Straat> straten, List<Lid> leden)
+        internal (Straat?, Lid?) MatchOrder(PendingOnlineBestellingDto onlineBestelling, List<Straat> straten, List<Lid> leden)
         {
             // Try to match street (lowercase + trimmed + postcode)
             var straatNaam = onlineBestelling.Straat?.ToLower().Trim() ?? "";
@@ -112,31 +112,55 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
             var straatMatch = straten.FirstOrDefault(s => 
                 (s.Naam?.ToLower().Trim() ?? "") == straatNaam && s.PostNummer.ToString() == postcode);
 
-            // Try to match member (firstname + lastname lowercase + trimmed + Tak)
+            // Try to match member (firstname + lastname or lastname + firstname, lowercase + trimmed + Tak)
             var lidNaamParts = onlineBestelling.Lid?.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries) ?? new string[0];
-            var lidVoornaam = lidNaamParts.Length > 0 ? lidNaamParts[0].ToLower().Trim() : "";
-            var lidAchternaam = lidNaamParts.Length > 1 ? string.Join(" ", lidNaamParts.Skip(1)).ToLower().Trim() : "";
-            var takNaam = onlineBestelling.Tak?.Trim() ?? "";
+            var takNaam = onlineBestelling.Tak?.ToLower().Trim() ?? "";
 
             Lid lidMatch = null;
-            if (!string.IsNullOrEmpty(lidVoornaam) && !string.IsNullOrEmpty(lidAchternaam))
+            if (lidNaamParts.Length >= 2)
             {
-                lidMatch = leden.FirstOrDefault(l => 
-                    (l.Voornaam?.ToLower().Trim() ?? "") == lidVoornaam && 
-                    (l.Achternaam?.ToLower().Trim() ?? "") == lidAchternaam &&
-                    (l.Tak?.Naam?.Trim() ?? "") == takNaam);
+                // Try all possible splits for firstname/lastname in both orders
+                // For "First Middle Last", try:
+                // - First + Middle Last (firstname, lastname)
+                // - Middle Last + First (lastname, firstname)
+                // - First Middle + Last (firstname, lastname)
+                // - Last + First Middle (lastname, firstname)
+                
+                // Try splitting at position 1: first part as firstname, rest as lastname
+                for (int splitIndex = 1; splitIndex < lidNaamParts.Length; splitIndex++)
+                {
+                    var voornaam = string.Join(" ", lidNaamParts.Take(splitIndex)).ToLower().Trim();
+                    var achternaam = string.Join(" ", lidNaamParts.Skip(splitIndex)).ToLower().Trim();
+                    
+                    lidMatch = leden.FirstOrDefault(l => 
+                        (l.Voornaam?.ToLower().Trim() ?? "") == voornaam && 
+                        (l.Achternaam?.ToLower().Trim() ?? "") == achternaam &&
+                        (l.Tak?.Naam?.ToLower().Trim() ?? "") == takNaam);
+                    
+                    if (lidMatch != null)
+                        break;
+                    
+                    // Try reversed: first part as lastname, rest as firstname
+                    lidMatch = leden.FirstOrDefault(l => 
+                        (l.Voornaam?.ToLower().Trim() ?? "") == achternaam && 
+                        (l.Achternaam?.ToLower().Trim() ?? "") == voornaam &&
+                        (l.Tak?.Naam?.ToLower().Trim() ?? "") == takNaam);
+                    
+                    if (lidMatch != null)
+                        break;
+                }
             }
 
             return (straatMatch, lidMatch);
         }
 
-        private Tak? MatchTak(string takName, List<Tak> takken)
+        internal Tak? MatchTak(string takName, List<Tak> takken)
         {
             if (string.IsNullOrEmpty(takName))
             {
                 return null;
             }
-            return takken.FirstOrDefault(t => (t.Naam?.Trim() ?? "") == takName.Trim());
+            return takken.FirstOrDefault(t => (t.Naam?.ToLower().Trim() ?? "") == takName.ToLower().Trim());
         }
 
         private HangendeBestelling CreateHangendeBestelling(
