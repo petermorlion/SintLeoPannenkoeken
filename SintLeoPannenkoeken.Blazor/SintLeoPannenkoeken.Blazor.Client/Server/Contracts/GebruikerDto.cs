@@ -6,11 +6,11 @@
         {
             Id = id;
             Email = email;
-            Rollen = rollen ?? new List<string>();
+            Rollen = new HashSet<string>(rollen ?? new List<string>());
         }
 
         public string Id { get; set; }
         public string Email { get; set; }
-        public IEnumerable<string> Rollen { get; set; }
+        public HashSet<string> Rollen { get; set; } = new();
     }
 }

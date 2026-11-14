@@ -22,28 +22,24 @@
             Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" />
         </MudItem>
         <MudItem xs="12" sm="6">
-            <MudSelect @bind-SelectedValues="_newGebruikerRollen" T="string" Label="Rollen" MultiSelection="true" 
+            <MudSelect SelectedValues="_newGebruikerRollen" 
+                       SelectedValuesChanged="@(x => _newGebruikerRollen = new HashSet<string>(x ?? new List<string>()))"
+                       T="string" Label="Rollen" MultiSelection="true" 
                        Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel
-                       QuickSearchInterval="TimeSpan.FromSeconds(1)">
-                @foreach (var role in Roles.AllRoles)
-                {
-                    <MudSelectItem Value="role">@role</MudSelectItem>
-                }
-            </MudSelect>
+                       QuickSearchInterval="TimeSpan.FromSeconds(1)"
+                       Items="@Roles.AllRoles" />
         </MudItem>
     </NewItemFormElements>
     <Columns>
         <PropertyColumn T="GebruikerDto" TProperty="string" Property="x => x.Email" Title="Email" InitialDirection="SortDirection.Ascending" />
         <PropertyColumn T="GebruikerDto" TProperty="string" Property="x => FormatRoles(x.Rollen)" Title="Rollen">
             <EditTemplate>
-                <MudSelect @bind-SelectedValues="context.Item.Rollen" T="string" Label="Rollen" MultiSelection="true"
+                <MudSelect SelectedValues="context.Item.Rollen" 
+                           SelectedValuesChanged="@(x => context.Item.Rollen = new HashSet<string>(x ?? new List<string>()))"
+                           T="string" Label="Rollen" MultiSelection="true"
                            Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel
-                           QuickSearchInterval="TimeSpan.FromSeconds(1)">
-                    @foreach (var role in Roles.AllRoles)
-                    {
-                        <MudSelectItem Value="role">@role</MudSelectItem>
-                    }
-                </MudSelect>
+                           QuickSearchInterval="TimeSpan.FromSeconds(1)"
+                           Items="@Roles.AllRoles" />
             </EditTemplate>
         </PropertyColumn>
     </Columns>
@@ -61,7 +57,7 @@
     private Func<IServerData, Task<IList<GebruikerDto>>> _dataProvider => async (serverData) => await serverData.GetGebruikers();
 
     private string _newGebruikerEmail = "";
-    private IEnumerable<string> _newGebruikerRollen = new HashSet<string>();
+    private HashSet<string> _newGebruikerRollen = new();
 
     [Inject]
     private IServerData _serverData { get; set; } = default!;
@@ -85,7 +81,7 @@
     void OnCancel()
     {
         _newGebruikerEmail = "";
-        _newGebruikerRollen = new List<string>();
+        _newGebruikerRollen = new();
     }
 
     async Task OnUpdate(GebruikerDto item)

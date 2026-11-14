@@ -2,6 +2,7 @@
 @using SintLeoPannenkoeken.Blazor.Client.Server
 @using SintLeoPannenkoeken.Blazor.Client.Auth
 @using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
+@using MudBlazor
 @typeparam TDto
 @implements IDisposable
 
@@ -352,16 +353,18 @@
         }
     }
 
-    async Task Update(TDto item)
+    async Task<DataGridEditFormAction> Update(TDto item)
     {
         try
         {
             await OnUpdate.InvokeAsync(item);
+            return DataGridEditFormAction.Close;
         }
         catch (Exception e)
         {
             await ClientLogger.LogErrorAsync("MasterDetailPage", e.Message, e);
             Snackbar.Add($"Er is een fout gebeurd: {e.Message}", Severity.Error);
+            return DataGridEditFormAction.KeepOpen;
         }
     }
 
