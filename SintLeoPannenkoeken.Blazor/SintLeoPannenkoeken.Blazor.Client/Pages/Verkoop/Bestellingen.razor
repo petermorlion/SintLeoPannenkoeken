@@ -23,20 +23,19 @@
         @{
             if (_scoutsjaar != null)
             {
-                <div class="ml-20">
+                <div class="ml-20 d-flex align-items-center gap-2">
                     <MudChip T="string" Color="Color.Primary">Bestellingen: @_bestellingen.Count()</MudChip>
                     <MudChip T="string" Color="Color.Primary">Pakken: @_bestellingen.Sum(x => x.AantalPakken)</MudChip>
                     <MudChip T="string" Color="Color.Primary">Pannenkoeken: @_bestellingen.Sum(x => x.AantalPakken * _scoutsjaar.PannenkoekenPerPak)</MudChip>
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Info"
+                               StartIcon="@Icons.Material.Filled.CloudDownload"
+                               OnClick="ImportOrders">
+                        Importeren
+                    </MudButton>
                 </div>
             }
         }
-        <MudButton Variant="Variant.Filled"
-                   Color="Color.Info"
-                   StartIcon="@Icons.Material.Filled.CloudDownload"
-                   OnClick="ImportOrders"
-                   Class="ml-auto">
-            Importeren
-        </MudButton>
     </TitleBarContent>
     <NewItemFormElements>
         <BestellingForm @ref="bestellingForm" />
