@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace SintLeoPannenkoeken.Blazor.Client.Server.Contracts
 {
     public class PendingOnlineBestellingDto
@@ -16,6 +18,12 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server.Contracts
         /// </summary>
         public string Straat { get; set; } = "";
         public int? ProposedStraatId { get; set; }
+        
+        /// <summary>
+        /// Transient property for UI binding - the selected street DTO
+        /// </summary>
+        [JsonIgnore]
+        public StraatDto? ProposedStraat { get; set; }
         
         /// <summary>
         /// House number from the external system
@@ -42,6 +50,12 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server.Contracts
         /// </summary>
         public string Lid { get; set; } = "";
         public int? ProposedLidId { get; set; }
+        
+        /// <summary>
+        /// Transient property for UI binding - the selected member DTO
+        /// </summary>
+        [JsonIgnore]
+        public LidDto? ProposedLid { get; set; }
         
         /// <summary>
         /// Tak (age group) from the external system

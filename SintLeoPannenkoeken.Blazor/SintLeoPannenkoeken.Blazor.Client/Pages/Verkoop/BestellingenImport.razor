@@ -1,4 +1,4 @@
-﻿@page "/verkoop/bestellingenimport"
+@page "/verkoop/bestellingenimport"
 @using SintLeoPannenkoeken.Blazor.Client.Components
 @using SintLeoPannenkoeken.Blazor.Client.Server
 @using SintLeoPannenkoeken.Blazor.Client.Auth
@@ -43,19 +43,48 @@
             <MudAlert Severity="Severity.Warning">Er zijn @_hangendeBestellingen.Count bestellingen die handmatig moeten worden gematcht.</MudAlert>
             
             <h3>Hangende bestellingen (@_hangendeBestellingen.Count)</h3>
-            <MudDataGrid Items="_hangendeBestellingen" Class="mb-8">
-                <Columns>
-                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="int" Property="x => x.Id" Title="Id" />
-                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Naam" Title="Naam" />
-                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Telefoon" Title="Telefoon" />
-                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Straat" Title="Straat" />
-                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Postcode" Title="Postcode" />
-                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="int" Property="x => x.AantalPakken" Title="Aantal pakken" />
-                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Lid" Title="Lid" />
-                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Tak" Title="Tak" />
-                    <PropertyColumn T="PendingOnlineBestellingDto" TProperty="string" Property="x => x.Opmerkingen" Title="Opmerkingen" />
-                </Columns>
-            </MudDataGrid>
+            
+            <MudStack Row="true" Spacing="4" Class="mb-8 flex-wrap" Style="gap: 16px;">
+                @foreach (var bestelling in _hangendeBestellingen)
+                {
+                    <MudCard Class="pa-4" Style="min-width: 350px; max-width: 500px;" Elevation="5">
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6">@bestelling.Naam</MudText>
+                            </CardHeaderContent>
+                            <CardHeaderActions>
+                                <MudIconButton Icon="@Icons.Material.Filled.Info" Color="Color.Info" Size="Size.Small">
+                                    <MudTooltip Text="@GetBestellingDetails(bestelling)" Placement="Placement.Bottom" />
+                                </MudIconButton>
+                            </CardHeaderActions>
+                        </MudCardHeader>
+                        
+                        <MudCardContent>
+                            <MudStack Spacing="2">
+                                <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                                    <MudText Typo="Typo.body2" Class="me-2">Straat:</MudText>
+                                    <MudText Typo="Typo.body2" Class="text-secondary">@bestelling.Straat</MudText>
+                                </MudStack>
+                                
+                                <StraatAutocomplete Value="@bestelling.ProposedStraat"
+                                                    ValueChanged="(s) => OnStraatSelected(bestelling, s)"
+                                                    Label="Kies straat"
+                                                    Straten="@_straten" />
+                                
+                                <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Class="mt-2">
+                                    <MudText Typo="Typo.body2" Class="me-2">Lid:</MudText>
+                                    <MudText Typo="Typo.body2" Class="text-secondary">@bestelling.Lid</MudText>
+                                </MudStack>
+                                
+                                <LidAutocomplete Value="@bestelling.ProposedLid"
+                                                 ValueChanged="(l) => OnLidSelected(bestelling, l)"
+                                                 Label="Kies lid"
+                                                 Leden="@_leden" />
+                            </MudStack>
+                        </MudCardContent>
+                    </MudCard>
+                }
+            </MudStack>
         }
         
         @if (_importData == 0 && (_hangendeBestellingen == null || _hangendeBestellingen.Count == 0))
@@ -78,6 +107,8 @@
     private int _importData = 0;
     private IList<PendingOnlineBestellingDto>? _hangendeBestellingen = null;
     private string? _errorMessage = null;
+    private IList<StraatDto> _straten = new List<StraatDto>();
+    private IList<LidDto> _leden = new List<LidDto>();
 
     [Inject]
     public IServerData ServerData { get; set; } = default!;
@@ -109,6 +140,17 @@
         _selectedScoutsjaarBegin = selectedScoutsjaar.Begin;
         _isScoutsjaarGearchiveerd = selectedScoutsjaar.Status == ScoutsjaarStatusDto.Gearchiveerd;
         
+        // Load straten and leden
+        try
+        {
+            _straten = (await ServerData.GetStraten()).OrderBy(s => s.Naam).ToList();
+            _leden = (await ServerData.GetLeden()).OrderBy(l => l.Achternaam).ThenBy(l => l.Voornaam).ToList();
+        }
+        catch (Exception e)
+        {
+            _errorMessage = "Fout bij laden straten/leden: " + e.Message;
+        }
+        
         // Load hangende bestellingen on page load
         try
         {
@@ -118,6 +160,58 @@
         {
             _errorMessage = "Fout bij laden hangende bestellingen: " + e.Message;
         }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && _hangendeBestellingen != null)
+        {
+            // Sync ProposedStraatId/ProposedLidId to ProposedStraat/ProposedLid for the UI
+            foreach (var bestelling in _hangendeBestellingen)
+            {
+                if (bestelling.ProposedStraatId.HasValue)
+                {
+                    bestelling.ProposedStraat = _straten.FirstOrDefault(s => s.Id == bestelling.ProposedStraatId.Value);
+                }
+                if (bestelling.ProposedLidId.HasValue)
+                {
+                    bestelling.ProposedLid = _leden.FirstOrDefault(l => l.Id == bestelling.ProposedLidId.Value);
+                }
+            }
+        }
+    }
+
+    private void OnStraatSelected(PendingOnlineBestellingDto bestelling, StraatDto? straat)
+    {
+        bestelling.ProposedStraat = straat;
+        bestelling.ProposedStraatId = straat?.Id;
+    }
+
+    private void OnLidSelected(PendingOnlineBestellingDto bestelling, LidDto? lid)
+    {
+        bestelling.ProposedLid = lid;
+        bestelling.ProposedLidId = lid?.Id;
+    }
+
+    private string GetBestellingDetails(PendingOnlineBestellingDto bestelling)
+    {
+        var dateString = bestelling.DatumAangemaakt?.ToString("dd/MM/yyyy") ?? "N/A";
+        return @$"Naam: {bestelling.Naam}
+Telefoon: {bestelling.Telefoon}
+Email: {bestelling.Email}
+Aantal pakken: {bestelling.AantalPakken}
+Straat: {bestelling.Straat}
+Nummer: {bestelling.Nummer}
+Bus: {bestelling.Bus}
+Postcode: {bestelling.Postcode}
+Gemeente: {bestelling.Gemeente}
+Lid: {bestelling.Lid}
+Tak: {bestelling.Tak}
+Levering: {bestelling.Levering}
+Betaald: {bestelling.Betaald}
+Geleverd: {bestelling.Geleverd}
+Opmerkingen: {bestelling.Opmerkingen}
+Datum: {dateString}";
     }
 
     private async Task GetData()
