@@ -3,7 +3,7 @@
 
 <MudAutocomplete Value="@Value"
                  ValueChanged="@ValueChanged"
-                 SearchFunc="@SearchFunc"
+                 SearchFunc="@SearchStraten"
                  ToStringFunc="@_straatConverter"
                  Variant="Variant.Outlined"
                  Label="@Label"
@@ -35,6 +35,27 @@
 
     [Parameter]
     public Func<string?, CancellationToken, Task<IEnumerable<StraatDto?>>?>? SearchFunc { get; set; }
+
+    private async Task<IEnumerable<StraatDto?>?> SearchStraten(string input, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            return _straten;
+        }
+
+        return _straten.Where(x => x.Naam.Contains(input, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        var straten = await _serverData.GetStraten();
+        _straten = straten.OrderBy(straat => straat.Naam).ToList();
+    }
 
     private Func<StraatDto?, string> _straatConverter = straat =>
     {

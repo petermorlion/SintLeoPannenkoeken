@@ -23,8 +23,7 @@
 <MudItem xs="12" sm="5">
     <StraatAutocomplete @bind-Value="Item.Straat"
                      Label="Straat"
-                     Disabled="@ZelfAfhalen"
-                     SearchFunc="@SearchStreets"/>
+                     Disabled="@ZelfAfhalen"/>
 </MudItem>
 <MudItem xs="12" sm="2" Class="d-flex align-center">
     Code: <MudChip T="string">@($"{Item.Straat?.ZoneNaam} {Item.Straat?.Nummer}")</MudChip>
@@ -97,26 +96,6 @@
 
         return $"{lid.Achternaam} {lid.Voornaam} ({lid.TakNaam})";
     };
-
-    private Func<StraatDto?, string> _straatConverter = straat => 
-    {
-        if (straat == null)
-        {
-            return "";
-        }
-
-        return $"{straat.Naam} ({straat.Gemeente})";
-    };
-
-    private async Task<IEnumerable<StraatDto?>> SearchStreets(string value, CancellationToken token)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return _straten;
-        }
-
-        return _straten.Where(x => x.Naam.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-    }
 
     private async Task<IEnumerable<LidDto>> SearchLeden(string value, CancellationToken token)
     {
