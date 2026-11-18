@@ -22,11 +22,9 @@
 </MudItem>
 <MudItem xs="12" sm="5">
     <StraatAutocomplete @bind-Value="Item.Straat"
-                     T="StraatDto"
-                     SearchFunc="SearchStreets"
-                     ToStringFunc="_straatConverter"
                      Label="Straat"
-                     Disabled="@ZelfAfhalen" />
+                     Disabled="@ZelfAfhalen"
+                     SearchFunc="@SearchStreets"/>
 </MudItem>
 <MudItem xs="12" sm="2" Class="d-flex align-center">
     Code: <MudChip T="string">@($"{Item.Straat?.ZoneNaam} {Item.Straat?.Nummer}")</MudChip>

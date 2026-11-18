@@ -1,9 +1,10 @@
-﻿@typeparam T
+﻿@using SintLeoPannenkoeken.Blazor.Client.Server
+@using SintLeoPannenkoeken.Blazor.Client.Server.Contracts
 
 <MudAutocomplete Value="@Value"
                  ValueChanged="@ValueChanged"
                  SearchFunc="@SearchFunc"
-                 ToStringFunc="@ToStringFunc"
+                 ToStringFunc="@_straatConverter"
                  Variant="Variant.Outlined"
                  Label="@Label"
                  Margin="Margin.Dense"
@@ -15,21 +16,33 @@
                  Disabled="@Disabled" />
 
 @code {
-    [Parameter]
-    public T? Value { get; set; }
+    private IList<StraatDto> _straten = [];
+
+    [Inject]
+    private IServerData _serverData { get; set; } = default!;
 
     [Parameter]
-    public EventCallback<T?> ValueChanged { get; set; }
+    public StraatDto? Value { get; set; }
 
     [Parameter]
-    public Func<string?, CancellationToken, Task<IEnumerable<T?>>?>? SearchFunc { get; set; }
-
-    [Parameter]
-    public Func<T?, string?>? ToStringFunc { get; set; }
+    public EventCallback<StraatDto?> ValueChanged { get; set; }
 
     [Parameter]
     public string Label { get; set; } = "";
 
     [Parameter]
     public bool Disabled { get; set; }
+
+    [Parameter]
+    public Func<string?, CancellationToken, Task<IEnumerable<StraatDto?>>?>? SearchFunc { get; set; }
+
+    private Func<StraatDto?, string> _straatConverter = straat =>
+    {
+        if (straat == null)
+        {
+            return "";
+        }
+
+        return $"{straat.Naam} ({straat.Gemeente})";
+    };
 }
