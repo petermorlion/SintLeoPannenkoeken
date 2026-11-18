@@ -21,13 +21,19 @@
     <MudButton Variant="Variant.Filled"
                Color="Color.Primary"
                StartIcon="@Icons.Material.Filled.CloudDownload"
-               Disabled="_isScoutsjaarGearchiveerd"
+               Disabled="_isScoutsjaarGearchiveerd || _isLoading"
                OnClick="GetData"
                Class="mb-4">
         Data ophalen
     </MudButton>
 
-    @if (_importData == 0 && (_hangendeBestellingen == null || _hangendeBestellingen.Count == 0))
+    @if (_isLoading)
+    {
+        <MudStack AlignItems="AlignItems.Center" Class="mt-8">
+            <MudProgressCircular Size="Size.Large" Indeterminate="true" />
+        </MudStack>
+    }
+    else if (_importData == 0 && (_hangendeBestellingen == null || _hangendeBestellingen.Count == 0))
     {
         <MudAlert Severity="Severity.Info">Er is nog geen data opgehaald. Klik op de knop hierboven om de online bestellingen op te halen.</MudAlert>
     }
@@ -109,6 +115,7 @@
     private string? _errorMessage = null;
     private IList<StraatDto> _straten = new List<StraatDto>();
     private IList<LidDto> _leden = new List<LidDto>();
+    private bool _isLoading = true;
 
     [Inject]
     public IServerData ServerData { get; set; } = default!;
@@ -159,6 +166,10 @@
         catch (Exception e)
         {
             _errorMessage = "Fout bij laden hangende bestellingen: " + e.Message;
+        }
+        finally
+        {
+            _isLoading = false;
         }
     }
 
@@ -217,6 +228,8 @@ Datum: {dateString}";
     private async Task GetData()
     {
         _errorMessage = null;
+        _isLoading = true;
+        StateHasChanged();
         try
         {
             _importData = await ServerData.ImportOnlineBestellingen(_selectedScoutsjaarBegin);
@@ -226,6 +239,11 @@ Datum: {dateString}";
         catch (Exception e)
         {
             _errorMessage = e.Message;
+        }
+        finally
+        {
+            _isLoading = false;
+            StateHasChanged();
         }
     }
 }
