@@ -1,0 +1,35 @@
+﻿@typeparam T
+
+<MudAutocomplete Value="@Value"
+                 ValueChanged="@ValueChanged"
+                 SearchFunc="@SearchFunc"
+                 ToStringFunc="@ToStringFunc"
+                 Variant="Variant.Outlined"
+                 Label="@Label"
+                 Margin="Margin.Dense"
+                 MaxItems=100
+                 Clearable="true"
+                 CoerceText="true"
+                 ResetValueOnEmptyText="true"
+                 SelectValueOnTab="true"
+                 Disabled="@Disabled" />
+
+@code {
+    [Parameter]
+    public T? Value { get; set; }
+
+    [Parameter]
+    public EventCallback<T?> ValueChanged { get; set; }
+
+    [Parameter]
+    public Func<string?, CancellationToken, Task<IEnumerable<T?>>?>? SearchFunc { get; set; }
+
+    [Parameter]
+    public Func<T?, string?>? ToStringFunc { get; set; }
+
+    [Parameter]
+    public string Label { get; set; } = "";
+
+    [Parameter]
+    public bool Disabled { get; set; }
+}
