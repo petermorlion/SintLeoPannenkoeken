@@ -52,17 +52,9 @@
 </MudItem>
 
 <MudItem xs="12">
-    <MudAutocomplete @bind-Value="Item.Lid"
-                     SearchFunc="SearchLeden"
-                     ToStringFunc="_lidConverter"
-                     Variant="Variant.Outlined"
+    <LidAutocomplete @bind-Value="Item.Lid"
                      Label="Lid"
-                     Margin="Margin.Dense"
-                     MaxItems=100
-                     Clearable="true"
-                     CoerceText="true"
-                     ResetValueOnEmptyText="true"
-                     SelectValueOnTab="true"
+                     Leden="@_leden"
                      Required="true"
                      RequiredError="Het lid is verplicht." />
 </MudItem>
@@ -86,28 +78,6 @@
         ZelfAfhalen = false;
         StateHasChanged();
         await _naamField.FocusAsync();
-    }
-
-    private Func<LidDto?, string> _lidConverter = lid =>
-    {
-        if (lid == null)
-        {
-            return "";
-        }
-
-        return $"{lid.Achternaam} {lid.Voornaam} ({lid.TakNaam})";
-    };
-
-    private async Task<IEnumerable<LidDto>> SearchLeden(string value, CancellationToken token)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return _leden;
-        }
-
-        return _leden.Where(x =>
-            x.Achternaam.Contains(value, StringComparison.InvariantCultureIgnoreCase)
-            || x.Voornaam.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
     protected override async Task OnInitializedAsync()
