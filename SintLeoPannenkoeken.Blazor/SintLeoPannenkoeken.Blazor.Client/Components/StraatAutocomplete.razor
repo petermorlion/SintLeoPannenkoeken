@@ -16,7 +16,6 @@
                  Disabled="@Disabled" />
 
 @code {
-    private IList<StraatDto> _straten = [];
 
     [Inject]
     private IServerData _serverData { get; set; } = default!;
@@ -36,25 +35,17 @@
     [Parameter]
     public Func<string?, CancellationToken, Task<IEnumerable<StraatDto?>>?>? SearchFunc { get; set; }
 
+    [Parameter]
+    public IList<StraatDto?> Straten { get; set; } = new List<StraatDto?>();
+
     private async Task<IEnumerable<StraatDto?>?> SearchStraten(string input, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(input))
         {
-            return _straten;
+            return Straten;
         }
 
-        return _straten.Where(x => x.Naam.Contains(input, StringComparison.InvariantCultureIgnoreCase));
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender)
-        {
-            return;
-        }
-
-        var straten = await _serverData.GetStraten();
-        _straten = straten.OrderBy(straat => straat.Naam).ToList();
+        return Straten.Where(x => x.Naam.Contains(input, StringComparison.InvariantCultureIgnoreCase));
     }
 
     private Func<StraatDto?, string> _straatConverter = straat =>
