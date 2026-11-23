@@ -21,6 +21,12 @@ Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add appsettings.Development.secrets.json after environment-specific settings but before user secrets
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddJsonFile("appsettings.Development.secrets.json", optional: true, reloadOnChange: true);
+}
+
 builder.AddServiceDefaults();
 
 // Add services to the container.

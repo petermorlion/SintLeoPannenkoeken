@@ -21,6 +21,27 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
 
         public async Task<IList<PendingOnlineBestellingDto>> GetOnlineBestelingen(int scoutsjaarBegin, DateTime? startDate = null)
         {
+            return new List<PendingOnlineBestellingDto>
+            {
+                new PendingOnlineBestellingDto
+                {
+                    AantalPakken = 2,
+                    Betaald = true,
+                    DatumAangemaakt = DateTime.UtcNow,
+                    Email = "peter.morlion@gmail.com",
+                    Gemeente = "Brugge",
+                    Id = 123,
+                    Levering = "Leveren",
+                    Naam = "Peter Morlion",
+                    Lid = "Fien Morlion",
+                    Opmerkingen = "geen",
+                    Nummer = "15",
+                    Postcode = "8000",
+                    Straat = "Jacob van Maerlantstraat",
+                    Tak = "Zeepaardjes",
+                    Telefoon = "0473310130"
+                }
+            };
             var allEntries = new List<PendingOnlineBestellingDto>();
             int page = 1;
             bool hasMore = true;
