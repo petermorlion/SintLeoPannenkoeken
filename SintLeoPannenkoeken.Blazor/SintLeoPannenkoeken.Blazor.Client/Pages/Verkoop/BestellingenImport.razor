@@ -147,7 +147,7 @@
         _selectedScoutsjaarBegin = selectedScoutsjaar.Begin;
         _isScoutsjaarGearchiveerd = selectedScoutsjaar.Status == ScoutsjaarStatusDto.Gearchiveerd;
         
-        // Load straten and leden
+        // Load straten and leden first
         try
         {
             _straten = (await ServerData.GetStraten()).OrderBy(s => s.Naam).ToList();
@@ -156,12 +156,31 @@
         catch (Exception e)
         {
             _errorMessage = "Fout bij laden straten/leden: " + e.Message;
+            _isLoading = false;
+            return;
         }
         
         // Load hangende bestellingen on page load
         try
         {
             _hangendeBestellingen = await ServerData.GetHangendeBestellingen(_selectedScoutsjaarBegin);
+            
+            // Sync ProposedStraatId/ProposedLidId to ProposedStraat/ProposedLid for the UI
+            // This ensures pre-selection happens before first render
+            if (_hangendeBestellingen != null)
+            {
+                foreach (var bestelling in _hangendeBestellingen)
+                {
+                    if (bestelling.ProposedStraatId.HasValue)
+                    {
+                        bestelling.ProposedStraat = _straten.FirstOrDefault(s => s.Id == bestelling.ProposedStraatId.Value);
+                    }
+                    if (bestelling.ProposedLidId.HasValue)
+                    {
+                        bestelling.ProposedLid = _leden.FirstOrDefault(l => l.Id == bestelling.ProposedLidId.Value);
+                    }
+                }
+            }
         }
         catch (Exception e)
         {
@@ -175,21 +194,6 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && _hangendeBestellingen != null)
-        {
-            // Sync ProposedStraatId/ProposedLidId to ProposedStraat/ProposedLid for the UI
-            foreach (var bestelling in _hangendeBestellingen)
-            {
-                if (bestelling.ProposedStraatId.HasValue)
-                {
-                    bestelling.ProposedStraat = _straten.FirstOrDefault(s => s.Id == bestelling.ProposedStraatId.Value);
-                }
-                if (bestelling.ProposedLidId.HasValue)
-                {
-                    bestelling.ProposedLid = _leden.FirstOrDefault(l => l.Id == bestelling.ProposedLidId.Value);
-                }
-            }
-        }
     }
 
     private void OnStraatSelected(PendingOnlineBestellingDto bestelling, StraatDto? straat)

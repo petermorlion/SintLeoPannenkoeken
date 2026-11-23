@@ -61,7 +61,6 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server.Contracts
         /// Tak (age group) from the external system
         /// </summary>
         public string Tak { get; set; } = "";
-        public int? ProposedTakId { get; set; }
         
         /// <summary>
         /// Delivery method: "Leveren" or "Afhalen"

@@ -408,9 +408,6 @@ namespace SintLeoPannenkoeken.Blazor.Migrations
                     b.Property<int?>("ProposedStraatId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProposedTakId")
-                        .HasColumnType("int");
-
                     b.Property<string>("RawData")
                         .HasColumnType("nvarchar(max)");
 

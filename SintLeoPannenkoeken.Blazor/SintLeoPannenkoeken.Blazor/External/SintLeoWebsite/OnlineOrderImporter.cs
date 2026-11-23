@@ -37,7 +37,6 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
                 // Load reference data once
                 var straten = await dbContext.Straten.ToListAsync();
                 var leden = await dbContext.Leden.Include(l => l.Tak).ToListAsync();
-                var takken = await dbContext.Takken.ToListAsync();
 
                 var hangendeBestellingen = new List<HangendeBestelling>();
                 int successfullyImportedCount = 0;
@@ -50,19 +49,18 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
                     }
 
                     var (straatMatch, lidMatch) = MatchOrder(onlineBestelling, straten, leden);
-                    var takMatch = MatchTak(onlineBestelling.Tak, takken);
 
-                    if (straatMatch != null && lidMatch != null && takMatch != null)
+                    if (straatMatch != null && lidMatch != null)
                     {
                         // Full match - save to Bestellingen table
-                        await SaveMatchedBestelling(dbContext, onlineBestelling, scoutsjaar.Id, straatMatch.Id, lidMatch.Id, takMatch.Id);
+                        await SaveMatchedBestelling(dbContext, onlineBestelling, scoutsjaar.Id, straatMatch.Id, lidMatch.Id);
                         successfullyImportedCount++;
                     }
                     else
                     {
                         // Partial or no match - store in HangendeBestellingen
                         var hangendeBestelling = CreateHangendeBestelling(
-                            onlineBestelling, scoutsjaar.Id, straatMatch?.Id, lidMatch?.Id, takMatch?.Id);
+                            onlineBestelling, scoutsjaar.Id, straatMatch?.Id, lidMatch?.Id);
                         hangendeBestellingen.Add(hangendeBestelling);
                     }
                 }
@@ -73,8 +71,10 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
             }
         }
 
-        private async Task SaveMatchedBestelling(ApplicationDbContext dbContext, PendingOnlineBestellingDto onlineBestelling, int scoutsjaarId, int straatId, int lidId, int takId)
+        private async Task SaveMatchedBestelling(ApplicationDbContext dbContext, PendingOnlineBestellingDto onlineBestelling, int scoutsjaarId, int straatId, int lidId)
         {
+            var takId = await GetTakIdForLid(dbContext, lidId);
+            
             var bestelling = new Bestelling(onlineBestelling.Naam, onlineBestelling.AantalPakken)
             {
                 OnlineBestellingId = onlineBestelling.Id,
@@ -96,6 +96,12 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
             
             _logger.LogInformation("Saved matched bestelling: OnlineBestellingId={OnlineBestellingId}, Naam={Naam}, Straat={Straat}, AantalPakken={AantalPakken}",
                 onlineBestelling.Id, onlineBestelling.Naam, onlineBestelling.Straat, onlineBestelling.AantalPakken);
+        }
+        
+        private async Task<int> GetTakIdForLid(ApplicationDbContext dbContext, int lidId)
+        {
+            var lid = await dbContext.Leden.Include(l => l.Tak).FirstOrDefaultAsync(l => l.Id == lidId);
+            return lid?.TakId ?? 0;
         }
 
         private async Task<bool> IsAlreadyImported(ApplicationDbContext dbContext, int onlineBestellingId, int scoutsjaarId)
@@ -154,21 +160,11 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
             return (straatMatch, lidMatch);
         }
 
-        internal Tak? MatchTak(string takName, List<Tak> takken)
-        {
-            if (string.IsNullOrEmpty(takName))
-            {
-                return null;
-            }
-            return takken.FirstOrDefault(t => (t.Naam?.ToLower().Trim() ?? "") == takName.ToLower().Trim());
-        }
-
         private HangendeBestelling CreateHangendeBestelling(
             PendingOnlineBestellingDto onlineBestelling,
             int scoutsjaarId,
             int? proposedStraatId,
-            int? proposedLidId,
-            int? proposedTakId)
+            int? proposedLidId)
         {
             return new HangendeBestelling
             {
@@ -192,7 +188,6 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
                 ScoutsjaarId = scoutsjaarId,
                 ProposedStraatId = proposedStraatId,
                 ProposedLidId = proposedLidId,
-                ProposedTakId = proposedTakId,
                 Verwerkt = false,
                 RawData = onlineBestelling.RawData
             };
@@ -266,7 +261,6 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
                 DatumAangemaakt = h.DatumAangemaakt,
                 ProposedLidId = h.ProposedLidId,
                 ProposedStraatId = h.ProposedStraatId,
-                ProposedTakId = h.ProposedTakId,
                 Verwerkt = h.Verwerkt,
                 RawData = h.RawData
             };

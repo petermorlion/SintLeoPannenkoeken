@@ -82,11 +82,6 @@ namespace SintLeoPannenkoeken.Blazor.Models
         public int? ProposedLidId { get; set; }
         
         /// <summary>
-        /// Proposed match for TakId (nullable, to be filled manually)
-        /// </summary>
-        public int? ProposedTakId { get; set; }
-        
-        /// <summary>
         /// Indicates if this pending order has been processed (imported or rejected)
         /// </summary>
         public bool Verwerkt { get; set; }
