@@ -59,9 +59,31 @@
                                 <MudText Typo="Typo.h6">@bestelling.Naam</MudText>
                             </CardHeaderContent>
                             <CardHeaderActions>
-                                <MudIconButton Icon="@Icons.Material.Filled.Info" Color="Color.Info" Size="Size.Small">
-                                    <MudTooltip Text="@GetBestellingDetails(bestelling)" Placement="Placement.Bottom" />
-                                </MudIconButton>
+                                <MudTooltip Placement="Placement.Left">
+                                    <ChildContent>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Info" Color="Color.Info" Size="Size.Small" />
+                                    </ChildContent>
+                                    <TooltipContent>
+                                        <MudStack>
+                                            <MudStack Row="true"><strong>Naam:</strong> @bestelling.Naam</MudStack>
+                                            <MudStack Row="true"><strong>Telefoon:</strong> @bestelling.Telefoon</MudStack>
+                                            <MudStack Row="true"><strong>Email:</strong> @bestelling.Email</MudStack>
+                                            <MudStack Row="true"><strong>Aantal pakken:</strong> @bestelling.AantalPakken</MudStack>
+                                            <MudStack Row="true"><strong>Straat:</strong> @bestelling.Straat</MudStack>
+                                            <MudStack Row="true"><strong>Nummer:</strong> @bestelling.Nummer</MudStack>
+                                            <MudStack Row="true"><strong>Bus:</strong> @bestelling.Bus</MudStack>
+                                            <MudStack Row="true"><strong>Postcode:</strong> @bestelling.Postcode</MudStack>
+                                            <MudStack Row="true"><strong>Gemeente:</strong> @bestelling.Gemeente</MudStack>
+                                            <MudStack Row="true"><strong>Lid:</strong> @bestelling.Lid</MudStack>
+                                            <MudStack Row="true"><strong>Tak:</strong> @bestelling.Tak</MudStack>
+                                            <MudStack Row="true"><strong>Levering:</strong> @bestelling.Levering</MudStack>
+                                            <MudStack Row="true"><strong>Betaald:</strong> @bestelling.Betaald</MudStack>
+                                            <MudStack Row="true"><strong>Geleverd:</strong> @bestelling.Geleverd</MudStack>
+                                            <MudStack Row="true"><strong>Opmerkingen:</strong> @bestelling.Opmerkingen</MudStack>
+                                            <MudStack Row="true"><strong>Datum:</strong> @(bestelling.DatumAangemaakt?.ToString("dd/MM/yyyy") ?? "N/A")</MudStack>
+                                        </MudStack>
+                                    </TooltipContent>
+                                </MudTooltip>
                             </CardHeaderActions>
                         </MudCardHeader>
                         
@@ -208,26 +230,6 @@
         bestelling.ProposedLidId = lid?.Id;
     }
 
-    private string GetBestellingDetails(PendingOnlineBestellingDto bestelling)
-    {
-        var dateString = bestelling.DatumAangemaakt?.ToString("dd/MM/yyyy") ?? "N/A";
-        return @$"Naam: {bestelling.Naam}
-Telefoon: {bestelling.Telefoon}
-Email: {bestelling.Email}
-Aantal pakken: {bestelling.AantalPakken}
-Straat: {bestelling.Straat}
-Nummer: {bestelling.Nummer}
-Bus: {bestelling.Bus}
-Postcode: {bestelling.Postcode}
-Gemeente: {bestelling.Gemeente}
-Lid: {bestelling.Lid}
-Tak: {bestelling.Tak}
-Levering: {bestelling.Levering}
-Betaald: {bestelling.Betaald}
-Geleverd: {bestelling.Geleverd}
-Opmerkingen: {bestelling.Opmerkingen}
-Datum: {dateString}";
-    }
 
     private async Task GetData()
     {
