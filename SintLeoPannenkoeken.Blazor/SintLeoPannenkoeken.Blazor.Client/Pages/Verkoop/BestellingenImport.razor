@@ -53,7 +53,7 @@
             <MudStack Row="true" Spacing="4" Class="mb-8 flex-wrap" Style="gap: 16px;">
                 @foreach (var bestelling in _hangendeBestellingen)
                 {
-                    <MudCard Class="pa-4" Style="min-width: 350px; max-width: 500px;" Elevation="5">
+                    <MudCard Class="pa-4" Style="width: 100%;" Elevation="5">
                         <MudCardHeader>
                             <CardHeaderContent>
                                 <MudText Typo="Typo.h6">@bestelling.Naam</MudText>
@@ -66,9 +66,9 @@
                         </MudCardHeader>
                         
                         <MudCardContent>
-                            <MudStack Spacing="2">
-                                <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
-                                    <MudText Typo="Typo.body2" Class="me-2">Straat:</MudText>
+                            <MudStack Spacing="4" Row="true">
+                                <MudStack Row="true" Spacing="0" AlignItems="AlignItems.Center">
+                                    <MudText Typo="Typo.body2" Class="me-2">Ingevulde straat:</MudText>
                                     <MudText Typo="Typo.body2" Class="text-secondary">@bestelling.Straat</MudText>
                                 </MudStack>
                                 
@@ -77,9 +77,9 @@
                                                     Label="Kies straat"
                                                     Straten="@_straten" />
                                 
-                                <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Class="mt-2">
-                                    <MudText Typo="Typo.body2" Class="me-2">Lid:</MudText>
-                                    <MudText Typo="Typo.body2" Class="text-secondary">@bestelling.Lid</MudText>
+                                <MudStack Row="true" Spacing="0" AlignItems="AlignItems.Center" Class="mt-2">
+                                    <MudText Typo="Typo.body2" Class="me-2">Ingevuld lid:</MudText>
+                                    <MudText Typo="Typo.body2" Class="text-secondary">@bestelling.Lid (@bestelling.Tak)</MudText>
                                 </MudStack>
                                 
                                 <LidAutocomplete Value="@bestelling.ProposedLid"
