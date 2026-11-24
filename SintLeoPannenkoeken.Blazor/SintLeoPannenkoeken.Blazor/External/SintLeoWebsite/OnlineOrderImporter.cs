@@ -242,7 +242,7 @@ namespace SintLeoPannenkoeken.Blazor.External.SintLeoWebsite
         {
             return new PendingOnlineBestellingDto
             {
-                Id = h.OnlineBestellingId,
+                Id = h.Id,
                 Naam = h.Naam,
                 Telefoon = h.Telefoon,
                 Email = h.Email,
