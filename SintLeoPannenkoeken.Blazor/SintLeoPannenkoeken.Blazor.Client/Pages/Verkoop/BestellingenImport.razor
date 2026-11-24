@@ -91,8 +91,7 @@
                             <MudStack Spacing="4" Row="true">
                                 <MudStack Row="true" Spacing="0" AlignItems="AlignItems.Center">
                                     <MudText Typo="Typo.body2" Class="me-2">Ingevulde straat:</MudText>
-                                    <MudText Typo="Typo.body2" Class="text-secondary">@bestelling.Straat</MudText>
-                                    <MudText Typo="Typo.body2" Class="text-secondary ms-2">@bestelling.Postcode @bestelling.Gemeente</MudText>
+                                    <MudText Typo="Typo.body2" Class="text-secondary">@bestelling.Straat, @bestelling.Postcode @bestelling.Gemeente</MudText>
                                 </MudStack>
                                 
                                 <StraatAutocomplete Value="@bestelling.ProposedStraat"
