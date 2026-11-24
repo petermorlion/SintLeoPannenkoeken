@@ -26,8 +26,12 @@
                        SelectedValuesChanged="@(x => _newGebruikerRollen = new HashSet<string>(x ?? new List<string>()))"
                        T="string" Label="Rollen" MultiSelection="true" 
                        Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel
-                       QuickSearchInterval="TimeSpan.FromSeconds(1)"
-                       Items="@Roles.AllRoles" />
+                       QuickSearchInterval="TimeSpan.FromSeconds(1)">
+                @foreach (var role in Roles.AllRoles)
+                {
+                    <MudSelectItem Value="role">@role</MudSelectItem>
+                }
+            </MudSelect>
         </MudItem>
     </NewItemFormElements>
     <Columns>
@@ -38,8 +42,12 @@
                            SelectedValuesChanged="@(x => context.Item.Rollen = new HashSet<string>(x ?? new List<string>()))"
                            T="string" Label="Rollen" MultiSelection="true"
                            Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel
-                           QuickSearchInterval="TimeSpan.FromSeconds(1)"
-                           Items="@Roles.AllRoles" />
+                           QuickSearchInterval="TimeSpan.FromSeconds(1)">
+                    @foreach (var role in Roles.AllRoles)
+                    {
+                        <MudSelectItem Value="role">@role</MudSelectItem>
+                    }
+                </MudSelect>
             </EditTemplate>
         </PropertyColumn>
     </Columns>
