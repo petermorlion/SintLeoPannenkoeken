@@ -5,6 +5,7 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server.Contracts
     public class PendingOnlineBestellingDto
     {
         public int Id { get; set; }
+        public int OnlineBestellingId { get; set; }
         public string Naam { get; set; } = "";
         public string Telefoon { get; set; } = "";
         public string Email { get; set; } = "";
