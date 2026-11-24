@@ -50,10 +50,10 @@
             
             <h3>Hangende bestellingen (@_hangendeBestellingen.Count)</h3>
             
-            <MudStack Row="true" Spacing="4" Class="mb-8 flex-wrap card-container" Style="gap: 16px;">
+            <MudStack Row="true" Spacing="4" Class="mb-8 flex-wrap" Style="gap: 16px;">
                 @foreach (var bestelling in _hangendeBestellingen)
                 {
-                    <MudCard Class="@GetCardClass(bestelling)" Style="width: 100%;" Elevation="5">
+                    <MudCard Class="@($"pending-order-card pa-4 {GetCardClass(bestelling)}")" Style="width: 100%;" Elevation="5">
                         <MudCardHeader>
                             <CardHeaderContent>
                                 <MudText Typo="Typo.h6">#@bestelling.OnlineBestellingId @bestelling.Naam</MudText>
@@ -177,7 +177,7 @@
 
         _selectedScoutsjaarBegin = selectedScoutsjaar.Begin;
         _isScoutsjaarGearchiveerd = selectedScoutsjaar.Status == ScoutsjaarStatusDto.Gearchiveerd;
-        
+
         // Load straten and leden first
         try
         {
@@ -190,12 +190,12 @@
             _isLoading = false;
             return;
         }
-        
+
         // Load hangende bestellingen on page load
         try
         {
             _hangendeBestellingen = await ServerData.GetHangendeBestellingen(_selectedScoutsjaarBegin);
-            
+
             // Sync ProposedStraatId/ProposedLidId to ProposedStraat/ProposedLid for the UI
             // This ensures pre-selection happens before first render
             if (_hangendeBestellingen != null)
@@ -243,9 +243,10 @@
     {
         if (_removingBestellingId == bestelling.Id)
         {
-            return "pa-4 card-removing";
+            return "pending-order-card-removing";
         }
-        return "pa-4";
+
+        return "";
     }
 
     private bool CanSave(PendingOnlineBestellingDto bestelling)
