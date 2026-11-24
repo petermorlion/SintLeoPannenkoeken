@@ -6,20 +6,6 @@
 
 <PageTitle>Bestellingen Importeren</PageTitle>
 
-<style>
-    .card-container {
-        transition: all 0.3s ease;
-    }
-    .card-removing {
-        opacity: 0;
-        transform: scale(0.9);
-        height: 0;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-    }
-</style>
-
 <MudStack Row="true" Breakpoint="Breakpoint.Xs">
     <h1>Bestellingen Importeren</h1>
     <ScoutsjaarSelect Value="_selectedScoutsjaarBegin" />
@@ -283,7 +269,7 @@
             StateHasChanged();
             
             // Wait for animation to complete (300ms) then remove the card
-            await Task.Delay(300);
+            await Task.Delay(2000);
             
             // Remove from the list
             if (_hangendeBestellingen != null)
