@@ -66,5 +66,16 @@ namespace SintLeoPannenkoeken.Blazor.Controllers
             var result = await _serverData.ImportOnlineBestellingen(scoutsjaar);
             return Ok(result);
         }
+
+        [HttpPut]
+        [Route("{scoutsjaar:int}/savehangendebestelling/{hangendeBestellingId:int}")]
+        public async Task<IActionResult> SaveHangendeBestelling(int scoutsjaar, int hangendeBestellingId, [FromBody] dynamic data)
+        {
+            int straatId = (int)data.straatId;
+            int lidId = (int)data.lidId;
+            
+            await _serverData.SaveHangendeBestelling(hangendeBestellingId, straatId, lidId, scoutsjaar);
+            return Ok();
+        }
     }
 }

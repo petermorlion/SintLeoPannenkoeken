@@ -1291,5 +1291,72 @@ namespace SintLeoPannenkoeken.Blazor.Data
         {
             return await _onlineOrderImporter.GetHangendeBestellingen(scoutsjaarBegin);
         }
+
+        public async Task SaveHangendeBestelling(int hangendeBestellingId, int straatId, int lidId, int scoutsjaarBegin)
+        {
+            using (var dbContext = _dbContextFactory.CreateDbContext())
+            {
+                using (var transaction = await dbContext.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        // Get the hangende bestelling
+                        var hangendeBestelling = await dbContext.HangendeBestellingen
+                            .SingleOrDefaultAsync(h => h.Id == hangendeBestellingId);
+                        
+                        if (hangendeBestelling == null)
+                        {
+                            _logger.LogWarning("HangendeBestelling with ID {Id} not found", hangendeBestellingId);
+                            throw new InvalidOperationException("HangendeBestelling not found");
+                        }
+                        
+                        // Get the lid to get the TakId
+                        var lid = await dbContext.Leden.Include(l => l.Tak).SingleOrDefaultAsync(l => l.Id == lidId);
+                        if (lid == null)
+                        {
+                            _logger.LogWarning("Lid with ID {Id} not found", lidId);
+                            throw new InvalidOperationException("Lid not found");
+                        }
+                        
+                        int takId = lid.TakId;
+                        
+                        // Create and save the new bestelling
+                        var bestelling = new Bestelling(hangendeBestelling.Naam, hangendeBestelling.AantalPakken)
+                        {
+                            OnlineBestellingId = hangendeBestelling.OnlineBestellingId,
+                            Telefoon = hangendeBestelling.Telefoon ?? "",
+                            Opmerkingen = hangendeBestelling.Opmerkingen ?? "",
+                            Betaald = hangendeBestelling.Betaald,
+                            Geleverd = hangendeBestelling.Geleverd,
+                            LidId = lidId,
+                            StraatId = straatId,
+                            TakId = takId,
+                            Nummer = hangendeBestelling.Nummer ?? "",
+                            Bus = hangendeBestelling.Bus ?? "",
+                            IngaveDatum = hangendeBestelling.DatumAangemaakt ?? DateTime.Now,
+                            ScoutsjaarId = hangendeBestelling.ScoutsjaarId
+                        };
+                        
+                        dbContext.Bestellingen.Add(bestelling);
+                        
+                        // Mark the hangende bestelling as processed (or delete it)
+                        // We'll delete it since the user wants it to disappear
+                        dbContext.HangendeBestellingen.Remove(hangendeBestelling);
+                        
+                        await dbContext.SaveChangesAsync();
+                        await transaction.CommitAsync();
+                        
+                        _logger.LogInformation("Saved hangende bestelling: HangendeBestellingId={HangendeBestellingId}, Naam={Naam}, StraatId={StraatId}, LidId={LidId}",
+                            hangendeBestellingId, hangendeBestelling.Naam, straatId, lidId);
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync();
+                        _logger.LogError(ex, "Failed to save hangende bestelling: HangendeBestellingId={HangendeBestellingId}", hangendeBestellingId);
+                        throw;
+                    }
+                }
+            }
+        }
     }
 }

@@ -72,5 +72,7 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         Task<int> ImportOnlineBestellingen(int scoutsjaarBegin);
         
         Task<IList<PendingOnlineBestellingDto>> GetHangendeBestellingen(int scoutsjaarBegin);
+        
+        Task SaveHangendeBestelling(int hangendeBestellingId, int straatId, int lidId, int scoutsjaarBegin);
     }
 }

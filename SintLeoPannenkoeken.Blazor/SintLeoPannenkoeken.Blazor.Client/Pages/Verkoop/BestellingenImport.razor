@@ -6,6 +6,20 @@
 
 <PageTitle>Bestellingen Importeren</PageTitle>
 
+<style>
+    .card-container {
+        transition: all 0.3s ease;
+    }
+    .card-removing {
+        opacity: 0;
+        transform: scale(0.9);
+        height: 0;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+</style>
+
 <MudStack Row="true" Breakpoint="Breakpoint.Xs">
     <h1>Bestellingen Importeren</h1>
     <ScoutsjaarSelect Value="_selectedScoutsjaarBegin" />
@@ -50,10 +64,10 @@
             
             <h3>Hangende bestellingen (@_hangendeBestellingen.Count)</h3>
             
-            <MudStack Row="true" Spacing="4" Class="mb-8 flex-wrap" Style="gap: 16px;">
+            <MudStack Row="true" Spacing="4" Class="mb-8 flex-wrap card-container" Style="gap: 16px;">
                 @foreach (var bestelling in _hangendeBestellingen)
                 {
-                    <MudCard Class="pa-4" Style="width: 100%;" Elevation="5">
+                    <MudCard Class="@GetCardClass(bestelling)" Style="width: 100%;" Elevation="5">
                         <MudCardHeader>
                             <CardHeaderContent>
                                 <MudText Typo="Typo.h6">@bestelling.Naam</MudText>
@@ -109,6 +123,14 @@
                                                  Label="Kies lid"
                                                  Leden="@_leden" />
                             </MudStack>
+                            
+                            <MudStack Row="true" Justify="Justify.FlexEnd" Class="mt-4">
+                                <MudButton Variant="Variant.Filled" Color="Color.Success" 
+                                           OnClick="() => SaveBestelling(bestelling)"
+                                           Disabled="@(!CanSave(bestelling))">
+                                    Opslaan
+                                </MudButton>
+                            </MudStack>
                         </MudCardContent>
                     </MudCard>
                 }
@@ -138,6 +160,7 @@
     private IList<StraatDto> _straten = new List<StraatDto>();
     private IList<LidDto> _leden = new List<LidDto>();
     private bool _isLoading = true;
+    private int? _removingBestellingId = null;
 
     [Inject]
     public IServerData ServerData { get; set; } = default!;
@@ -230,6 +253,57 @@
         bestelling.ProposedLidId = lid?.Id;
     }
 
+    private string GetCardClass(PendingOnlineBestellingDto bestelling)
+    {
+        if (_removingBestellingId == bestelling.Id)
+        {
+            return "pa-4 card-removing";
+        }
+        return "pa-4";
+    }
+
+    private bool CanSave(PendingOnlineBestellingDto bestelling)
+    {
+        return bestelling.ProposedStraatId.HasValue && bestelling.ProposedLidId.HasValue;
+    }
+
+    private async Task SaveBestelling(PendingOnlineBestellingDto bestelling)
+    {
+        if (!CanSave(bestelling))
+        {
+            return;
+        }
+
+        try
+        {
+            await ServerData.SaveHangendeBestelling(bestelling.Id, bestelling.ProposedStraatId.Value, bestelling.ProposedLidId.Value, _selectedScoutsjaarBegin);
+            
+            // Trigger animation by setting the removing ID
+            _removingBestellingId = bestelling.Id;
+            StateHasChanged();
+            
+            // Wait for animation to complete (300ms) then remove the card
+            await Task.Delay(300);
+            
+            // Remove from the list
+            if (_hangendeBestellingen != null)
+            {
+                var bestellingToRemove = _hangendeBestellingen.FirstOrDefault(b => b.Id == bestelling.Id);
+                if (bestellingToRemove != null)
+                {
+                    _hangendeBestellingen.Remove(bestellingToRemove);
+                    _removingBestellingId = null;
+                    StateHasChanged();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            _removingBestellingId = null;
+            _errorMessage = "Fout bij opslaan: " + e.Message;
+            StateHasChanged();
+        }
+    }
 
     private async Task GetData()
     {

@@ -334,5 +334,10 @@ namespace SintLeoPannenkoeken.Blazor.Client.Server
         {
             return await Get<IList<PendingOnlineBestellingDto>>($"/api/bestellingen/{scoutsjaarBegin}/hangendebestellingen", Roles.RolesForBestellingen);
         }
+
+        public async Task SaveHangendeBestelling(int hangendeBestellingId, int straatId, int lidId, int scoutsjaarBegin)
+        {
+            await Update(new { hangendeBestellingId, straatId, lidId, scoutsjaarBegin }, $"/api/bestellingen/{scoutsjaarBegin}/savehangendebestelling/{hangendeBestellingId}", Roles.RolesForBestellingen);
+        }
     }
 }
